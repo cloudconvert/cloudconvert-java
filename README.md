@@ -71,7 +71,7 @@ final JobResponse jobResponse = cloudConvertClient.jobs().create(
 ```
 
 ## Downloading Files
-CloudConvert can generate public URLs for using `export/url` tasks. You can use these URLs to download output files.
+CloudConvert can generate public URLs using `export/url` tasks. You can use these URLs to download output files.
 ```java
 // Create a client
 final CloudConvertClient cloudConvertClient = new CloudConvertClient();
@@ -80,7 +80,7 @@ final CloudConvertClient cloudConvertClient = new CloudConvertClient();
 final String exportUrlTaskId = "84e872fc-d823-4363-baab-eade2e05ee54"; 
 
 // Wait for export/url task to be finished
-final TaskResponse waitUrlExportTaskResponse = cloudConvertClient.tasks().wait("").getBody().get().getData();
+final TaskResponse waitUrlExportTaskResponse = cloudConvertClient.tasks().wait(exportUrlTaskId).getBody().get().getData();
 
 // Get url of export/url task
 final String exportUrl = waitUrlExportTaskResponse.getResult().getFiles().get(0).get("url");

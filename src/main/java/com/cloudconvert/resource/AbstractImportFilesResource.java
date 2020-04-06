@@ -1,8 +1,7 @@
 package com.cloudconvert.resource;
 
-import com.cloudconvert.client.api.key.ApiKeyProvider;
-import com.cloudconvert.client.api.url.ApiUrlProvider;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
+import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.AzureBlobImportRequest;
 import com.cloudconvert.dto.request.GoogleCloudStorageImportRequest;
 import com.cloudconvert.dto.request.OpenStackImportRequest;
@@ -26,6 +25,9 @@ import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -45,9 +47,9 @@ public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<T
     private final Tika tika;
 
     public AbstractImportFilesResource(
-        final ApiUrlProvider apiUrlProvider, final ApiKeyProvider apiKeyProvider, final ObjectMapperProvider objectMapperProvider
+        final SettingsProvider settingsProvider, final ObjectMapperProvider objectMapperProvider
     ) {
-        super(apiUrlProvider, apiKeyProvider, objectMapperProvider);
+        super(settingsProvider, objectMapperProvider);
 
         this.tika = new Tika();
     }
@@ -62,6 +64,70 @@ public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<T
      */
     public abstract TRDAR url(
         @NotNull final UrlImportRequest urlImportRequest
+    ) throws IOException, URISyntaxException;
+
+    /**
+     * Create a task which uploads one input file.
+     * It allows your users to directly upload input files to CloudConvert, without temporary storing them on your server.
+     * <p>
+     * Just create upload task, do not upload file immediately
+     *
+     * @param uploadImportRequest {@link UploadImportRequest}
+     * @return TRD
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    public abstract TRDAR upload(
+        @NotNull final UploadImportRequest uploadImportRequest
+    ) throws IOException, URISyntaxException;
+
+    /**
+     * Create a task which uploads one input file.
+     * It allows your users to directly upload input files to CloudConvert, without temporary storing them on your server.
+     * <p>
+     * Upload file immediately
+     *
+     * @param uploadImportRequest {@link UploadImportRequest}
+     * @param file                {@link File} file which will be uploaded
+     * @return TRD
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    public abstract TRDAR upload(
+        @NotNull final UploadImportRequest uploadImportRequest, @NotNull final File file
+    ) throws IOException, URISyntaxException;
+
+    /**
+     * Create a task which uploads one input file.
+     * It allows your users to directly upload input files to CloudConvert, without temporary storing them on your server.
+     * <p>
+     * Upload file using existing task response data result
+     *
+     * @param taskResponseDataResult {@link TRDAR}
+     * @param file                   {@link File} file which will be uploaded
+     * @return TRD
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    public abstract TRDAR upload(
+        @NotNull final TRDAR taskResponseDataResult, @NotNull final File file
+    ) throws IOException, URISyntaxException;
+
+    /**
+     * Create a task which uploads one input file.
+     * It allows your users to directly upload input files to CloudConvert, without temporary storing them on your server.
+     * <p>
+     * Upload file using existing task id and {@link com.cloudconvert.dto.response.TaskResponse.Result.Form}
+     *
+     * @param taskId                 task
+     * @param taskResponseResultForm {@link com.cloudconvert.dto.response.TaskResponse.Result.Form}
+     * @param file                   {@link File} file which will be uploaded
+     * @return
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    public abstract TRDAR upload(
+        @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final File file
     ) throws IOException, URISyntaxException;
 
     /**
@@ -84,24 +150,10 @@ public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<T
      * Create a task which uploads one input file.
      * It allows your users to directly upload input files to CloudConvert, without temporary storing them on your server.
      * <p>
-     * Just create upload task, do not upload file immediately
-     *
-     * @param uploadImportRequest {@link UploadImportRequest}
-     * @return TRD
-     * @throws IOException
-     * @throws URISyntaxException
-     */
-    public abstract TRDAR upload(
-        @NotNull final UploadImportRequest uploadImportRequest
-    ) throws IOException, URISyntaxException;
-
-    /**
-     * Create a task which uploads one input file.
-     * It allows your users to directly upload input files to CloudConvert, without temporary storing them on your server.
-     * <p>
      * Upload file using existing task response data result
      *
      * @param taskResponseDataResult {@link TRDAR}
+     * @param inputStream            {@link InputStream} of file which will be uploaded
      * @return TRD
      * @throws IOException
      * @throws URISyntaxException
@@ -188,23 +240,30 @@ public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<T
     ) throws IOException, URISyntaxException;
 
     protected HttpEntity getMultipartHttpEntity(
-        final TaskResponse.Result.Form.Parameters uploadImportResponseResultFormParameters, final InputStream inputStream
+        final TaskResponse.Result.Form uploadImportResponseResultForm, final File file
+    ) throws IOException {
+        // We still need to convert File to InputStream here, because if we don't, then async client will fail with ContentTooLongException if we do not
+        return getMultipartHttpEntity(uploadImportResponseResultForm, file.getName(), new FileInputStream(file));
+    }
+
+    protected HttpEntity getMultipartHttpEntity(
+        final TaskResponse.Result.Form uploadImportResponseResultForm, final InputStream inputStream
     ) throws IOException {
         try {
             final MimeType mimeType = MimeTypes.getDefaultMimeTypes().forName(tika.detect(inputStream));
-
-            final HttpEntity httpEntity = MultipartEntityBuilder.create()
-                .setContentType(ContentType.MULTIPART_FORM_DATA)
-                .addTextBody("expires", uploadImportResponseResultFormParameters.getExpires())
-                .addTextBody("max_file_count", uploadImportResponseResultFormParameters.getMaxFileCount())
-                .addTextBody("max_file_size", uploadImportResponseResultFormParameters.getMaxFileSize())
-                .addTextBody("redirect", uploadImportResponseResultFormParameters.getRedirect())
-                .addTextBody("signature", uploadImportResponseResultFormParameters.getSignature())
-                .addPart(FormBodyPartBuilder.create("form", new InputStreamBody(inputStream, mimeType.getExtension())).build()).build();
-
-            return new BufferedHttpEntity(httpEntity);
+            return getMultipartHttpEntity(uploadImportResponseResultForm, "file" + mimeType.getExtension(), inputStream);
         } catch (MimeTypeException e) {
             throw new IOException(e);
         }
+    }
+
+    protected HttpEntity getMultipartHttpEntity(
+        final TaskResponse.Result.Form uploadImportResponseResultForm,
+        @NotNull final String filename, final InputStream inputStream
+    ) throws IOException {
+        final MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create().setContentType(ContentType.MULTIPART_FORM_DATA);
+        uploadImportResponseResultForm.getParameters().forEach(multipartEntityBuilder::addTextBody);
+        return new BufferedHttpEntity(multipartEntityBuilder.addPart(
+            FormBodyPartBuilder.create("form", new InputStreamBody(new BufferedInputStream(inputStream), filename)).build()).build());
     }
 }

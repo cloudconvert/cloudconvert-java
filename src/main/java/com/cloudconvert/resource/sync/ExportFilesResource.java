@@ -1,8 +1,7 @@
 package com.cloudconvert.resource.sync;
 
-import com.cloudconvert.client.api.key.ApiKeyProvider;
-import com.cloudconvert.client.api.url.ApiUrlProvider;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
+import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.AzureBlobExportRequest;
 import com.cloudconvert.dto.request.GoogleCloudStorageExportRequest;
 import com.cloudconvert.dto.request.OpenStackExportRequest;
@@ -30,10 +29,10 @@ public class ExportFilesResource extends AbstractExportFilesResource<Result<Task
     private final RequestExecutor requestExecutor;
 
     public ExportFilesResource(
-        final ApiUrlProvider apiUrlProvider, final ApiKeyProvider apiKeyProvider,
+        final SettingsProvider settingsProvider,
         final ObjectMapperProvider objectMapperProvider, final RequestExecutor requestExecutor
     ) {
-        super(apiUrlProvider, apiKeyProvider, objectMapperProvider);
+        super(settingsProvider, objectMapperProvider);
 
         this.requestExecutor = requestExecutor;
     }

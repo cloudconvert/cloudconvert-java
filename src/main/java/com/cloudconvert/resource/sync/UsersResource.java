@@ -1,8 +1,7 @@
 package com.cloudconvert.resource.sync;
 
-import com.cloudconvert.client.api.key.ApiKeyProvider;
-import com.cloudconvert.client.api.url.ApiUrlProvider;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
+import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.response.UserResponseData;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.executor.RequestExecutor;
@@ -21,10 +20,10 @@ public class UsersResource extends AbstractUsersResource<Result<UserResponseData
     private final RequestExecutor requestExecutor;
 
     public UsersResource(
-        final ApiUrlProvider apiUrlProvider, final ApiKeyProvider apiKeyProvider,
+        final SettingsProvider settingsProvider,
         final ObjectMapperProvider objectMapperProvider, final RequestExecutor requestExecutor
     ) {
-        super(apiUrlProvider, apiKeyProvider, objectMapperProvider);
+        super(settingsProvider, objectMapperProvider);
 
         this.requestExecutor = requestExecutor;
     }

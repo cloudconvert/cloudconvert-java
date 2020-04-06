@@ -1,8 +1,7 @@
 package com.cloudconvert.resource.async;
 
-import com.cloudconvert.client.api.key.ApiKeyProvider;
-import com.cloudconvert.client.api.url.ApiUrlProvider;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
+import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.AzureBlobImportRequest;
 import com.cloudconvert.dto.request.GoogleCloudStorageImportRequest;
 import com.cloudconvert.dto.request.OpenStackImportRequest;
@@ -26,6 +25,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -39,11 +39,11 @@ public class AsyncImportFilesResource extends AbstractImportFilesResource<AsyncR
     private final AsyncTasksResource asyncTasksResource;
 
     public AsyncImportFilesResource(
-        final ApiUrlProvider apiUrlProvider, final ApiKeyProvider apiKeyProvider,
+        final SettingsProvider settingsProvider,
         final ObjectMapperProvider objectMapperProvider, final AsyncRequestExecutor asyncRequestExecutor,
         final AsyncTasksResource asyncTasksResource
     ) {
-        super(apiUrlProvider, apiKeyProvider, objectMapperProvider);
+        super(settingsProvider, objectMapperProvider);
 
         this.asyncRequestExecutor = asyncRequestExecutor;
         this.asyncTasksResource = asyncTasksResource;
@@ -69,6 +69,48 @@ public class AsyncImportFilesResource extends AbstractImportFilesResource<AsyncR
         final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
 
         return asyncRequestExecutor.execute(httpUriRequest, TASK_RESPONSE_DATA_TYPE_REFERENCE);
+    }
+
+    @Override
+    public AsyncResult<TaskResponseData> upload(
+        @NotNull final UploadImportRequest uploadImportRequest, @NotNull final File file
+    ) throws IOException, URISyntaxException {
+        return upload(upload(uploadImportRequest), file);
+    }
+
+    @Override
+    public AsyncResult<TaskResponseData> upload(
+        @NotNull final AsyncResult<TaskResponseData> taskResponseDataAsyncResult, @NotNull final File file
+    ) throws IOException, URISyntaxException {
+        try {
+            final Result<TaskResponseData> taskResponseDataResult = taskResponseDataAsyncResult.get();
+
+            if (HttpStatus.SC_CREATED == taskResponseDataResult.getStatus()) {
+                final TaskResponse taskResponse = taskResponseDataResult.getBody().get().getData();
+
+                return upload(taskResponse.getId(), taskResponse.getResult().getForm(), file);
+            } else {
+                return CompletedAsyncResult.<TaskResponseData>builder().result(Result.<TaskResponseData>builder()
+                    .status(taskResponseDataResult.getStatus()).message(taskResponseDataResult.getMessage()).build()).build();
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new IOException(e);
+        }
+    }
+
+    @Override
+    public AsyncResult<TaskResponseData> upload(
+        @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final File file
+    ) throws IOException, URISyntaxException {
+        try {
+            final URI multipartUri = new URI(taskResponseResultForm.getUrl());
+            final HttpEntity multipartHttpEntity = getMultipartHttpEntity(taskResponseResultForm, file);
+            final HttpUriRequest multipartHttpUriRequest = getHttpUriRequest(HttpPost.class, multipartUri, multipartHttpEntity);
+
+            return uploadPostProcess(taskId, asyncRequestExecutor.execute(multipartHttpUriRequest, VOID_TYPE_REFERENCE));
+        } catch (InterruptedException | ExecutionException e) {
+            throw new IOException(e);
+        }
     }
 
     @Override
@@ -104,33 +146,38 @@ public class AsyncImportFilesResource extends AbstractImportFilesResource<AsyncR
     ) throws IOException, URISyntaxException {
         try {
             final URI multipartUri = new URI(taskResponseResultForm.getUrl());
-            final HttpEntity multipartHttpEntity = getMultipartHttpEntity(taskResponseResultForm.getParameters(), inputStream);
+            final HttpEntity multipartHttpEntity = getMultipartHttpEntity(taskResponseResultForm, inputStream);
             final HttpUriRequest multipartHttpUriRequest = getHttpUriRequest(HttpPost.class, multipartUri, multipartHttpEntity);
 
-            final AsyncResult<Void> multipartVoidAsyncResult = asyncRequestExecutor.execute(multipartHttpUriRequest, VOID_TYPE_REFERENCE);
-            final Result<Void> multipartVoidResult = multipartVoidAsyncResult.get();
-
-            if (HttpStatus.SC_CREATED == multipartVoidResult.getStatus()) {
-                return asyncTasksResource.show(taskId);
-            } else if (HttpStatus.SC_SEE_OTHER == multipartVoidResult.getStatus()) {
-                final URI redirectUri = new URI(multipartVoidResult.getHeaders().get("Location"));
-                final HttpUriRequest redirectHttpUriRequest = getHttpUriRequest(HttpGet.class, redirectUri);
-
-                final AsyncResult<Void> redirectVoidAsyncResult = asyncRequestExecutor.execute(redirectHttpUriRequest, VOID_TYPE_REFERENCE);
-                final Result<Void> redirectVoidResult = redirectVoidAsyncResult.get();
-
-                if (HttpStatus.SC_CREATED == redirectVoidResult.getStatus()) {
-                    return asyncTasksResource.show(taskId);
-                } else {
-                    return CompletedAsyncResult.<TaskResponseData>builder().result(Result.<TaskResponseData>builder()
-                        .status(redirectVoidResult.getStatus()).message(redirectVoidResult.getMessage()).build()).build();
-                }
-            } else {
-                return CompletedAsyncResult.<TaskResponseData>builder().result(Result.<TaskResponseData>builder()
-                    .status(multipartVoidResult.getStatus()).message(multipartVoidResult.getMessage()).build()).build();
-            }
+            return uploadPostProcess(taskId, asyncRequestExecutor.execute(multipartHttpUriRequest, VOID_TYPE_REFERENCE));
         } catch (InterruptedException | ExecutionException e) {
             throw new IOException(e);
+        }
+    }
+
+    private AsyncResult<TaskResponseData> uploadPostProcess(
+        final String taskId, final AsyncResult<Void> multipartVoidAsyncResult
+    ) throws IOException, URISyntaxException, InterruptedException, ExecutionException {
+        final Result<Void> multipartVoidResult = multipartVoidAsyncResult.get();
+
+        if (HttpStatus.SC_CREATED == multipartVoidResult.getStatus()) {
+            return asyncTasksResource.show(taskId);
+        } else if (HttpStatus.SC_SEE_OTHER == multipartVoidResult.getStatus()) {
+            final URI redirectUri = new URI(multipartVoidResult.getHeaders().get("Location"));
+            final HttpUriRequest redirectHttpUriRequest = getHttpUriRequest(HttpGet.class, redirectUri);
+
+            final AsyncResult<Void> redirectVoidAsyncResult = asyncRequestExecutor.execute(redirectHttpUriRequest, VOID_TYPE_REFERENCE);
+            final Result<Void> redirectVoidResult = redirectVoidAsyncResult.get();
+
+            if (HttpStatus.SC_CREATED == redirectVoidResult.getStatus()) {
+                return asyncTasksResource.show(taskId);
+            } else {
+                return CompletedAsyncResult.<TaskResponseData>builder().result(Result.<TaskResponseData>builder()
+                    .status(redirectVoidResult.getStatus()).message(redirectVoidResult.getMessage()).build()).build();
+            }
+        } else {
+            return CompletedAsyncResult.<TaskResponseData>builder().result(Result.<TaskResponseData>builder()
+                .status(multipartVoidResult.getStatus()).message(multipartVoidResult.getMessage()).build()).build();
         }
     }
 

@@ -1,11 +1,9 @@
 package com.cloudconvert.client;
 
-import com.cloudconvert.client.api.key.ApiKeyProvider;
-import com.cloudconvert.client.api.key.PropertiesFileApiKeyProvider;
-import com.cloudconvert.client.api.url.ApiUrlProvider;
-import com.cloudconvert.client.api.url.PropertiesFileApiUrlProvider;
 import com.cloudconvert.client.http.CloseableHttpClientProvider;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
+import com.cloudconvert.client.setttings.PropertyFileSettingsProvider;
+import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.response.JobResponse;
 import com.cloudconvert.dto.response.JobResponseData;
 import com.cloudconvert.dto.response.OperationResponse;
@@ -41,51 +39,55 @@ public class CloudConvertClient extends AbstractCloudConvertClient<Result<Void>,
     Result<Pageable<WebhookResponse>>, Result<UserResponseData>, Result<Pageable<OperationResponse>>> {
 
     public CloudConvertClient() throws IOException {
-        this(new PropertiesFileApiUrlProvider(), new PropertiesFileApiKeyProvider());
+        this(new PropertyFileSettingsProvider(false));
     }
 
     public CloudConvertClient(
-        final ApiUrlProvider apiUrlProvider, final ApiKeyProvider apiKeyProvider
+        final boolean useSandbox
     ) throws IOException {
-        this(apiUrlProvider, apiKeyProvider, new ObjectMapperProvider());
+        this(new PropertyFileSettingsProvider(useSandbox));
     }
 
     public CloudConvertClient(
-        final ApiUrlProvider apiUrlProvider, final ApiKeyProvider apiKeyProvider, final ObjectMapperProvider objectMapperProvider
+        final SettingsProvider settingsProvider
     ) throws IOException {
-        this(apiUrlProvider, apiKeyProvider, objectMapperProvider,
-            new RequestExecutor(new ResultExtractor(objectMapperProvider), new CloseableHttpClientProvider())
-        );
+        this(settingsProvider, new ObjectMapperProvider());
     }
 
     public CloudConvertClient(
-        final ApiUrlProvider apiUrlProvider, final ApiKeyProvider apiKeyProvider,
+        final SettingsProvider settingsProvider, final ObjectMapperProvider objectMapperProvider
+    ) throws IOException {
+        this(settingsProvider, objectMapperProvider, new RequestExecutor(new ResultExtractor(objectMapperProvider), new CloseableHttpClientProvider()));
+    }
+
+    public CloudConvertClient(
+        final SettingsProvider settingsProvider,
         final ObjectMapperProvider objectMapperProvider, final RequestExecutor requestExecutor
     ) {
-        this(apiUrlProvider, apiKeyProvider, objectMapperProvider, requestExecutor,
-            new TasksResource(apiUrlProvider, apiKeyProvider, objectMapperProvider, requestExecutor,
-                new ConvertFilesResource(apiUrlProvider, apiKeyProvider, objectMapperProvider, requestExecutor),
-                new OptimizeFilesResource(apiUrlProvider, apiKeyProvider, objectMapperProvider, requestExecutor),
-                new CaptureWebsitesResource(apiUrlProvider, apiKeyProvider, objectMapperProvider, requestExecutor),
-                new MergeFilesResource(apiUrlProvider, apiKeyProvider, objectMapperProvider, requestExecutor),
-                new CreateArchivesResource(apiUrlProvider, apiKeyProvider, objectMapperProvider, requestExecutor),
-                new ExecuteCommandsResource(apiUrlProvider, apiKeyProvider, objectMapperProvider, requestExecutor)
+        this(settingsProvider, objectMapperProvider, requestExecutor,
+            new TasksResource(settingsProvider, objectMapperProvider, requestExecutor,
+                new ConvertFilesResource(settingsProvider, objectMapperProvider, requestExecutor),
+                new OptimizeFilesResource(settingsProvider, objectMapperProvider, requestExecutor),
+                new CaptureWebsitesResource(settingsProvider, objectMapperProvider, requestExecutor),
+                new MergeFilesResource(settingsProvider, objectMapperProvider, requestExecutor),
+                new CreateArchivesResource(settingsProvider, objectMapperProvider, requestExecutor),
+                new ExecuteCommandsResource(settingsProvider, objectMapperProvider, requestExecutor)
             ),
-            new JobsResource(apiUrlProvider, apiKeyProvider, objectMapperProvider, requestExecutor)
+            new JobsResource(settingsProvider, objectMapperProvider, requestExecutor)
         );
     }
 
     public CloudConvertClient(
-        final ApiUrlProvider apiUrlProvider, final ApiKeyProvider apiKeyProvider,
+        final SettingsProvider settingsProvider,
         final ObjectMapperProvider objectMapperProvider, final RequestExecutor requestExecutor,
         final TasksResource tasksResource, final JobsResource jobsResource
     ) {
         super(tasksResource, jobsResource,
-            new ImportFilesResource(apiUrlProvider, apiKeyProvider, objectMapperProvider, requestExecutor, tasksResource),
-            new ExportFilesResource(apiUrlProvider, apiKeyProvider, objectMapperProvider, requestExecutor),
-            new UsersResource(apiUrlProvider, apiKeyProvider, objectMapperProvider, requestExecutor),
-            new WebhookResource(apiUrlProvider, apiKeyProvider, objectMapperProvider, requestExecutor),
-            new FilesResource(apiUrlProvider, apiKeyProvider, objectMapperProvider, requestExecutor)
+            new ImportFilesResource(settingsProvider, objectMapperProvider, requestExecutor, tasksResource),
+            new ExportFilesResource(settingsProvider, objectMapperProvider, requestExecutor),
+            new UsersResource(settingsProvider, objectMapperProvider, requestExecutor),
+            new WebhookResource(settingsProvider, objectMapperProvider, requestExecutor),
+            new FilesResource(settingsProvider, objectMapperProvider, requestExecutor)
         );
     }
 }

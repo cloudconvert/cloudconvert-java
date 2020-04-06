@@ -1,8 +1,7 @@
 package com.cloudconvert.resource;
 
-import com.cloudconvert.client.api.key.ApiKeyProvider;
-import com.cloudconvert.client.api.url.ApiUrlProvider;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
+import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.Request;
 import com.cloudconvert.dto.response.JobResponse;
 import com.cloudconvert.dto.response.JobResponseData;
@@ -17,6 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import lombok.Getter;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpDelete;
@@ -66,17 +66,16 @@ public abstract class AbstractResource implements Closeable {
     public static final TypeReference<Pageable<JobResponse>> JOB_RESPONSE_PAGEABLE_TYPE_REFERENCE = new TypeReference<Pageable<JobResponse>>() {};
     public static final TypeReference<Pageable<WebhookResponse>> WEBHOOKS_RESPONSE_PAGEABLE_TYPE_REFERENCE = new TypeReference<Pageable<WebhookResponse>>() {};
 
-    private final ApiUrlProvider apiUrlProvider;
-    private final ApiKeyProvider apiKeyProvider;
+    @Getter
+    private final SettingsProvider settingsProvider;
     private final ObjectMapperProvider objectMapperProvider;
 
     private final Map<Class<? extends HttpRequestBase>, Supplier<RequestBuilder>> requestBuilderProviders;
 
     public AbstractResource(
-        final ApiUrlProvider apiUrlProvider, final ApiKeyProvider apiKeyProvider, final ObjectMapperProvider objectMapperProvider
+        final SettingsProvider settingsProvider, final ObjectMapperProvider objectMapperProvider
     ) {
-        this.apiUrlProvider = apiUrlProvider;
-        this.apiKeyProvider = apiKeyProvider;
+        this.settingsProvider = settingsProvider;
         this.objectMapperProvider = objectMapperProvider;
 
         this.requestBuilderProviders = ImmutableMap.<Class<? extends HttpRequestBase>, Supplier<RequestBuilder>>builder()
@@ -97,7 +96,7 @@ public abstract class AbstractResource implements Closeable {
     ) throws URISyntaxException {
         final List<String> v2PathSegments = ImmutableList.<String>builder().add(V2).addAll(pathSegments).build();
 
-        return new URIBuilder(apiUrlProvider.provide()).setPathSegments(v2PathSegments).setParameters(nameValuePairs).build();
+        return new URIBuilder(settingsProvider.getApiUrl()).setPathSegments(v2PathSegments).setParameters(nameValuePairs).build();
     }
 
     protected HttpEntity getHttpEntity(
@@ -116,6 +115,6 @@ public abstract class AbstractResource implements Closeable {
         final Class<? extends HttpRequestBase> httpRequestBaseClass, final URI uri, @Nullable final HttpEntity httpEntity
     ) {
         return requestBuilderProviders.get(httpRequestBaseClass).get().setUri(uri).setEntity(httpEntity)
-            .setHeader(HEADER_USER_AGENT, VALUE_USER_AGENT).setHeader(HEADER_AUTHORIZATION, BEARER + " " + apiKeyProvider.provide()).build();
+            .setHeader(HEADER_USER_AGENT, VALUE_USER_AGENT).setHeader(HEADER_AUTHORIZATION, BEARER + " " + settingsProvider.getApiKey()).build();
     }
 }

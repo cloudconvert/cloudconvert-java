@@ -1,8 +1,7 @@
 package com.cloudconvert.resource.sync;
 
-import com.cloudconvert.client.api.key.ApiKeyProvider;
-import com.cloudconvert.client.api.url.ApiUrlProvider;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
+import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.CaptureWebsitesTaskRequest;
 import com.cloudconvert.dto.request.ConvertFilesTaskRequest;
 import com.cloudconvert.dto.request.CreateArchivesTaskRequest;
@@ -51,13 +50,13 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponseData
     private final PaginationToNameValuePairsConverter paginationToNameValuePairsConverter;
 
     public TasksResource(
-        final ApiUrlProvider apiUrlProvider, final ApiKeyProvider apiKeyProvider,
+        final SettingsProvider settingsProvider,
         final ObjectMapperProvider objectMapperProvider, final RequestExecutor requestExecutor,
         final ConvertFilesResource convertFilesResource, final OptimizeFilesResource optimizeFilesResource,
         final CaptureWebsitesResource captureWebsitesResource, final MergeFilesResource mergeFilesResource,
         final CreateArchivesResource createArchivesResource, final ExecuteCommandsResource executeCommandsResource
     ) {
-        super(apiUrlProvider, apiKeyProvider, objectMapperProvider, convertFilesResource, optimizeFilesResource, captureWebsitesResource,
+        super(settingsProvider, objectMapperProvider, convertFilesResource, optimizeFilesResource, captureWebsitesResource,
             mergeFilesResource, createArchivesResource, executeCommandsResource);
 
         this.requestExecutor = requestExecutor;

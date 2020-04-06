@@ -1,8 +1,7 @@
 package com.cloudconvert.resource;
 
-import com.cloudconvert.client.api.key.ApiKeyProvider;
-import com.cloudconvert.client.api.url.ApiUrlProvider;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
+import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.CaptureWebsitesTaskRequest;
 import com.cloudconvert.dto.response.TaskResponseData;
 import com.cloudconvert.dto.result.AbstractResult;
@@ -16,9 +15,9 @@ public abstract class AbstractCaptureWebsitesResource<TRDAR extends AbstractResu
     public static final String PATH_SEGMENT_CAPTURE_WEBSITE = "capture-website";
 
     public AbstractCaptureWebsitesResource(
-        final ApiUrlProvider apiUrlProvider, final ApiKeyProvider apiKeyProvider, final ObjectMapperProvider objectMapperProvider
+        final SettingsProvider settingsProvider, final ObjectMapperProvider objectMapperProvider
     ) {
-        super(apiUrlProvider, apiKeyProvider, objectMapperProvider);
+        super(settingsProvider, objectMapperProvider);
     }
 
     /**

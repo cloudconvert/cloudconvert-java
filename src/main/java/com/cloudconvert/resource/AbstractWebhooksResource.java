@@ -1,8 +1,7 @@
 package com.cloudconvert.resource;
 
-import com.cloudconvert.client.api.key.ApiKeyProvider;
-import com.cloudconvert.client.api.url.ApiUrlProvider;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
+import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.WebhookRequest;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.WebhookResponse;
@@ -30,9 +29,9 @@ public abstract class AbstractWebhooksResource<WRDAR extends AbstractResult<Webh
     public static final String PATH_SEGMENT_WEBHOOKS = "webhooks";
 
     public AbstractWebhooksResource(
-        final ApiUrlProvider apiUrlProvider, final ApiKeyProvider apiKeyProvider, final ObjectMapperProvider objectMapperProvider
+        final SettingsProvider settingsProvider, final ObjectMapperProvider objectMapperProvider
     ) {
-        super(apiUrlProvider, apiKeyProvider, objectMapperProvider);
+        super(settingsProvider, objectMapperProvider);
     }
 
     /**
@@ -102,14 +101,13 @@ public abstract class AbstractWebhooksResource<WRDAR extends AbstractResult<Webh
      *
      * @param payload   payload
      * @param signature signature
-     * @param secret    secret
      * @return
      */
     public boolean verify(
-        @NotNull final String payload, @NotNull final String signature, @NotNull final String secret
+        @NotNull final String payload, @NotNull final String signature
     ) throws InvalidKeyException, NoSuchAlgorithmException {
         final Mac mac = Mac.getInstance(HMAC_SHA256);
-        final SecretKeySpec secretKeySpec = new SecretKeySpec(secret.getBytes(), HMAC_SHA256);
+        final SecretKeySpec secretKeySpec = new SecretKeySpec(getSettingsProvider().getWebhookSigningSecret().getBytes(), HMAC_SHA256);
         mac.init(secretKeySpec);
 
         return signature.equals(Hex.encodeHexString(mac.doFinal(payload.getBytes())));

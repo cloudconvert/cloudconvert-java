@@ -1,8 +1,7 @@
 package com.cloudconvert.resource.sync;
 
-import com.cloudconvert.client.api.key.ApiKeyProvider;
-import com.cloudconvert.client.api.url.ApiUrlProvider;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
+import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.AzureBlobImportRequest;
 import com.cloudconvert.dto.request.GoogleCloudStorageImportRequest;
 import com.cloudconvert.dto.request.OpenStackImportRequest;
@@ -24,6 +23,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -36,11 +36,11 @@ public class ImportFilesResource extends AbstractImportFilesResource<Result<Task
     private final TasksResource tasksResource;
 
     public ImportFilesResource(
-        final ApiUrlProvider apiUrlProvider, final ApiKeyProvider apiKeyProvider,
+        final SettingsProvider settingsProvider,
         final ObjectMapperProvider objectMapperProvider, final RequestExecutor requestExecutor,
         final TasksResource tasksResource
     ) {
-        super(apiUrlProvider, apiKeyProvider, objectMapperProvider);
+        super(settingsProvider, objectMapperProvider);
 
         this.requestExecutor = requestExecutor;
         this.tasksResource = tasksResource;
@@ -70,6 +70,38 @@ public class ImportFilesResource extends AbstractImportFilesResource<Result<Task
 
     @Override
     public Result<TaskResponseData> upload(
+        @NotNull final UploadImportRequest uploadImportRequest, @NotNull final File file
+    ) throws IOException, URISyntaxException {
+        return upload(upload(uploadImportRequest), file);
+    }
+
+    @Override
+    public Result<TaskResponseData> upload(
+        @NotNull final Result<TaskResponseData> taskResponseDataResult, @NotNull final File file
+    ) throws IOException, URISyntaxException {
+        if (HttpStatus.SC_CREATED == taskResponseDataResult.getStatus()) {
+            final TaskResponse taskResponse = taskResponseDataResult.getBody().get().getData();
+
+            return upload(taskResponse.getId(), taskResponse.getResult().getForm(), file);
+        } else {
+            return Result.<TaskResponseData>builder().status(taskResponseDataResult.getStatus()).message(taskResponseDataResult.getMessage()).build();
+        }
+    }
+
+    @Override
+    public Result<TaskResponseData> upload(
+        @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final File file
+    ) throws IOException, URISyntaxException {
+
+        final URI multipartUri = new URI(taskResponseResultForm.getUrl());
+        final HttpEntity multipartHttpEntity = getMultipartHttpEntity(taskResponseResultForm, file);
+        final HttpUriRequest multipartHttpUriRequest = getHttpUriRequest(HttpPost.class, multipartUri, multipartHttpEntity);
+
+        return uploadPostProcess(taskId, requestExecutor.execute(multipartHttpUriRequest, VOID_TYPE_REFERENCE));
+    }
+
+    @Override
+    public Result<TaskResponseData> upload(
         @NotNull final UploadImportRequest uploadImportRequest, @NotNull final InputStream inputStream
     ) throws IOException, URISyntaxException {
         return upload(upload(uploadImportRequest), inputStream);
@@ -93,11 +125,15 @@ public class ImportFilesResource extends AbstractImportFilesResource<Result<Task
         @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final InputStream inputStream
     ) throws IOException, URISyntaxException {
         final URI multipartUri = new URI(taskResponseResultForm.getUrl());
-        final HttpEntity multipartHttpEntity = getMultipartHttpEntity(taskResponseResultForm.getParameters(), inputStream);
+        final HttpEntity multipartHttpEntity = getMultipartHttpEntity(taskResponseResultForm, inputStream);
         final HttpUriRequest multipartHttpUriRequest = getHttpUriRequest(HttpPost.class, multipartUri, multipartHttpEntity);
 
-        final Result<Void> multipartVoidResult = requestExecutor.execute(multipartHttpUriRequest, VOID_TYPE_REFERENCE);
+        return uploadPostProcess(taskId, requestExecutor.execute(multipartHttpUriRequest, VOID_TYPE_REFERENCE));
+    }
 
+    private Result<TaskResponseData> uploadPostProcess(
+        final String taskId, final Result<Void> multipartVoidResult
+    ) throws IOException, URISyntaxException {
         if (HttpStatus.SC_CREATED == multipartVoidResult.getStatus()) {
             return tasksResource.show(taskId);
         } else if (HttpStatus.SC_SEE_OTHER == multipartVoidResult.getStatus()) {

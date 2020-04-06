@@ -23,7 +23,7 @@ public class ContentResponseProcessor implements ResponseProcessor {
     public <T> Result<T> process(
         final int status, final Header[] headers, final InputStream inputStream, final TypeReference<T> typeReference
     ) throws IOException {
-        return Result.<T>builder().status(status).headers(Arrays.stream(headers).collect(Collectors.toMap(Header::getName, Header::getValue)))
+        return Result.<T>builder().status(status).headers(Arrays.stream(headers).collect(Collectors.toMap(Header::getName, Header::getValue, (v1, v2) -> v1 + ", " + v2)))
             .message("").body(objectMapperProvider.provide().readValue(inputStream, typeReference)).build();
     }
 }

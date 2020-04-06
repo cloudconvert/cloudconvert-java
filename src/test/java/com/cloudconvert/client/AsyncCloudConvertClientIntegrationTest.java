@@ -1,40 +1,10 @@
 package com.cloudconvert.client;
 
-import com.cloudconvert.client.api.key.PropertiesFileApiKeyProvider;
-import com.cloudconvert.client.api.url.PropertiesFileApiUrlProvider;
 import com.cloudconvert.dto.Event;
 import com.cloudconvert.dto.Operation;
 import com.cloudconvert.dto.Status;
-import com.cloudconvert.dto.request.AzureBlobExportRequest;
-import com.cloudconvert.dto.request.AzureBlobImportRequest;
-import com.cloudconvert.dto.request.CaptureWebsitesTaskRequest;
-import com.cloudconvert.dto.request.ConvertFilesTaskRequest;
-import com.cloudconvert.dto.request.CreateArchivesTaskRequest;
-import com.cloudconvert.dto.request.ExecuteCommandsTaskRequest;
-import com.cloudconvert.dto.request.GoogleCloudStorageExportRequest;
-import com.cloudconvert.dto.request.GoogleCloudStorageImportRequest;
-import com.cloudconvert.dto.request.MergeFilesTaskRequest;
-import com.cloudconvert.dto.request.OpenStackExportRequest;
-import com.cloudconvert.dto.request.OpenStackImportRequest;
-import com.cloudconvert.dto.request.OptimizeFilesTaskRequest;
-import com.cloudconvert.dto.request.S3ExportRequest;
-import com.cloudconvert.dto.request.S3ImportRequest;
-import com.cloudconvert.dto.request.SftpExportRequest;
-import com.cloudconvert.dto.request.SftpImportRequest;
-import com.cloudconvert.dto.request.TaskRequest;
-import com.cloudconvert.dto.request.UploadImportRequest;
-import com.cloudconvert.dto.request.UrlExportRequest;
-import com.cloudconvert.dto.request.UrlImportRequest;
-import com.cloudconvert.dto.request.WebhookRequest;
-import com.cloudconvert.dto.response.JobResponse;
-import com.cloudconvert.dto.response.JobResponseData;
-import com.cloudconvert.dto.response.OperationResponse;
-import com.cloudconvert.dto.response.Pageable;
-import com.cloudconvert.dto.response.TaskResponse;
-import com.cloudconvert.dto.response.TaskResponseData;
-import com.cloudconvert.dto.response.UserResponseData;
-import com.cloudconvert.dto.response.WebhookResponse;
-import com.cloudconvert.dto.response.WebhookResponseData;
+import com.cloudconvert.dto.request.*;
+import com.cloudconvert.dto.response.*;
 import com.cloudconvert.dto.result.AsyncResult;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.resource.params.Pagination;
@@ -76,7 +46,6 @@ public class AsyncCloudConvertClientIntegrationTest extends AbstractTest {
 
     private static final String WEBHOOK_PAYLOAD = "cloudconvert";
     private static final String WEBHOOK_SIGNATURE = "5c4c0691bce8a1a2af738b7073fe0627e792734813358c5f88a658819dd0a6d2";
-    private static final String WEBHOOK_SECRET = "90sffs0d8fs0f9sf0";
 
     private Tika tika;
 
@@ -93,7 +62,7 @@ public class AsyncCloudConvertClientIntegrationTest extends AbstractTest {
     @Before
     public void before() throws Exception {
         tika = new Tika();
-        asyncCloudConvertClient = new AsyncCloudConvertClient(new PropertiesFileApiUrlProvider(), new PropertiesFileApiKeyProvider());
+        asyncCloudConvertClient = new AsyncCloudConvertClient(true);
         jpgTestFile1InputStream = AsyncCloudConvertClientIntegrationTest.class.getClassLoader().getResourceAsStream(JPG_TEST_FILE_1);
         jpgTestFile2InputStream = AsyncCloudConvertClientIntegrationTest.class.getClassLoader().getResourceAsStream(JPG_TEST_FILE_2);
         odtTestFile1InputStream = AsyncCloudConvertClientIntegrationTest.class.getClassLoader().getResourceAsStream(ODT_TEST_FILE_1);
@@ -363,20 +332,20 @@ public class AsyncCloudConvertClientIntegrationTest extends AbstractTest {
         final TaskResponse uploadFile2TaskResponse = uploadFile2TaskResponseDataResult.getBody().get().getData();
         assertThat(uploadFile2TaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
-//        // Wait
-//        final Result<JobResponseData> waitJobResponseDataResult = cloudConvertClient.jobs().wait(jobResponse.getId());
-//        assertThat(waitJobResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
-//
-//        final JobResponse waitJobResponse = waitJobResponseDataResult.getBody().get().getData();
-////        assertThat(waitJobResponse.getStatus()).isEqualTo(Status.FINISHED); // TODO Need to fix, as conversion fails with UNKNOWN_ERROR Conversion failed
-//        assertThat(waitJobResponse.getId()).isEqualTo(jobResponse.getId());
+        // Wait
+        final Result<JobResponseData> waitJobResponseDataResult = asyncCloudConvertClient.jobs().wait(jobResponse.getId()).get();
+        assertThat(waitJobResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final JobResponse waitJobResponse = waitJobResponseDataResult.getBody().get().getData();
+        assertThat(waitJobResponse.getStatus()).isEqualTo(Status.FINISHED);
+        assertThat(waitJobResponse.getId()).isEqualTo(jobResponse.getId());
 
         // Show
         final Result<JobResponseData> showJobResponseDataResult = asyncCloudConvertClient.jobs().show(jobResponse.getId()).get();
         assertThat(showJobResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
         final JobResponse showJobResponse = showJobResponseDataResult.getBody().get().getData();
-//        assertThat(showJobResponse.getStatus()).isEqualTo(Status.FINISHED); // TODO Need to fix, as conversion fails with UNKNOWN_ERROR Conversion failed
+        assertThat(showJobResponse.getStatus()).isEqualTo(Status.FINISHED);
         assertThat(showJobResponse.getId()).isEqualTo(jobResponse.getId());
 
         // Delete job
@@ -670,7 +639,7 @@ public class AsyncCloudConvertClientIntegrationTest extends AbstractTest {
         assertThat(deleteWebhookResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
 
         // Verify
-        assertThat(asyncCloudConvertClient.webhooks().verify(WEBHOOK_PAYLOAD, WEBHOOK_SIGNATURE, WEBHOOK_SECRET)).isTrue();
+        assertThat(asyncCloudConvertClient.webhooks().verify(WEBHOOK_PAYLOAD, WEBHOOK_SIGNATURE)).isTrue();
     }
 
     @After

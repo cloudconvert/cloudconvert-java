@@ -1,8 +1,7 @@
 package com.cloudconvert.resource.async;
 
-import com.cloudconvert.client.api.key.ApiKeyProvider;
-import com.cloudconvert.client.api.url.ApiUrlProvider;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
+import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.ConvertFilesTaskRequest;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
@@ -42,10 +41,10 @@ public class AsyncConvertFilesResource extends AbstractConvertFilesResource<
     private final AlternativeToNameValuePairsConverter alternativeToNameValuePairsConverter;
 
     public AsyncConvertFilesResource(
-        final ApiUrlProvider apiUrlProvider, final ApiKeyProvider apiKeyProvider,
+        final SettingsProvider settingsProvider,
         final ObjectMapperProvider objectMapperProvider, final AsyncRequestExecutor asyncRequestExecutor
     ) {
-        super(apiUrlProvider, apiKeyProvider, objectMapperProvider);
+        super(settingsProvider, objectMapperProvider);
 
         this.asyncRequestExecutor = asyncRequestExecutor;
 

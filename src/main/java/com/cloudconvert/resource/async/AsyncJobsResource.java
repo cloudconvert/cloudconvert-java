@@ -1,8 +1,7 @@
 package com.cloudconvert.resource.async;
 
-import com.cloudconvert.client.api.key.ApiKeyProvider;
-import com.cloudconvert.client.api.url.ApiUrlProvider;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
+import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.TaskRequest;
 import com.cloudconvert.dto.response.JobResponse;
 import com.cloudconvert.dto.response.JobResponseData;
@@ -48,10 +47,10 @@ public class AsyncJobsResource extends AbstractJobsResource<
     private final PaginationToNameValuePairsConverter paginationToNameValuePairsConverter;
 
     public AsyncJobsResource(
-        final ApiUrlProvider apiUrlProvider, final ApiKeyProvider apiKeyProvider,
+        final SettingsProvider settingsProvider,
         final ObjectMapperProvider objectMapperProvider, final AsyncRequestExecutor asyncRequestExecutor
     ) {
-        super(apiUrlProvider, apiKeyProvider, objectMapperProvider);
+        super(settingsProvider, objectMapperProvider);
 
         this.asyncRequestExecutor = asyncRequestExecutor;
         this.objectMapperProvider = objectMapperProvider;

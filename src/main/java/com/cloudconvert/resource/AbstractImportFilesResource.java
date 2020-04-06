@@ -1,15 +1,8 @@
 package com.cloudconvert.resource;
 
-import com.cloudconvert.client.api.key.ApiKeyProvider;
-import com.cloudconvert.client.api.url.ApiUrlProvider;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
-import com.cloudconvert.dto.request.AzureBlobImportRequest;
-import com.cloudconvert.dto.request.GoogleCloudStorageImportRequest;
-import com.cloudconvert.dto.request.OpenStackImportRequest;
-import com.cloudconvert.dto.request.S3ImportRequest;
-import com.cloudconvert.dto.request.SftpImportRequest;
-import com.cloudconvert.dto.request.UploadImportRequest;
-import com.cloudconvert.dto.request.UrlImportRequest;
+import com.cloudconvert.client.setttings.SettingsProvider;
+import com.cloudconvert.dto.request.*;
 import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.response.TaskResponseData;
 import com.cloudconvert.dto.result.AbstractResult;
@@ -45,9 +38,9 @@ public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<T
     private final Tika tika;
 
     public AbstractImportFilesResource(
-        final ApiUrlProvider apiUrlProvider, final ApiKeyProvider apiKeyProvider, final ObjectMapperProvider objectMapperProvider
+        final SettingsProvider settingsProvider, final ObjectMapperProvider objectMapperProvider
     ) {
-        super(apiUrlProvider, apiKeyProvider, objectMapperProvider);
+        super(settingsProvider, objectMapperProvider);
 
         this.tika = new Tika();
     }
@@ -200,7 +193,7 @@ public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<T
                 .addTextBody("max_file_size", uploadImportResponseResultFormParameters.getMaxFileSize())
                 .addTextBody("redirect", uploadImportResponseResultFormParameters.getRedirect())
                 .addTextBody("signature", uploadImportResponseResultFormParameters.getSignature())
-                .addPart(FormBodyPartBuilder.create("form", new InputStreamBody(inputStream, mimeType.getExtension())).build()).build();
+                .addPart(FormBodyPartBuilder.create("form", new InputStreamBody(inputStream, "file" + mimeType.getExtension())).build()).build();
 
             return new BufferedHttpEntity(httpEntity);
         } catch (MimeTypeException e) {

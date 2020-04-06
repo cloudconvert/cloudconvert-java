@@ -32,7 +32,7 @@ public class AsyncWebhooksIntegrationTest extends AbstractTest {
 
     @Before
     public void before() throws Exception {
-        asyncCloudConvertClient = new AsyncCloudConvertClient(true);
+        asyncCloudConvertClient = new AsyncCloudConvertClient();
     }
 
     @Test

@@ -24,9 +24,10 @@ public class PropertySettingsProviderTest {
     public void success_useSandbox() {
         final Properties properties = new Properties();
         properties.setProperty(AbstractSettingsProvider.API_KEY, API_KEY);
+        properties.setProperty(AbstractSettingsProvider.USE_SANDBOX, "true");
         properties.setProperty(AbstractSettingsProvider.WEBHOOK_SIGNING_SECRET, WEBHOOK_SIGNING_SECRET);
 
-        final PropertySettingsProvider propertySettingsProvider = new PropertySettingsProvider(properties, true);
+        final PropertySettingsProvider propertySettingsProvider = new PropertySettingsProvider(properties);
         assertThat(propertySettingsProvider.getApiKey()).isEqualTo(API_KEY);
         assertThat(propertySettingsProvider.getWebhookSigningSecret()).isEqualTo(WEBHOOK_SIGNING_SECRET);
         assertThat(propertySettingsProvider.getApiUrl()).isEqualTo(AbstractSettingsProvider.API_URL_SANDBOX);
@@ -36,6 +37,7 @@ public class PropertySettingsProviderTest {
     public void success_useLive() {
         final Properties properties = new Properties();
         properties.setProperty(AbstractSettingsProvider.API_KEY, API_KEY);
+        properties.setProperty(AbstractSettingsProvider.USE_SANDBOX, "false");
         properties.setProperty(AbstractSettingsProvider.WEBHOOK_SIGNING_SECRET, WEBHOOK_SIGNING_SECRET);
 
         final PropertySettingsProvider propertySettingsProvider = new PropertySettingsProvider(properties);

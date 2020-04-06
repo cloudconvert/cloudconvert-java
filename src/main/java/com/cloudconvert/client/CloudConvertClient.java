@@ -39,13 +39,7 @@ public class CloudConvertClient extends AbstractCloudConvertClient<Result<Void>,
     Result<Pageable<WebhookResponse>>, Result<UserResponseData>, Result<Pageable<OperationResponse>>> {
 
     public CloudConvertClient() throws IOException {
-        this(new PropertyFileSettingsProvider(false));
-    }
-
-    public CloudConvertClient(
-        final boolean useSandbox
-    ) throws IOException {
-        this(new PropertyFileSettingsProvider(useSandbox));
+        this(new PropertyFileSettingsProvider());
     }
 
     public CloudConvertClient(

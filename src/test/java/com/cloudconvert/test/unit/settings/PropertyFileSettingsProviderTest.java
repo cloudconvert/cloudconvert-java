@@ -22,7 +22,7 @@ public class PropertyFileSettingsProviderTest {
 
     @Test
     public void success_useSandbox() throws IOException {
-        final PropertyFileSettingsProvider propertyFileSettingsProvider = new PropertyFileSettingsProvider("test-not-empty-application.properties", true);
+        final PropertyFileSettingsProvider propertyFileSettingsProvider = new PropertyFileSettingsProvider("test-not-empty-sandbox-application.properties");
 
         assertThat(propertyFileSettingsProvider.getApiKey()).isEqualTo(API_KEY);
         assertThat(propertyFileSettingsProvider.getWebhookSigningSecret()).isEqualTo(WEBHOOK_SIGNING_SECRET);
@@ -31,7 +31,7 @@ public class PropertyFileSettingsProviderTest {
 
     @Test
     public void success_useLive() throws IOException {
-        final PropertyFileSettingsProvider propertyFileSettingsProvider = new PropertyFileSettingsProvider("test-not-empty-application.properties");
+        final PropertyFileSettingsProvider propertyFileSettingsProvider = new PropertyFileSettingsProvider("test-not-empty-live-application.properties");
 
         assertThat(propertyFileSettingsProvider.getApiKey()).isEqualTo(API_KEY);
         assertThat(propertyFileSettingsProvider.getWebhookSigningSecret()).isEqualTo(WEBHOOK_SIGNING_SECRET);

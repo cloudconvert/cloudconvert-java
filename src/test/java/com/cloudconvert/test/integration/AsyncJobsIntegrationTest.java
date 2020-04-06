@@ -15,6 +15,7 @@ import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.resource.params.Pagination;
 import com.cloudconvert.test.framework.AbstractTest;
 import com.cloudconvert.test.framework.IntegrationTest;
+import com.cloudconvert.test.framework.WaitConditionFactoryProvider;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apache.http.HttpStatus;
@@ -46,12 +47,16 @@ public class AsyncJobsIntegrationTest extends AbstractTest {
 
     private InputStream odtTest2InputStream;
 
+    private WaitConditionFactoryProvider waitConditionFactoryProvider;
+
     @Before
     public void before() throws Exception {
-        asyncCloudConvertClient = new AsyncCloudConvertClient(true);
+        asyncCloudConvertClient = new AsyncCloudConvertClient();
 
         odtTest1InputStream = AsyncJobsIntegrationTest.class.getClassLoader().getResourceAsStream(ODT_TEST_FILE_1);
         odtTest2InputStream = AsyncJobsIntegrationTest.class.getClassLoader().getResourceAsStream(ODT_TEST_FILE_2);
+
+        waitConditionFactoryProvider = new WaitConditionFactoryProvider();
     }
 
     /**
@@ -109,9 +114,9 @@ public class AsyncJobsIntegrationTest extends AbstractTest {
         assertThat(uploadFile2TaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Wait
-        final JobResponse waitJobResponse = await().atMost(TIMEOUT).until(() ->
-                await().atMost(TIMEOUT).until(
-                    () -> asyncCloudConvertClient.jobs().show(jobResponse.getId()).get(),
+        final JobResponse waitJobResponse = await().atMost(AT_MOST).until(() ->
+                waitConditionFactoryProvider.provide(jobResponse.getId()).until(
+                    () -> asyncCloudConvertClient.jobs().wait(jobResponse.getId()).get(),
                     awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
                 ).getBody().get().getData(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED

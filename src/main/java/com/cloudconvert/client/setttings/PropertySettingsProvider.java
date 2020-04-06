@@ -9,12 +9,6 @@ public class PropertySettingsProvider extends AbstractSettingsProvider {
     public PropertySettingsProvider(
         @NotNull final Properties properties
     ) {
-        this(properties, false);
-    }
-
-    public PropertySettingsProvider(
-        @NotNull final Properties properties, final boolean useSandbox
-    ) {
-        super(properties.getProperty(API_KEY), properties.getProperty(WEBHOOK_SIGNING_SECRET), useSandbox);
+        super(properties.getProperty(API_KEY), properties.getProperty(WEBHOOK_SIGNING_SECRET), properties.getProperty(USE_SANDBOX));
     }
 }

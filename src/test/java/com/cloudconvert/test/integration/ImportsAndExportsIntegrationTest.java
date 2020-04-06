@@ -21,6 +21,7 @@ import com.cloudconvert.dto.response.TaskResponseData;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.test.framework.AbstractTest;
 import com.cloudconvert.test.framework.IntegrationTest;
+import com.cloudconvert.test.framework.WaitConditionFactoryProvider;
 import org.apache.http.HttpStatus;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MimeTypes;
@@ -51,14 +52,18 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
 
     private InputStream jpgTest1InputStream;
 
+    private WaitConditionFactoryProvider waitConditionFactoryProvider;
+
     @Before
     public void before() throws Exception {
         tika = new Tika();
-        cloudConvertClient = new CloudConvertClient(true);
+        cloudConvertClient = new CloudConvertClient();
 
         jpgTest1File = new File(ImportsAndExportsIntegrationTest.class.getClassLoader().getResource(JPG_TEST_FILE_1).toURI());
 
         jpgTest1InputStream = ImportsAndExportsIntegrationTest.class.getClassLoader().getResourceAsStream(JPG_TEST_FILE_1);
+
+        waitConditionFactoryProvider = new WaitConditionFactoryProvider();
     }
 
     @Test
@@ -97,9 +102,9 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         assertThat(uploadTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Wait import upload
-        final TaskResponse waitRetryUploadImportTaskResponse = await().atMost(TIMEOUT).until(() ->
-                await().atMost(TIMEOUT).until(
-                    () -> cloudConvertClient.tasks().show(retryUploadImportTaskResponse.getId()),
+        final TaskResponse waitRetryUploadImportTaskResponse = await().atMost(AT_MOST).until(() ->
+                waitConditionFactoryProvider.provide(retryUploadImportTaskResponse.getId()).until(
+                    () -> cloudConvertClient.tasks().wait(retryUploadImportTaskResponse.getId()),
                     awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
                 ).getBody().get().getData(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
@@ -119,9 +124,9 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         assertThat(uploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Wait import upload
-        final TaskResponse waitUploadImportTaskResponse = await().atMost(TIMEOUT).until(() ->
-                await().atMost(TIMEOUT).until(
-                    () -> cloudConvertClient.tasks().show(uploadImportTaskResponse.getId()),
+        final TaskResponse waitUploadImportTaskResponse = await().atMost(AT_MOST).until(() ->
+                waitConditionFactoryProvider.provide(uploadImportTaskResponse.getId()).until(
+                    () -> cloudConvertClient.tasks().wait(uploadImportTaskResponse.getId()),
                     awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
                 ).getBody().get().getData(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
@@ -138,9 +143,9 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         assertThat(urlExportTaskResponse.getOperation()).isEqualTo(Operation.EXPORT_URL);
 
         // Wait export url
-        final TaskResponse waitUrlExportTaskResponse = await().atMost(TIMEOUT).until(() ->
-                await().atMost(TIMEOUT).until(
-                    () -> cloudConvertClient.tasks().show(urlExportTaskResponse.getId()),
+        final TaskResponse waitUrlExportTaskResponse = await().atMost(AT_MOST).until(() ->
+                waitConditionFactoryProvider.provide(urlExportTaskResponse.getId()).until(
+                    () -> cloudConvertClient.tasks().wait(urlExportTaskResponse.getId()),
                     awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
                 ).getBody().get().getData(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
@@ -165,9 +170,9 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         assertThat(uploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Wait import upload
-        final TaskResponse waitUploadImportTaskResponse = await().atMost(TIMEOUT).until(() ->
-                await().atMost(TIMEOUT).until(
-                    () -> cloudConvertClient.tasks().show(uploadImportTaskResponse.getId()),
+        final TaskResponse waitUploadImportTaskResponse = await().atMost(AT_MOST).until(() ->
+                waitConditionFactoryProvider.provide(uploadImportTaskResponse.getId()).until(
+                    () -> cloudConvertClient.tasks().wait(uploadImportTaskResponse.getId()),
                     awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
                 ).getBody().get().getData(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
@@ -184,9 +189,9 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         assertThat(urlExportTaskResponse.getOperation()).isEqualTo(Operation.EXPORT_URL);
 
         // Wait export url
-        final TaskResponse waitUrlExportTaskResponse = await().atMost(TIMEOUT).until(() ->
-                await().atMost(TIMEOUT).until(
-                    () -> cloudConvertClient.tasks().show(urlExportTaskResponse.getId()),
+        final TaskResponse waitUrlExportTaskResponse = await().atMost(AT_MOST).until(() ->
+                waitConditionFactoryProvider.provide(urlExportTaskResponse.getId()).until(
+                    () -> cloudConvertClient.tasks().wait(urlExportTaskResponse.getId()),
                     awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
                 ).getBody().get().getData(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED

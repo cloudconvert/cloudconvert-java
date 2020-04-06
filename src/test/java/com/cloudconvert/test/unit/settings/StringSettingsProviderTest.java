@@ -1,4 +1,4 @@
-package com.cloudconvert.client.settings;
+package com.cloudconvert.test.unit.settings;
 
 import com.cloudconvert.client.setttings.AbstractSettingsProvider;
 import com.cloudconvert.client.setttings.StringSettingsProvider;

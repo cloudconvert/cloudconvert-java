@@ -2,7 +2,13 @@ package com.cloudconvert.resource;
 
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
-import com.cloudconvert.dto.request.*;
+import com.cloudconvert.dto.request.AzureBlobImportRequest;
+import com.cloudconvert.dto.request.GoogleCloudStorageImportRequest;
+import com.cloudconvert.dto.request.OpenStackImportRequest;
+import com.cloudconvert.dto.request.S3ImportRequest;
+import com.cloudconvert.dto.request.SftpImportRequest;
+import com.cloudconvert.dto.request.UploadImportRequest;
+import com.cloudconvert.dto.request.UrlImportRequest;
 import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.response.TaskResponseData;
 import com.cloudconvert.dto.result.AbstractResult;
@@ -19,7 +25,11 @@ import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.List;
 

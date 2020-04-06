@@ -2,7 +2,12 @@ package com.cloudconvert.resource.async;
 
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
-import com.cloudconvert.dto.request.*;
+import com.cloudconvert.dto.request.AzureBlobExportRequest;
+import com.cloudconvert.dto.request.GoogleCloudStorageExportRequest;
+import com.cloudconvert.dto.request.OpenStackExportRequest;
+import com.cloudconvert.dto.request.S3ExportRequest;
+import com.cloudconvert.dto.request.SftpExportRequest;
+import com.cloudconvert.dto.request.UrlExportRequest;
 import com.cloudconvert.dto.response.TaskResponseData;
 import com.cloudconvert.dto.result.AsyncResult;
 import com.cloudconvert.executor.AsyncRequestExecutor;

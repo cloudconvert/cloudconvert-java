@@ -21,6 +21,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -50,22 +51,27 @@ public class CloudConvertClientIntegrationTest extends AbstractTest {
 
     private CloudConvertClient cloudConvertClient;
 
-    private InputStream jpgTestFile1InputStream;
+    private File jpgTest1File;
 
-    private InputStream jpgTestFile2InputStream;
+    private InputStream jpgTest1InputStream;
 
-    private InputStream odtTestFile1InputStream;
+    private InputStream jpgTest2InputStream;
 
-    private InputStream odtTestFile2InputStream;
+    private InputStream odtTest1InputStream;
+
+    private InputStream odtTest2InputStream;
 
     @Before
     public void before() throws Exception {
         tika = new Tika();
         cloudConvertClient = new CloudConvertClient(true);
-        jpgTestFile1InputStream = CloudConvertClientIntegrationTest.class.getClassLoader().getResourceAsStream(JPG_TEST_FILE_1);
-        jpgTestFile2InputStream = CloudConvertClientIntegrationTest.class.getClassLoader().getResourceAsStream(JPG_TEST_FILE_2);
-        odtTestFile1InputStream = CloudConvertClientIntegrationTest.class.getClassLoader().getResourceAsStream(ODT_TEST_FILE_1);
-        odtTestFile2InputStream = CloudConvertClientIntegrationTest.class.getClassLoader().getResourceAsStream(ODT_TEST_FILE_2);
+
+        jpgTest1File = new File(CloudConvertClientIntegrationTest.class.getClassLoader().getResource(JPG_TEST_FILE_1).toURI());
+
+        jpgTest1InputStream = CloudConvertClientIntegrationTest.class.getClassLoader().getResourceAsStream(JPG_TEST_FILE_1);
+        jpgTest2InputStream = CloudConvertClientIntegrationTest.class.getClassLoader().getResourceAsStream(JPG_TEST_FILE_2);
+        odtTest1InputStream = CloudConvertClientIntegrationTest.class.getClassLoader().getResourceAsStream(ODT_TEST_FILE_1);
+        odtTest2InputStream = CloudConvertClientIntegrationTest.class.getClassLoader().getResourceAsStream(ODT_TEST_FILE_2);
     }
 
     @Test(timeout = TIMEOUT)
@@ -97,7 +103,7 @@ public class CloudConvertClientIntegrationTest extends AbstractTest {
         assertThat(retryImportUploadTaskResponse.getStatus()).isEqualTo(Status.WAITING);
 
         // Upload (actual upload)
-        final Result<TaskResponseData> uploadTaskResponseDataResult = cloudConvertClient.importUsing().upload(retryUploadImportTaskResponseDataResult, jpgTestFile1InputStream);
+        final Result<TaskResponseData> uploadTaskResponseDataResult = cloudConvertClient.importUsing().upload(retryUploadImportTaskResponseDataResult, jpgTest1InputStream);
         assertThat(uploadTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
         final TaskResponse uploadTaskResponse = uploadTaskResponseDataResult.getBody().get().getData();
@@ -114,9 +120,48 @@ public class CloudConvertClientIntegrationTest extends AbstractTest {
     }
 
     @Test(timeout = TIMEOUT)
-    public void importUploadAndExportUrlTaskLifecycle() throws Exception {
+    public void importUploadInputStreamAndExportUrlTaskLifecycle() throws Exception {
         // Import upload (immediate upload)
-        final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTestFile1InputStream);
+        final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream);
+        assertThat(uploadImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse importUploadTaskResponse = uploadImportTaskResponseDataResult.getBody().get().getData();
+        assertThat(importUploadTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
+
+        // Wait import upload
+        final Result<TaskResponseData> waitUploadImportTaskResponseDataResult = cloudConvertClient.tasks().wait(importUploadTaskResponse.getId());
+        assertThat(waitUploadImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse waitUploadImportTaskResponse = waitUploadImportTaskResponseDataResult.getBody().get().getData();
+        assertThat(waitUploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
+        assertThat(waitUploadImportTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
+
+        // Export url
+        final UrlExportRequest urlExportRequest = new UrlExportRequest().setInput(importUploadTaskResponse.getId());
+        final Result<TaskResponseData> urlExportTaskResponseDataResult = cloudConvertClient.exportUsing().url(urlExportRequest);
+        assertThat(urlExportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
+
+        final TaskResponse urlExportTaskResponse = urlExportTaskResponseDataResult.getBody().get().getData();
+        assertThat(urlExportTaskResponse.getOperation()).isEqualTo(Operation.EXPORT_URL);
+
+        // Wait export url
+        final Result<TaskResponseData> waitUrlExportTaskResponseDataResult = cloudConvertClient.tasks().wait(urlExportTaskResponse.getId());
+        assertThat(waitUrlExportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse waitUploadExportTaskResponse = waitUrlExportTaskResponseDataResult.getBody().get().getData();
+        assertThat(waitUploadExportTaskResponse.getOperation()).isEqualTo(Operation.EXPORT_URL);
+        assertThat(waitUploadExportTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
+        assertThat(waitUploadExportTaskResponse.getResult().getFiles()).hasSize(1).hasOnlyOneElementSatisfying(map -> assertThat(map.get("url")).isNotNull());
+
+        final Result<InputStream> inputStreamResult = cloudConvertClient.files().download(waitUploadExportTaskResponse.getResult().getFiles().get(0).get("url"));
+        assertThat(inputStreamResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(MimeTypes.getDefaultMimeTypes().forName(tika.detect(inputStreamResult.getBody().get())).getName()).isEqualTo("image/jpeg");
+    }
+
+    @Test(timeout = TIMEOUT)
+    public void importUploadFileAndExportUrlTaskLifecycle() throws Exception {
+        // Import upload (immediate upload)
+        final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1File);
         assertThat(uploadImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
         final TaskResponse importUploadTaskResponse = uploadImportTaskResponseDataResult.getBody().get().getData();
@@ -155,7 +200,7 @@ public class CloudConvertClientIntegrationTest extends AbstractTest {
     @Test(timeout = TIMEOUT)
     public void convertFileTaskLifecycle() throws Exception {
         // Import upload (immediate upload)
-        final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTestFile1InputStream);
+        final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream);
         assertThat(uploadImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
         final TaskResponse importUploadTaskResponse = uploadImportTaskResponseDataResult.getBody().get().getData();
@@ -202,7 +247,7 @@ public class CloudConvertClientIntegrationTest extends AbstractTest {
     @Test(timeout = TIMEOUT)
     public void optimizeFileTaskLifecycle() throws Exception {
         // Import upload (immediate upload)
-        final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTestFile1InputStream);
+        final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream);
         assertThat(uploadImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
         final TaskResponse importUploadTaskResponse = uploadImportTaskResponseDataResult.getBody().get().getData();
@@ -311,7 +356,7 @@ public class CloudConvertClientIntegrationTest extends AbstractTest {
 
         // Upload (actual upload file 1)
         final Result<TaskResponseData> uploadFile1TaskResponseDataResult = cloudConvertClient.importUsing()
-            .upload(uploadFile1TaskJobResponse.getId(), uploadFile1TaskJobResponse.getResult().getForm(), odtTestFile1InputStream);
+            .upload(uploadFile1TaskJobResponse.getId(), uploadFile1TaskJobResponse.getResult().getForm(), odtTest1InputStream);
         assertThat(uploadFile1TaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
         final TaskResponse uploadFile1TaskResponse = uploadFile1TaskResponseDataResult.getBody().get().getData();
@@ -319,7 +364,7 @@ public class CloudConvertClientIntegrationTest extends AbstractTest {
 
         // Upload (actual upload file 2)
         final Result<TaskResponseData> uploadFile2TaskResponseDataResult = cloudConvertClient.importUsing()
-            .upload(uploadFile2TaskJobResponse.getId(), uploadFile2TaskJobResponse.getResult().getForm(), odtTestFile2InputStream);
+            .upload(uploadFile2TaskJobResponse.getId(), uploadFile2TaskJobResponse.getResult().getForm(), odtTest2InputStream);
         assertThat(uploadFile2TaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
         final TaskResponse uploadFile2TaskResponse = uploadFile2TaskResponseDataResult.getBody().get().getData();
@@ -349,7 +394,7 @@ public class CloudConvertClientIntegrationTest extends AbstractTest {
     @Test(timeout = TIMEOUT)
     public void createArchiveTaskLifecycle() throws Exception {
         // Import upload (immediate upload)
-        final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTestFile1InputStream);
+        final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream);
         assertThat(uploadImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
         final TaskResponse importUploadTaskResponse = uploadImportTaskResponseDataResult.getBody().get().getData();
@@ -389,7 +434,7 @@ public class CloudConvertClientIntegrationTest extends AbstractTest {
     @Test(timeout = TIMEOUT)
     public void executeCommandTaskLifecycle() throws Exception {
         // Import upload (immediate upload)
-        final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTestFile1InputStream);
+        final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream);
         assertThat(uploadImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
         final TaskResponse importUploadTaskResponse = uploadImportTaskResponseDataResult.getBody().get().getData();
@@ -506,7 +551,7 @@ public class CloudConvertClientIntegrationTest extends AbstractTest {
     @Test(timeout = TIMEOUT)
     public void exportTasksCreation() throws Exception {
         // Import upload (immediate upload)
-        final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTestFile1InputStream);
+        final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream);
         assertThat(uploadImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
         final TaskResponse importUploadTaskResponse = uploadImportTaskResponseDataResult.getBody().get().getData();
@@ -630,10 +675,10 @@ public class CloudConvertClientIntegrationTest extends AbstractTest {
 
     @After
     public void after() throws Exception {
-        jpgTestFile1InputStream.close();
-        jpgTestFile2InputStream.close();
-        odtTestFile1InputStream.close();
-        odtTestFile2InputStream.close();
+        jpgTest1InputStream.close();
+        jpgTest2InputStream.close();
+        odtTest1InputStream.close();
+        odtTest2InputStream.close();
         cloudConvertClient.close();
     }
 }

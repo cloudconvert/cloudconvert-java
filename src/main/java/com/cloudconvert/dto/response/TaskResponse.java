@@ -143,26 +143,7 @@ public class TaskResponse extends Response {
 
             private String url;
 
-            private Parameters parameters;
-
-
-            @Getter
-            @Setter
-            @Accessors(chain = true)
-            @ToString
-            @EqualsAndHashCode
-            public static class Parameters {
-
-                private String expires;
-
-                private String maxFileCount;
-
-                private String maxFileSize;
-
-                private String redirect;
-
-                private String signature;
-            }
+            private Map<String, String> parameters;
         }
     }
 

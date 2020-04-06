@@ -694,8 +694,8 @@ public class CloudConvertClientTest extends AbstractTest {
     @Test
     public void import_upload_immediateUpload() throws Exception {
         final UploadImportRequest expectedUploadImportRequest = new UploadImportRequest().setRedirect("import-upload-redirect");
-        final TaskResponse.Result.Form.Parameters parameters = new TaskResponse.Result.Form.Parameters().setExpires("expires")
-            .setMaxFileCount("max-file-count").setMaxFileSize("max-file-size").setRedirect("redirect").setSignature("signature");
+        final Map<String, String> parameters = ImmutableMap.of("expires", "expires", "max-file-count", "max-file-count",
+            "max-file-size", "max-file-size", "redirect", "redirect", "signature", "signature");
         final TaskResponse taskResponse = new TaskResponse().setId("import-upload-task-id").setResult(
             new TaskResponse.Result().setForm(new TaskResponse.Result.Form().setUrl("import-upload-task-result-form-url").setParameters(parameters)));
         final TaskResponseData taskResponseData = new TaskResponseData().setData(taskResponse);

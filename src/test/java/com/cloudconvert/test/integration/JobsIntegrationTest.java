@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 @Category(IntegrationTest.class)
 @RunWith(JUnit4.class)
@@ -60,7 +61,7 @@ public class JobsIntegrationTest extends AbstractTest {
      * <p>
      * So this integration test tests job lifecycle, which contains (upload + upload + merge + export url) tasks then delete the job
      */
-    @Test(timeout = TIMEOUT)
+    @Test
     public void mergeFileTaskAsJobLifecycle() throws Exception {
         final String uploadFile1TaskName = "import-image-test-file-1";
         final String uploadFile2TaskName = "import-image-test-file-2";
@@ -107,10 +108,13 @@ public class JobsIntegrationTest extends AbstractTest {
         assertThat(uploadFile2TaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Wait
-        final Result<JobResponseData> waitJobResponseDataResult = cloudConvertClient.jobs().wait(jobResponse.getId());
-        assertThat(waitJobResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
-
-        final JobResponse waitJobResponse = waitJobResponseDataResult.getBody().get().getData();
+        final JobResponse waitJobResponse = await().atMost(TIMEOUT).until(() ->
+                await().atMost(TIMEOUT).until(
+                    () -> cloudConvertClient.jobs().show(jobResponse.getId()),
+                    awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
+                ).getBody().get().getData(),
+            waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
+        );
         assertThat(waitJobResponse.getStatus()).isEqualTo(Status.FINISHED);
         assertThat(waitJobResponse.getId()).isEqualTo(jobResponse.getId());
 
@@ -127,17 +131,11 @@ public class JobsIntegrationTest extends AbstractTest {
         assertThat(deleteVoidResult.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
     }
 
-    @Test(timeout = TIMEOUT)
-    public void listAndDeleteJobsLifecycle() throws Exception {
+    @Test
+    public void listJobsLifecycle() throws Exception {
         // List jobs
         final Result<Pageable<JobResponse>> jobResponsePageable = cloudConvertClient.jobs().list(ImmutableMap.of(), ImmutableList.of(), new Pagination(10, 1));
         assertThat(jobResponsePageable.getStatus()).isEqualTo(HttpStatus.SC_OK);
-
-        // Delete jobs
-        for (JobResponse jobResponse : jobResponsePageable.getBody().get().getData()) {
-            final Result<Void> waitTaskResponseDataResult = cloudConvertClient.jobs().delete(jobResponse.getId());
-            assertThat(waitTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
-        }
     }
 
     @After

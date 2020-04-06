@@ -2,7 +2,6 @@ package com.cloudconvert.test.unit.settings;
 
 import com.cloudconvert.client.setttings.AbstractSettingsProvider;
 import com.cloudconvert.client.setttings.PropertySettingsProvider;
-import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.test.framework.UnitTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -24,8 +23,8 @@ public class PropertySettingsProviderTest {
     @Test
     public void success_useSandbox() {
         final Properties properties = new Properties();
-        properties.setProperty(SettingsProvider.API_KEY, API_KEY);
-        properties.setProperty(SettingsProvider.WEBHOOK_SIGNING_SECRET, WEBHOOK_SIGNING_SECRET);
+        properties.setProperty(AbstractSettingsProvider.API_KEY, API_KEY);
+        properties.setProperty(AbstractSettingsProvider.WEBHOOK_SIGNING_SECRET, WEBHOOK_SIGNING_SECRET);
 
         final PropertySettingsProvider propertySettingsProvider = new PropertySettingsProvider(properties, true);
         assertThat(propertySettingsProvider.getApiKey()).isEqualTo(API_KEY);
@@ -36,8 +35,8 @@ public class PropertySettingsProviderTest {
     @Test
     public void success_useLive() {
         final Properties properties = new Properties();
-        properties.setProperty(SettingsProvider.API_KEY, API_KEY);
-        properties.setProperty(SettingsProvider.WEBHOOK_SIGNING_SECRET, WEBHOOK_SIGNING_SECRET);
+        properties.setProperty(AbstractSettingsProvider.API_KEY, API_KEY);
+        properties.setProperty(AbstractSettingsProvider.WEBHOOK_SIGNING_SECRET, WEBHOOK_SIGNING_SECRET);
 
         final PropertySettingsProvider propertySettingsProvider = new PropertySettingsProvider(properties);
         assertThat(propertySettingsProvider.getApiKey()).isEqualTo(API_KEY);

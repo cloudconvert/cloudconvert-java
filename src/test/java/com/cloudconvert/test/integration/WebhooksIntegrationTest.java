@@ -35,14 +35,14 @@ public class WebhooksIntegrationTest extends AbstractTest {
         cloudConvertClient = new CloudConvertClient(true);
     }
 
-    @Test(timeout = TIMEOUT)
+    @Test
     public void userLifecycle() throws Exception {
         final Result<UserResponseData> userResponseDataResult = cloudConvertClient.users().me();
         assertThat(userResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
         assertThat(userResponseDataResult.getBody()).get().isNotNull();
     }
 
-    @Test(timeout = TIMEOUT)
+    @Test
     public void webhooksLifecycle() throws Exception {
         // Create
         final WebhookRequest webhookRequest = new WebhookRequest().setUrl("http://some-url.com")

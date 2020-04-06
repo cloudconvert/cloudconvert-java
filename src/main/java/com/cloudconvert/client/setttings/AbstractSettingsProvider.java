@@ -9,6 +9,8 @@ import java.util.Properties;
 
 public abstract class AbstractSettingsProvider implements SettingsProvider {
 
+    public static final String API_KEY = "CLOUDCONVERT_API_KEY";
+    public static final String WEBHOOK_SIGNING_SECRET = "CLOUDCONVERT_WEBHOOK_SIGNING_SECRET";
     public static final String API_URL_SANDBOX = "https://api.sandbox.cloudconvert.com/v2";
     public static final String API_URL_LIVE = "https://api.cloudconvert.com/v2";
 

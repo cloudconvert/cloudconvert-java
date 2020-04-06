@@ -22,14 +22,14 @@ public class SystemPropertySettingsProviderTest {
 
     @Before
     public void before() {
-        System.clearProperty(SettingsProvider.API_KEY);
-        System.clearProperty(SettingsProvider.WEBHOOK_SIGNING_SECRET);
+        System.clearProperty(AbstractSettingsProvider.API_KEY);
+        System.clearProperty(AbstractSettingsProvider.WEBHOOK_SIGNING_SECRET);
     }
 
     @Test
     public void success_useSandbox() {
-        System.setProperty(SettingsProvider.API_KEY, API_KEY);
-        System.setProperty(SettingsProvider.WEBHOOK_SIGNING_SECRET, WEBHOOK_SIGNING_SECRET);
+        System.setProperty(AbstractSettingsProvider.API_KEY, API_KEY);
+        System.setProperty(AbstractSettingsProvider.WEBHOOK_SIGNING_SECRET, WEBHOOK_SIGNING_SECRET);
 
         final SystemPropertySettingsProvider systemPropertySettingsProvider = new SystemPropertySettingsProvider(true);
         assertThat(systemPropertySettingsProvider.getApiKey()).isEqualTo(API_KEY);
@@ -39,8 +39,8 @@ public class SystemPropertySettingsProviderTest {
 
     @Test
     public void success_useLive() {
-        System.setProperty(SettingsProvider.API_KEY, API_KEY);
-        System.setProperty(SettingsProvider.WEBHOOK_SIGNING_SECRET, WEBHOOK_SIGNING_SECRET);
+        System.setProperty(AbstractSettingsProvider.API_KEY, API_KEY);
+        System.setProperty(AbstractSettingsProvider.WEBHOOK_SIGNING_SECRET, WEBHOOK_SIGNING_SECRET);
 
         final SystemPropertySettingsProvider systemPropertySettingsProvider = new SystemPropertySettingsProvider();
         assertThat(systemPropertySettingsProvider.getApiKey()).isEqualTo(API_KEY);

@@ -1,8 +1,7 @@
 package com.cloudconvert.resource;
 
-import com.cloudconvert.client.api.key.ApiKeyProvider;
-import com.cloudconvert.client.api.url.ApiUrlProvider;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
+import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.result.AbstractResult;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,9 +12,9 @@ import java.net.URISyntaxException;
 public abstract class AbstractFilesResource<ISAR extends AbstractResult<InputStream>> extends AbstractResource {
 
     public AbstractFilesResource(
-        final ApiUrlProvider apiUrlProvider, final ApiKeyProvider apiKeyProvider, final ObjectMapperProvider objectMapperProvider
+        final SettingsProvider settingsProvider, final ObjectMapperProvider objectMapperProvider
     ) {
-        super(apiUrlProvider, apiKeyProvider, objectMapperProvider);
+        super(settingsProvider, objectMapperProvider);
     }
 
     /**

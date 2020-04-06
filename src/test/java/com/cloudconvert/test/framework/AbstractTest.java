@@ -2,5 +2,5 @@ package com.cloudconvert.test.framework;
 
 public abstract class AbstractTest {
 
-    public static final int TIMEOUT = 30000;
+    public static final int TIMEOUT = 120000;
 }

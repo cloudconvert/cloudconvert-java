@@ -1,38 +1,9 @@
 package com.cloudconvert.client;
 
-import com.cloudconvert.client.api.key.ApiKeyProvider;
-import com.cloudconvert.client.api.url.ApiUrlProvider;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
-import com.cloudconvert.dto.request.AzureBlobExportRequest;
-import com.cloudconvert.dto.request.AzureBlobImportRequest;
-import com.cloudconvert.dto.request.CaptureWebsitesTaskRequest;
-import com.cloudconvert.dto.request.ConvertFilesTaskRequest;
-import com.cloudconvert.dto.request.CreateArchivesTaskRequest;
-import com.cloudconvert.dto.request.ExecuteCommandsTaskRequest;
-import com.cloudconvert.dto.request.GoogleCloudStorageExportRequest;
-import com.cloudconvert.dto.request.GoogleCloudStorageImportRequest;
-import com.cloudconvert.dto.request.MergeFilesTaskRequest;
-import com.cloudconvert.dto.request.OpenStackExportRequest;
-import com.cloudconvert.dto.request.OpenStackImportRequest;
-import com.cloudconvert.dto.request.OptimizeFilesTaskRequest;
-import com.cloudconvert.dto.request.S3ExportRequest;
-import com.cloudconvert.dto.request.S3ImportRequest;
-import com.cloudconvert.dto.request.SftpExportRequest;
-import com.cloudconvert.dto.request.SftpImportRequest;
-import com.cloudconvert.dto.request.TaskRequest;
-import com.cloudconvert.dto.request.UploadImportRequest;
-import com.cloudconvert.dto.request.UrlExportRequest;
-import com.cloudconvert.dto.request.UrlImportRequest;
-import com.cloudconvert.dto.request.WebhookRequest;
-import com.cloudconvert.dto.response.JobResponse;
-import com.cloudconvert.dto.response.JobResponseData;
-import com.cloudconvert.dto.response.OperationResponse;
-import com.cloudconvert.dto.response.Pageable;
-import com.cloudconvert.dto.response.TaskResponse;
-import com.cloudconvert.dto.response.TaskResponseData;
-import com.cloudconvert.dto.response.UserResponseData;
-import com.cloudconvert.dto.response.WebhookResponse;
-import com.cloudconvert.dto.response.WebhookResponseData;
+import com.cloudconvert.client.setttings.SettingsProvider;
+import com.cloudconvert.dto.request.*;
+import com.cloudconvert.dto.response.*;
 import com.cloudconvert.dto.result.AsyncResult;
 import com.cloudconvert.dto.result.CompletedAsyncResult;
 import com.cloudconvert.dto.result.FutureAsyncResult;
@@ -50,12 +21,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
 import com.pivovarit.function.ThrowingSupplier;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,9 +41,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @Category(UnitTest.class)
 @RunWith(MockitoJUnitRunner.class)
@@ -93,10 +57,7 @@ public class AsyncCloudConvertClientTest extends AbstractTest {
     private static final String WEBHOOK_ID = "webhook-id";
 
     @Mock
-    private ApiUrlProvider apiUrlProvider;
-
-    @Mock
-    private ApiKeyProvider apiKeyProvider;
+    private SettingsProvider settingsProvider;
 
     @Mock
     private AsyncRequestExecutor asyncRequestExecutor;
@@ -114,10 +75,10 @@ public class AsyncCloudConvertClientTest extends AbstractTest {
 
     @Before
     public void before() throws Exception {
-        when(apiUrlProvider.provide()).thenReturn(API_URL);
-        when(apiKeyProvider.provide()).thenReturn(API_KEY);
+        when(settingsProvider.getApiKey()).thenReturn(API_KEY);
+        when(settingsProvider.getApiUrl()).thenReturn(API_URL);
 
-        asyncCloudConvertClient = new AsyncCloudConvertClient(apiUrlProvider, apiKeyProvider, objectMapperProvider, asyncRequestExecutor);
+        asyncCloudConvertClient = new AsyncCloudConvertClient(settingsProvider, objectMapperProvider, asyncRequestExecutor);
     }
 
     @Test

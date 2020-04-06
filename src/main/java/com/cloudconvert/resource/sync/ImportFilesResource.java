@@ -1,15 +1,8 @@
 package com.cloudconvert.resource.sync;
 
-import com.cloudconvert.client.api.key.ApiKeyProvider;
-import com.cloudconvert.client.api.url.ApiUrlProvider;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
-import com.cloudconvert.dto.request.AzureBlobImportRequest;
-import com.cloudconvert.dto.request.GoogleCloudStorageImportRequest;
-import com.cloudconvert.dto.request.OpenStackImportRequest;
-import com.cloudconvert.dto.request.S3ImportRequest;
-import com.cloudconvert.dto.request.SftpImportRequest;
-import com.cloudconvert.dto.request.UploadImportRequest;
-import com.cloudconvert.dto.request.UrlImportRequest;
+import com.cloudconvert.client.setttings.SettingsProvider;
+import com.cloudconvert.dto.request.*;
 import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.response.TaskResponseData;
 import com.cloudconvert.dto.result.Result;
@@ -36,11 +29,11 @@ public class ImportFilesResource extends AbstractImportFilesResource<Result<Task
     private final TasksResource tasksResource;
 
     public ImportFilesResource(
-        final ApiUrlProvider apiUrlProvider, final ApiKeyProvider apiKeyProvider,
+        final SettingsProvider settingsProvider,
         final ObjectMapperProvider objectMapperProvider, final RequestExecutor requestExecutor,
         final TasksResource tasksResource
     ) {
-        super(apiUrlProvider, apiKeyProvider, objectMapperProvider);
+        super(settingsProvider, objectMapperProvider);
 
         this.requestExecutor = requestExecutor;
         this.tasksResource = tasksResource;

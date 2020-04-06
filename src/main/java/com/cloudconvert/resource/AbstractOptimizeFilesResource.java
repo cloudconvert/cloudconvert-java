@@ -1,8 +1,7 @@
 package com.cloudconvert.resource;
 
-import com.cloudconvert.client.api.key.ApiKeyProvider;
-import com.cloudconvert.client.api.url.ApiUrlProvider;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
+import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.OptimizeFilesTaskRequest;
 import com.cloudconvert.dto.response.TaskResponseData;
 import com.cloudconvert.dto.result.AbstractResult;
@@ -16,9 +15,9 @@ public abstract class AbstractOptimizeFilesResource<TRDAR extends AbstractResult
     public static final String PATH_SEGMENT_OPTIMIZE = "optimize";
 
     public AbstractOptimizeFilesResource(
-        final ApiUrlProvider apiUrlProvider, final ApiKeyProvider apiKeyProvider, final ObjectMapperProvider objectMapperProvider
+        final SettingsProvider settingsProvider, final ObjectMapperProvider objectMapperProvider
     ) {
-        super(apiUrlProvider, apiKeyProvider, objectMapperProvider);
+        super(settingsProvider, objectMapperProvider);
     }
 
     /**

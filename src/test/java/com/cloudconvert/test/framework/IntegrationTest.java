@@ -1,4 +1,3 @@
 package com.cloudconvert.test.framework;
 
-public interface IntegrationTest {
-}
+public interface IntegrationTest {}

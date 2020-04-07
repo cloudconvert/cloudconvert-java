@@ -28,7 +28,7 @@ public class StringSettingsProviderTest {
 
     @Test
     public void success_useLive() {
-        final StringSettingsProvider stringSettingsProvider = new StringSettingsProvider(API_KEY, WEBHOOK_SIGNING_SECRET);
+        final StringSettingsProvider stringSettingsProvider = new StringSettingsProvider(API_KEY, WEBHOOK_SIGNING_SECRET, false);
 
         assertThat(stringSettingsProvider.getApiKey()).isEqualTo(API_KEY);
         assertThat(stringSettingsProvider.getWebhookSigningSecret()).isEqualTo(WEBHOOK_SIGNING_SECRET);

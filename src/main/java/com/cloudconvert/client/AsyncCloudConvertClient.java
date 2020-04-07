@@ -39,13 +39,7 @@ public class AsyncCloudConvertClient extends AbstractCloudConvertClient<AsyncRes
     AsyncResult<Pageable<WebhookResponse>>, AsyncResult<UserResponseData>, AsyncResult<Pageable<OperationResponse>>> {
 
     public AsyncCloudConvertClient() throws IOException {
-        this(new PropertyFileSettingsProvider(false));
-    }
-
-    public AsyncCloudConvertClient(
-        final boolean useSandbox
-    ) throws IOException {
-        this(new PropertyFileSettingsProvider(useSandbox));
+        this(new PropertyFileSettingsProvider());
     }
 
     public AsyncCloudConvertClient(

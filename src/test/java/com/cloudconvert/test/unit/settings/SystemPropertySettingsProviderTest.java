@@ -1,7 +1,6 @@
 package com.cloudconvert.test.unit.settings;
 
 import com.cloudconvert.client.setttings.AbstractSettingsProvider;
-import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.client.setttings.SystemPropertySettingsProvider;
 import com.cloudconvert.test.framework.UnitTest;
 import org.junit.Before;
@@ -23,15 +22,17 @@ public class SystemPropertySettingsProviderTest {
     @Before
     public void before() {
         System.clearProperty(AbstractSettingsProvider.API_KEY);
+        System.clearProperty(AbstractSettingsProvider.USE_SANDBOX);
         System.clearProperty(AbstractSettingsProvider.WEBHOOK_SIGNING_SECRET);
     }
 
     @Test
     public void success_useSandbox() {
         System.setProperty(AbstractSettingsProvider.API_KEY, API_KEY);
+        System.setProperty(AbstractSettingsProvider.USE_SANDBOX, "true");
         System.setProperty(AbstractSettingsProvider.WEBHOOK_SIGNING_SECRET, WEBHOOK_SIGNING_SECRET);
 
-        final SystemPropertySettingsProvider systemPropertySettingsProvider = new SystemPropertySettingsProvider(true);
+        final SystemPropertySettingsProvider systemPropertySettingsProvider = new SystemPropertySettingsProvider();
         assertThat(systemPropertySettingsProvider.getApiKey()).isEqualTo(API_KEY);
         assertThat(systemPropertySettingsProvider.getWebhookSigningSecret()).isEqualTo(WEBHOOK_SIGNING_SECRET);
         assertThat(systemPropertySettingsProvider.getApiUrl()).isEqualTo(AbstractSettingsProvider.API_URL_SANDBOX);
@@ -40,6 +41,7 @@ public class SystemPropertySettingsProviderTest {
     @Test
     public void success_useLive() {
         System.setProperty(AbstractSettingsProvider.API_KEY, API_KEY);
+        System.setProperty(AbstractSettingsProvider.USE_SANDBOX, "false");
         System.setProperty(AbstractSettingsProvider.WEBHOOK_SIGNING_SECRET, WEBHOOK_SIGNING_SECRET);
 
         final SystemPropertySettingsProvider systemPropertySettingsProvider = new SystemPropertySettingsProvider();

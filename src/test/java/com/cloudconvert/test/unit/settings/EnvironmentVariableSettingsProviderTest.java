@@ -26,9 +26,10 @@ public class EnvironmentVariableSettingsProviderTest {
     @Test
     public void success_useSandbox() {
         environmentVariables.set(AbstractSettingsProvider.API_KEY, API_KEY);
+        environmentVariables.set(AbstractSettingsProvider.USE_SANDBOX, "true");
         environmentVariables.set(AbstractSettingsProvider.WEBHOOK_SIGNING_SECRET, WEBHOOK_SIGNING_SECRET);
 
-        final EnvironmentVariableSettingsProvider environmentVariableSettingsProvider = new EnvironmentVariableSettingsProvider(true);
+        final EnvironmentVariableSettingsProvider environmentVariableSettingsProvider = new EnvironmentVariableSettingsProvider();
         assertThat(environmentVariableSettingsProvider.getApiKey()).isEqualTo(API_KEY);
         assertThat(environmentVariableSettingsProvider.getWebhookSigningSecret()).isEqualTo(WEBHOOK_SIGNING_SECRET);
         assertThat(environmentVariableSettingsProvider.getApiUrl()).isEqualTo(AbstractSettingsProvider.API_URL_SANDBOX);
@@ -37,6 +38,7 @@ public class EnvironmentVariableSettingsProviderTest {
     @Test
     public void success_useLive() {
         environmentVariables.set(AbstractSettingsProvider.API_KEY, API_KEY);
+        environmentVariables.set(AbstractSettingsProvider.USE_SANDBOX, "false");
         environmentVariables.set(AbstractSettingsProvider.WEBHOOK_SIGNING_SECRET, WEBHOOK_SIGNING_SECRET);
 
         final EnvironmentVariableSettingsProvider environmentVariableSettingsProvider = new EnvironmentVariableSettingsProvider();

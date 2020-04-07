@@ -10,59 +10,49 @@ $ mvn clean install -U
 ## Creating API Client
 
 ###### Configuration
-By default, API Key and Webhook Signing Secret are being read from `application.properties` file
+By default, API Key, Sandbox and Webhook Signing Secret are being read from `application.properties` file
 ```properties
 CLOUDCONVERT_API_KEY=<api-key>
+CLOUDCONVERT_SANDBOX=<true|false>
 CLOUDCONVERT_WEBHOOK_SIGNING_SECRET=<api-url>
 ```
-It is also possible to provide API Key and Webhook Signing Secret using environment variables, custom properties file, system properties and string variables.
-For all options, `CLOUDCONVERT_API_KEY` and `CLOUDCONVERT_WEBHOOK_SIGNING_SECRET` variable names should be used.
-It is also possible to use CloudConvert client in the sandbox environment, by passing `useSandbox=true` variable during object construction.
+It is also possible to provide configuration above using environment variables, custom properties file, system properties and string variables.
+For all options, `CLOUDCONVERT_API_KEY`, `CLOUDCONVERT_SANDBOX` and `CLOUDCONVERT_WEBHOOK_SIGNING_SECRET` variable names should be used.
 
 ###### Default (synchronous) client
 ```java
-// Using API Key and API URL from `application.properties` file
-new CloudConvertClient(); // Live
-new CloudConvertClient(true); // Sandbox
+// Using configuration from `application.properties` file
+new CloudConvertClient();
 
-// Using API Key and API URL from environment variables
-new CloudConvertClient(new EnvironmentVariableSettingsProvider()); // Live
-new CloudConvertClient(new EnvironmentVariableSettingsProvider(true)); // Sandbox
+// Using configuration from environment variables
+new CloudConvertClient(new EnvironmentVariableSettingsProvider());
 
-// Using API Key and API URL from custom properties file
-new CloudConvertClient(new PropertyFileSettingsProvider("custom.properties")); // Live
-new CloudConvertClient(new PropertyFileSettingsProvider("custom.properties", true)); // Sandbox
+// Using configuration from custom properties file
+new CloudConvertClient(new PropertyFileSettingsProvider("custom.properties"));
 
-// Using API Key and API URL from string variables
-new CloudConvertClient(new StringSettingsProvider("api-url", "webhook-signing-secret")); // Live
-new CloudConvertClient(new StringSettingsProvider("api-url", "webhook-signing-secret", true)); // Sandbox
+// Using configuration from string variables
+new CloudConvertClient(new StringSettingsProvider("api-url", "webhook-signing-secret"));
 
-// Using API Key and API URL from system properties
-new CloudConvertClient(new SystemPropertySettingsProvider()); // Live
-new CloudConvertClient(new SystemPropertySettingsProvider(true)); // Sandbox
+// Using configuration from system properties
+new CloudConvertClient(new SystemPropertySettingsProvider()); 
 ```
 
 ###### Asynchronous client
 ```java
-// Using API Key and API URL from `application.properties` file
-new AsyncCloudConvertClient(); // Live
-new AsyncCloudConvertClient(true); // Sandbox
+// Using configuration from `application.properties` file
+new AsyncCloudConvertClient();
 
-// Using API Key and API URL from environment variables
-new AsyncCloudConvertClient(new EnvironmentVariableSettingsProvider()); // Live
-new AsyncCloudConvertClient(new EnvironmentVariableSettingsProvider(true)); // Sandbox
+// Using configuration from environment variables
+new AsyncCloudConvertClient(new EnvironmentVariableSettingsProvider());
 
-// Using API Key and API URL from custom properties file
-new AsyncCloudConvertClient(new PropertyFileSettingsProvider("custom.properties")); // Live
-new AsyncCloudConvertClient(new PropertyFileSettingsProvider("custom.properties", true)); // Sandbox
+// Using configuration from custom properties file
+new AsyncCloudConvertClient(new PropertyFileSettingsProvider("custom.properties"));
 
-// Using API Key and API URL from string variables
-new AsyncCloudConvertClient(new StringSettingsProvider("api-url", "webhook-signing-secret")); // Live
-new AsyncCloudConvertClient(new StringSettingsProvider("api-url", "webhook-signing-secret", true)); // Sandbox
+// Using configuration from string variables
+new AsyncCloudConvertClient(new StringSettingsProvider("api-url", "webhook-signing-secret"));
 
-// Using API Key and API URL from system properties
-new AsyncCloudConvertClient(new SystemPropertySettingsProvider()); // Live
-new AsyncCloudConvertClient(new SystemPropertySettingsProvider(true)); // Sandbox
+// Using configuration from system properties
+new AsyncCloudConvertClient(new SystemPropertySettingsProvider());
 ```
 
 ## Creating Jobs
@@ -86,6 +76,9 @@ final String jobId = createJobResponse.getId();
 
 // Wait for a job completion
 final JobResponse waitJobResponse = cloudConvertClient.jobs().wait(jobId).getBody().get().getData();
+
+// Get an export/url task id
+final String exportUrlTaskId = waitJobResponse.getTasks().stream().filter(taskResponse -> taskResponse.getName().equals("export-my-file")).findFirst().get().getId();
 ```
 
 ###### Asynchronous client
@@ -107,6 +100,9 @@ final String jobId = createJobResponse.getId();
 
 // Wait for a job completion
 final JobResponse waitJobResponse = asyncCloudConvertClient.jobs().wait(jobId).get().getBody().get().getData();
+
+// Get an export/url task id
+final String exportUrlTaskId = waitJobResponse.getTasks().stream().filter(taskResponse -> taskResponse.getName().equals("export-my-file")).findFirst().get().getId();
 ```
 
 ## Downloading Files

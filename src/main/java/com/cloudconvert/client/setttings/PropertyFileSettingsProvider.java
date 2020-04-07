@@ -18,24 +18,12 @@ public class PropertyFileSettingsProvider extends AbstractSettingsProvider {
     };
 
     public PropertyFileSettingsProvider() throws IOException {
-        this(false);
-    }
-
-    public PropertyFileSettingsProvider(
-        final boolean useSandbox
-    ) throws IOException {
-        this(null, useSandbox);
+        this(null);
     }
 
     public PropertyFileSettingsProvider(
         @Nullable final String propertiesFilePath
     ) throws IOException {
-        this(propertiesFilePath, false);
-    }
-
-    public PropertyFileSettingsProvider(
-        @Nullable final String propertiesFilePath, final boolean useSandbox
-    ) throws IOException {
-        super(PROPERTIES_FILE_PATH_TO_INPUT_STREAM.apply(propertiesFilePath), useSandbox);
+        super(PROPERTIES_FILE_PATH_TO_INPUT_STREAM.apply(propertiesFilePath));
     }
 }

@@ -15,6 +15,7 @@ import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.resource.params.Pagination;
 import com.cloudconvert.test.framework.AbstractTest;
 import com.cloudconvert.test.framework.IntegrationTest;
+import com.cloudconvert.test.framework.WaitConditionFactoryProvider;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apache.http.HttpStatus;
@@ -46,12 +47,16 @@ public class JobsIntegrationTest extends AbstractTest {
 
     private InputStream odtTest2InputStream;
 
+    private WaitConditionFactoryProvider waitConditionFactoryProvider;
+
     @Before
     public void before() throws Exception {
-        cloudConvertClient = new CloudConvertClient(true);
+        cloudConvertClient = new CloudConvertClient();
 
         odtTest1InputStream = JobsIntegrationTest.class.getClassLoader().getResourceAsStream(ODT_TEST_FILE_1);
         odtTest2InputStream = JobsIntegrationTest.class.getClassLoader().getResourceAsStream(ODT_TEST_FILE_2);
+
+        waitConditionFactoryProvider = new WaitConditionFactoryProvider();
     }
 
     /**
@@ -108,9 +113,9 @@ public class JobsIntegrationTest extends AbstractTest {
         assertThat(uploadFile2TaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Wait
-        final JobResponse waitJobResponse = await().atMost(TIMEOUT).until(() ->
-                await().atMost(TIMEOUT).until(
-                    () -> cloudConvertClient.jobs().show(jobResponse.getId()),
+        final JobResponse waitJobResponse = await().atMost(AT_MOST).until(() ->
+                waitConditionFactoryProvider.provide(jobResponse.getId()).until(
+                    () -> cloudConvertClient.jobs().wait(jobResponse.getId()),
                     awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
                 ).getBody().get().getData(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED

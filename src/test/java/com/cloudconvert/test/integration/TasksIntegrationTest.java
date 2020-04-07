@@ -17,6 +17,7 @@ import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.resource.params.Pagination;
 import com.cloudconvert.test.framework.AbstractTest;
 import com.cloudconvert.test.framework.IntegrationTest;
+import com.cloudconvert.test.framework.WaitConditionFactoryProvider;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apache.http.HttpStatus;
@@ -49,11 +50,15 @@ public class TasksIntegrationTest extends AbstractTest {
 
     private InputStream jpgTest1InputStream;
 
+    private WaitConditionFactoryProvider waitConditionFactoryProvider;
+
     @Before
     public void before() throws Exception {
-        cloudConvertClient = new CloudConvertClient(true);
+        cloudConvertClient = new CloudConvertClient();
 
         jpgTest1InputStream = TasksIntegrationTest.class.getClassLoader().getResourceAsStream(JPG_TEST_FILE_1);
+
+        waitConditionFactoryProvider = new WaitConditionFactoryProvider();
     }
 
     @Test
@@ -81,9 +86,9 @@ public class TasksIntegrationTest extends AbstractTest {
         assertThat(convertTaskResponse.getOperation()).isEqualTo(Operation.CONVERT);
 
         // Wait
-        final TaskResponse waitConvertTaskResponse = await().atMost(TIMEOUT).until(() ->
-                await().atMost(TIMEOUT).until(
-                    () -> cloudConvertClient.tasks().show(convertTaskResponse.getId()),
+        final TaskResponse waitConvertTaskResponse = await().atMost(AT_MOST).until(() ->
+                waitConditionFactoryProvider.provide(convertTaskResponse.getId()).until(
+                    () -> cloudConvertClient.tasks().wait(convertTaskResponse.getId()),
                     awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
                 ).getBody().get().getData(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
@@ -124,9 +129,9 @@ public class TasksIntegrationTest extends AbstractTest {
         assertThat(optimizeTaskResponse.getOperation()).isEqualTo(Operation.OPTIMIZE);
 
         // Wait
-        final TaskResponse waitOptimizeTaskResponse = await().atMost(TIMEOUT).until(() ->
-                await().atMost(TIMEOUT).until(
-                    () -> cloudConvertClient.tasks().show(optimizeTaskResponse.getId()),
+        final TaskResponse waitOptimizeTaskResponse = await().atMost(AT_MOST).until(() ->
+                waitConditionFactoryProvider.provide(optimizeTaskResponse.getId()).until(
+                    () -> cloudConvertClient.tasks().wait(optimizeTaskResponse.getId()),
                     awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
                 ).getBody().get().getData(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
@@ -160,9 +165,9 @@ public class TasksIntegrationTest extends AbstractTest {
         assertThat(captureTaskResponse.getOperation()).isEqualTo(Operation.CAPTURE_WEBSITE);
 
         // Wait
-        final TaskResponse waitCaptureTaskResponse = await().atMost(TIMEOUT).until(() ->
-                await().atMost(TIMEOUT).until(
-                    () -> cloudConvertClient.tasks().show(captureTaskResponse.getId()),
+        final TaskResponse waitCaptureTaskResponse = await().atMost(AT_MOST).until(() ->
+                waitConditionFactoryProvider.provide(captureTaskResponse.getId()).until(
+                    () -> cloudConvertClient.tasks().wait(captureTaskResponse.getId()),
                     awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
                 ).getBody().get().getData(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
@@ -203,9 +208,9 @@ public class TasksIntegrationTest extends AbstractTest {
         assertThat(archiveTaskResponse.getOperation()).isEqualTo(Operation.ARCHIVE);
 
         // Wait
-        final TaskResponse waitArchiveTaskResponse = await().atMost(TIMEOUT).until(() ->
-                await().atMost(TIMEOUT).until(
-                    () -> cloudConvertClient.tasks().show(archiveTaskResponse.getId()),
+        final TaskResponse waitArchiveTaskResponse = await().atMost(AT_MOST).until(() ->
+                waitConditionFactoryProvider.provide(archiveTaskResponse.getId()).until(
+                    () -> cloudConvertClient.tasks().wait(archiveTaskResponse.getId()),
                     awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
                 ).getBody().get().getData(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
@@ -248,9 +253,9 @@ public class TasksIntegrationTest extends AbstractTest {
         assertThat(executeTaskResponse.getOperation()).isEqualTo(Operation.COMMAND);
 
         // Wait
-        final TaskResponse waitExecuteTaskResponse = await().atMost(TIMEOUT).until(() ->
-                await().atMost(TIMEOUT).until(
-                    () -> cloudConvertClient.tasks().show(executeTaskResponse.getId()),
+        final TaskResponse waitExecuteTaskResponse = await().atMost(AT_MOST).until(() ->
+                waitConditionFactoryProvider.provide(executeTaskResponse.getId()).until(
+                    () -> cloudConvertClient.tasks().wait(executeTaskResponse.getId()),
                     awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
                 ).getBody().get().getData(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED

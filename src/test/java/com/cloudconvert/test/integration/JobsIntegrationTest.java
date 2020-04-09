@@ -82,7 +82,7 @@ public class JobsIntegrationTest extends AbstractTest {
         final Result<JobResponseData> jobResponseDataResult = cloudConvertClient.jobs().create(tasks);
         assertThat(jobResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final JobResponse jobResponse = jobResponseDataResult.getBody().get().getData();
+        final JobResponse jobResponse = jobResponseDataResult.getBody().getData();
         assertThat(jobResponse.getTasks()).hasSize(3);
         assertThat(jobResponse.getStatus()).isEqualTo(Status.WAITING);
         assertThat(jobResponse.getTasks()).extracting(TaskResponse::getName).contains(uploadFile1TaskName, uploadFile2TaskName, mergeFile1AndFile2TaskName);
@@ -101,7 +101,7 @@ public class JobsIntegrationTest extends AbstractTest {
             .upload(uploadFile1TaskJobResponse.getId(), uploadFile1TaskJobResponse.getResult().getForm(), odtTest1InputStream);
         assertThat(uploadFile1TaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final TaskResponse uploadFile1TaskResponse = uploadFile1TaskResponseDataResult.getBody().get().getData();
+        final TaskResponse uploadFile1TaskResponse = uploadFile1TaskResponseDataResult.getBody().getData();
         assertThat(uploadFile1TaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Upload (actual upload file 2)
@@ -109,7 +109,7 @@ public class JobsIntegrationTest extends AbstractTest {
             .upload(uploadFile2TaskJobResponse.getId(), uploadFile2TaskJobResponse.getResult().getForm(), odtTest2InputStream);
         assertThat(uploadFile2TaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final TaskResponse uploadFile2TaskResponse = uploadFile2TaskResponseDataResult.getBody().get().getData();
+        final TaskResponse uploadFile2TaskResponse = uploadFile2TaskResponseDataResult.getBody().getData();
         assertThat(uploadFile2TaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Wait
@@ -117,7 +117,7 @@ public class JobsIntegrationTest extends AbstractTest {
                 waitConditionFactoryProvider.provide(jobResponse.getId()).until(
                     () -> cloudConvertClient.jobs().wait(jobResponse.getId()),
                     awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
-                ).getBody().get().getData(),
+                ).getBody().getData(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
         );
         assertThat(waitJobResponse.getStatus()).isEqualTo(Status.FINISHED);
@@ -127,7 +127,7 @@ public class JobsIntegrationTest extends AbstractTest {
         final Result<JobResponseData> showJobResponseDataResult = cloudConvertClient.jobs().show(jobResponse.getId());
         assertThat(showJobResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final JobResponse showJobResponse = showJobResponseDataResult.getBody().get().getData();
+        final JobResponse showJobResponse = showJobResponseDataResult.getBody().getData();
         assertThat(showJobResponse.getStatus()).isEqualTo(Status.FINISHED);
         assertThat(showJobResponse.getId()).isEqualTo(jobResponse.getId());
 

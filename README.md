@@ -69,13 +69,13 @@ final JobResponse createJobResponse = cloudConvertClient.jobs().create(
         "convert-my-file", new ConvertFilesTaskRequest().setInput("import-my-file"),
         "export-my-file", new UrlExportRequest().setInput("convert-my-file")
     )
-).getBody().get().getData();
+).getBody().getData();
 
 // Get a job id
 final String jobId = createJobResponse.getId();
 
 // Wait for a job completion
-final JobResponse waitJobResponse = cloudConvertClient.jobs().wait(jobId).getBody().get().getData();
+final JobResponse waitJobResponse = cloudConvertClient.jobs().wait(jobId).getBody().getData();
 
 // Get an export/url task id
 final String exportUrlTaskId = waitJobResponse.getTasks().stream().filter(taskResponse -> taskResponse.getName().equals("export-my-file")).findFirst().get().getId();
@@ -93,13 +93,13 @@ final JobResponse createJobResponse = asyncCloudConvertClient.jobs().create(
         "convert-my-file", new ConvertFilesTaskRequest().setInput("import-my-file"),
         "export-my-file", new UrlExportRequest().setInput("convert-my-file")
     )
-).get().getBody().get().getData();
+).get().getBody().getData();
 
 // Get a job id
 final String jobId = createJobResponse.getId();
 
 // Wait for a job completion
-final JobResponse waitJobResponse = asyncCloudConvertClient.jobs().wait(jobId).get().getBody().get().getData();
+final JobResponse waitJobResponse = asyncCloudConvertClient.jobs().wait(jobId).get().getBody().getData();
 
 // Get an export/url task id
 final String exportUrlTaskId = waitJobResponse.getTasks().stream().filter(taskResponse -> taskResponse.getName().equals("export-my-file")).findFirst().get().getId();
@@ -114,19 +114,19 @@ CloudConvert can generate public URLs using `export/url` tasks. You can use thes
 final CloudConvertClient cloudConvertClient = new CloudConvertClient();
 
 // Create an export/url task
-final TaskResponse exportUrlTaskResponse = cloudConvertClient.exportUsing().url(new UrlExportRequest()).getBody().get().getData();
+final TaskResponse exportUrlTaskResponse = cloudConvertClient.exportUsing().url(new UrlExportRequest()).getBody().getData();
 
 // Get an export/url task id
 final String exportUrlTaskId = exportUrlTaskResponse.getId();
 
 // Wait for an export/url task to be finished
-final TaskResponse waitUrlExportTaskResponse = cloudConvertClient.tasks().wait(exportUrlTaskId).getBody().get().getData();
+final TaskResponse waitUrlExportTaskResponse = cloudConvertClient.tasks().wait(exportUrlTaskId).getBody().getData();
 
 // Get a url of export/url task
 final String exportUrl = waitUrlExportTaskResponse.getResult().getFiles().get(0).get("url");
 
 // Get file as input stream using url of export/url task
-final InputStream inputStream = cloudConvertClient.files().download(exportUrl).getBody().get();
+final InputStream inputStream = cloudConvertClient.files().download(exportUrl).getBody();
 ```
 
 ###### Asynchronous client
@@ -135,19 +135,19 @@ final InputStream inputStream = cloudConvertClient.files().download(exportUrl).g
 final AsyncCloudConvertClient asyncCloudConvertClient = new AsyncCloudConvertClient();
 
 // Create an export/url task
-final TaskResponse exportUrlTaskResponse = asyncCloudConvertClient.exportUsing().url(new UrlExportRequest()).get()getBody().get().getData();
+final TaskResponse exportUrlTaskResponse = asyncCloudConvertClient.exportUsing().url(new UrlExportRequest()).get().getBody().getData();
 
 // Get an export/url task id
 final String exportUrlTaskId = exportUrlTaskResponse.getId();
 
 // Wait for an export/url task to be finished
-final TaskResponse waitUrlExportTaskResponse = asyncCloudConvertClient.tasks().wait(exportUrlTaskId).get().getBody().get().getData();
+final TaskResponse waitUrlExportTaskResponse = asyncCloudConvertClient.tasks().wait(exportUrlTaskId).get().getBody().getData();
 
 // Get a url of export/url task
 final String exportUrl = waitUrlExportTaskResponse.getResult().getFiles().get(0).get("url");
 
 // Get file as input stream using url of export/url task
-final InputStream inputStream = asyncCloudConvertClient.files().download(exportUrl).get().getBody().get();
+final InputStream inputStream = asyncCloudConvertClient.files().download(exportUrl).get().getBody();
 ```
 
 ## Uploading Files
@@ -163,10 +163,10 @@ final CloudConvertClient cloudConvertClient = new CloudConvertClient();
 final InputStream inputStream = getClass().getClassLoader().getResourceAsStream("file.jpg");
 
 // Upload file using import/upload task
-final TaskResponse uploadImportTaskResponse = cloudConvertClient.importUsing().upload(new UploadImportRequest(), inputStream).getBody().get().getData();
+final TaskResponse uploadImportTaskResponse = cloudConvertClient.importUsing().upload(new UploadImportRequest(), inputStream).getBody().getData();
 
 // Wait for import/upload task to be finished
-final TaskResponse waitUploadImportTaskResponse = cloudConvertClient.tasks().wait(uploadImportTaskResponse.getId()).getBody().get().getData();
+final TaskResponse waitUploadImportTaskResponse = cloudConvertClient.tasks().wait(uploadImportTaskResponse.getId()).getBody().getData();
 ```
 
 ###### Asynchronous client
@@ -178,10 +178,10 @@ final AsyncCloudConvertClient asyncCloudConvertClient = new CloudConvertClient()
 final InputStream inputStream = getClass().getClassLoader().getResourceAsStream("file.jpg");
 
 // Upload file using import/upload task
-final TaskResponse uploadImportTaskResponse = asyncCloudConvertClient.importUsing().upload(new UploadImportRequest(), inputStream).get().getBody().get().getData();
+final TaskResponse uploadImportTaskResponse = asyncCloudConvertClient.importUsing().upload(new UploadImportRequest(), inputStream).get().getBody().getData();
 
 // Wait for import/upload task to be finished
-final TaskResponse waitUploadImportTaskResponse = asyncCloudConvertClient.tasks().wait(uploadImportTaskResponse.getId()).get().getBody().get().getData();
+final TaskResponse waitUploadImportTaskResponse = asyncCloudConvertClient.tasks().wait(uploadImportTaskResponse.getId()).get().getBody().getData();
 ```
 
 ## Signing Webhook 

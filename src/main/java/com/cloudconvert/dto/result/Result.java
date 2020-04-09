@@ -5,7 +5,6 @@ import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
-import java.util.Optional;
 
 @Builder
 public class Result<T> extends AbstractResult<T> {
@@ -19,10 +18,7 @@ public class Result<T> extends AbstractResult<T> {
     @Getter
     private String message;
 
+    @Getter
     @Nullable
     private T body;
-
-    public Optional<T> getBody() {
-        return Optional.ofNullable(body);
-    }
 }

@@ -12,7 +12,6 @@ import com.cloudconvert.dto.request.OptimizeFilesTaskRequest;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
-import com.cloudconvert.dto.response.TaskResponseData;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.executor.RequestExecutor;
 import com.cloudconvert.resource.AbstractResource;
@@ -81,11 +80,11 @@ public class TasksUnitTest extends AbstractTest {
 
     @Test
     public void tasks_show_noIncludes() throws Exception {
-        final Result<TaskResponseData> taskResponseDataResult = Result.<TaskResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataResult);
+        final Result<TaskResponse> taskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseResult);
 
-        assertThat(cloudConvertClient.tasks().show(TASK_ID)).isEqualTo(taskResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.tasks().show(TASK_ID)).isEqualTo(taskResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -101,13 +100,13 @@ public class TasksUnitTest extends AbstractTest {
 
     @Test
     public void tasks_show_includes() throws Exception {
-        final Result<TaskResponseData> taskResponseDataResult = Result.<TaskResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataResult);
+        final Result<TaskResponse> taskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseResult);
 
         final List<Include> includes = ImmutableList.of(Include.RETRIES, Include.DEPENDS_ON_TASKS, Include.PAYLOAD);
 
-        assertThat(cloudConvertClient.tasks().show(TASK_ID, includes)).isEqualTo(taskResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.tasks().show(TASK_ID, includes)).isEqualTo(taskResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -124,11 +123,11 @@ public class TasksUnitTest extends AbstractTest {
 
     @Test
     public void tasks_wait() throws Exception {
-        final Result<TaskResponseData> taskResponseDataResult = Result.<TaskResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataResult);
+        final Result<TaskResponse> taskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseResult);
 
-        assertThat(cloudConvertClient.tasks().wait(TASK_ID)).isEqualTo(taskResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.tasks().wait(TASK_ID)).isEqualTo(taskResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -189,11 +188,11 @@ public class TasksUnitTest extends AbstractTest {
 
     @Test
     public void tasks_cancel() throws Exception {
-        final Result<TaskResponseData> taskResponseDataResult = Result.<TaskResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataResult);
+        final Result<TaskResponse> taskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseResult);
 
-        assertThat(cloudConvertClient.tasks().cancel(TASK_ID)).isEqualTo(taskResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.tasks().cancel(TASK_ID)).isEqualTo(taskResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -209,11 +208,11 @@ public class TasksUnitTest extends AbstractTest {
 
     @Test
     public void tasks_retry() throws Exception {
-        final Result<TaskResponseData> taskResponseDataResult = Result.<TaskResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataResult);
+        final Result<TaskResponse> taskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseResult);
 
-        assertThat(cloudConvertClient.tasks().retry(TASK_ID)).isEqualTo(taskResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.tasks().retry(TASK_ID)).isEqualTo(taskResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -300,11 +299,11 @@ public class TasksUnitTest extends AbstractTest {
     @Test
     public void tasks_convert() throws Exception {
         final ConvertFilesTaskRequest expectedConvertFilesTaskRequest = new ConvertFilesTaskRequest().setInput("convert-files-task-input");
-        final Result<TaskResponseData> taskResponseDataResult = Result.<TaskResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataResult);
+        final Result<TaskResponse> taskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseResult);
 
-        assertThat(cloudConvertClient.tasks().convert(expectedConvertFilesTaskRequest)).isEqualTo(taskResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.tasks().convert(expectedConvertFilesTaskRequest)).isEqualTo(taskResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -374,11 +373,11 @@ public class TasksUnitTest extends AbstractTest {
     @Test
     public void tasks_optimize() throws Exception {
         final OptimizeFilesTaskRequest expectedOptimizeFilesTaskRequest = new OptimizeFilesTaskRequest().setInput("optimize-files-task-input");
-        final Result<TaskResponseData> taskResponseDataResult = Result.<TaskResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataResult);
+        final Result<TaskResponse> taskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseResult);
 
-        assertThat(cloudConvertClient.tasks().optimize(expectedOptimizeFilesTaskRequest)).isEqualTo(taskResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.tasks().optimize(expectedOptimizeFilesTaskRequest)).isEqualTo(taskResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -399,11 +398,11 @@ public class TasksUnitTest extends AbstractTest {
     @Test
     public void tasks_capture() throws Exception {
         final CaptureWebsitesTaskRequest expectedCaptureWebsitesTaskRequest = new CaptureWebsitesTaskRequest().setUrl("capture-websites-task-url");
-        final Result<TaskResponseData> taskResponseDataResult = Result.<TaskResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataResult);
+        final Result<TaskResponse> taskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseResult);
 
-        assertThat(cloudConvertClient.tasks().capture(expectedCaptureWebsitesTaskRequest)).isEqualTo(taskResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.tasks().capture(expectedCaptureWebsitesTaskRequest)).isEqualTo(taskResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -424,11 +423,11 @@ public class TasksUnitTest extends AbstractTest {
     @Test
     public void tasks_merge() throws Exception {
         final MergeFilesTaskRequest expectedMergeFilesTaskRequest = new MergeFilesTaskRequest().setInput("merge-files-task-input");
-        final Result<TaskResponseData> taskResponseDataResult = Result.<TaskResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataResult);
+        final Result<TaskResponse> taskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseResult);
 
-        assertThat(cloudConvertClient.tasks().merge(expectedMergeFilesTaskRequest)).isEqualTo(taskResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.tasks().merge(expectedMergeFilesTaskRequest)).isEqualTo(taskResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -449,11 +448,11 @@ public class TasksUnitTest extends AbstractTest {
     @Test
     public void tasks_archive() throws Exception {
         final CreateArchivesTaskRequest expectedCreateArchivesTaskRequest = new CreateArchivesTaskRequest().setInput("create-archives-task-input");
-        final Result<TaskResponseData> taskResponseDataResult = Result.<TaskResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataResult);
+        final Result<TaskResponse> taskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseResult);
 
-        assertThat(cloudConvertClient.tasks().archive(expectedCreateArchivesTaskRequest)).isEqualTo(taskResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.tasks().archive(expectedCreateArchivesTaskRequest)).isEqualTo(taskResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -474,11 +473,11 @@ public class TasksUnitTest extends AbstractTest {
     @Test
     public void tasks_command() throws Exception {
         final ExecuteCommandsTaskRequest expectedExecuteCommandsTaskRequest = new ExecuteCommandsTaskRequest().setInput("execute-commands-task-input");
-        final Result<TaskResponseData> taskResponseDataResult = Result.<TaskResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataResult);
+        final Result<TaskResponse> taskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseResult);
 
-        assertThat(cloudConvertClient.tasks().command(expectedExecuteCommandsTaskRequest)).isEqualTo(taskResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.tasks().command(expectedExecuteCommandsTaskRequest)).isEqualTo(taskResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 

@@ -11,7 +11,6 @@ import com.cloudconvert.dto.request.OptimizeFilesTaskRequest;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
-import com.cloudconvert.dto.response.TaskResponseData;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.executor.RequestExecutor;
 import com.cloudconvert.resource.AbstractTasksResource;
@@ -39,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class TasksResource extends AbstractTasksResource<Result<TaskResponseData>,
+public class TasksResource extends AbstractTasksResource<Result<TaskResponse>,
     Result<Pageable<TaskResponse>>, Result<Void>, Result<Pageable<OperationResponse>>> {
 
     private final RequestExecutor requestExecutor;
@@ -67,28 +66,28 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponseData
         this.paginationToNameValuePairsConverter = new PaginationToNameValuePairsConverter();
     }
 
-    public Result<TaskResponseData> show(
+    public Result<TaskResponse> show(
         @NotNull final String taskId
     ) throws IOException, URISyntaxException {
         return show(taskId, ImmutableList.of());
     }
 
-    public Result<TaskResponseData> show(
+    public Result<TaskResponse> show(
         @NotNull final String taskId, @NotNull final List<Include> includes
     ) throws IOException, URISyntaxException {
         final List<NameValuePair> nameValuePairs = ImmutableList.<NameValuePair>builder().addAll(includesToNameValuePairsConverter.convert(includes)).build();
 
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId), nameValuePairs);
 
-        return requestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
-    public Result<TaskResponseData> wait(
+    public Result<TaskResponse> wait(
         @NotNull final String taskId
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId, PATH_SEGMENT_WAIT));
 
-        return requestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     public Result<Pageable<TaskResponse>> list() throws IOException, URISyntaxException {
@@ -120,20 +119,20 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponseData
         return requestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), TASK_RESPONSE_PAGEABLE_TYPE_REFERENCE);
     }
 
-    public Result<TaskResponseData> cancel(
+    public Result<TaskResponse> cancel(
         @NotNull final String taskId
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId, PATH_SEGMENT_CANCEL));
 
-        return requestExecutor.execute(getHttpUriRequest(HttpPost.class, uri), TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(getHttpUriRequest(HttpPost.class, uri), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
-    public Result<TaskResponseData> retry(
+    public Result<TaskResponse> retry(
         @NotNull final String taskId
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId, PATH_SEGMENT_RETRY));
 
-        return requestExecutor.execute(getHttpUriRequest(HttpPost.class, uri), TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(getHttpUriRequest(HttpPost.class, uri), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     public Result<Void> delete(
@@ -172,7 +171,7 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponseData
     }
 
     @Override
-    public Result<TaskResponseData> convert(
+    public Result<TaskResponse> convert(
         @NotNull final ConvertFilesTaskRequest convertFilesTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractConvertFilesResource().convert(convertFilesTaskRequest);
@@ -205,35 +204,35 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponseData
     }
 
     @Override
-    public Result<TaskResponseData> optimize(
+    public Result<TaskResponse> optimize(
         @NotNull final OptimizeFilesTaskRequest optimizeFilesTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractOptimizeFilesResource().optimize(optimizeFilesTaskRequest);
     }
 
     @Override
-    public Result<TaskResponseData> capture(
+    public Result<TaskResponse> capture(
         @NotNull final CaptureWebsitesTaskRequest captureWebsitesTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractCaptureWebsitesResource().capture(captureWebsitesTaskRequest);
     }
 
     @Override
-    public Result<TaskResponseData> merge(
+    public Result<TaskResponse> merge(
         @NotNull final MergeFilesTaskRequest mergeFilesTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractMergeFilesResource().merge(mergeFilesTaskRequest);
     }
 
     @Override
-    public Result<TaskResponseData> archive(
+    public Result<TaskResponse> archive(
         @NotNull final CreateArchivesTaskRequest createArchivesTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractCreateArchivesResource().archive(createArchivesTaskRequest);
     }
 
     @Override
-    public Result<TaskResponseData> command(
+    public Result<TaskResponse> command(
         @NotNull final ExecuteCommandsTaskRequest executeCommandsTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractExecuteCommandsResource().command(executeCommandsTaskRequest);

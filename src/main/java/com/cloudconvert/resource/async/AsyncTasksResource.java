@@ -11,7 +11,6 @@ import com.cloudconvert.dto.request.OptimizeFilesTaskRequest;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
-import com.cloudconvert.dto.response.TaskResponseData;
 import com.cloudconvert.dto.result.AsyncResult;
 import com.cloudconvert.executor.AsyncRequestExecutor;
 import com.cloudconvert.resource.AbstractTasksResource;
@@ -39,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class AsyncTasksResource extends AbstractTasksResource<AsyncResult<TaskResponseData>,
+public class AsyncTasksResource extends AbstractTasksResource<AsyncResult<TaskResponse>,
     AsyncResult<Pageable<TaskResponse>>, AsyncResult<Void>, AsyncResult<Pageable<OperationResponse>>> {
 
     private final AsyncRequestExecutor asyncRequestExecutor;
@@ -66,28 +65,28 @@ public class AsyncTasksResource extends AbstractTasksResource<AsyncResult<TaskRe
         this.paginationToNameValuePairsConverter = new PaginationToNameValuePairsConverter();
     }
 
-    public AsyncResult<TaskResponseData> show(
+    public AsyncResult<TaskResponse> show(
         @NotNull final String taskId
     ) throws IOException, URISyntaxException {
         return show(taskId, ImmutableList.of());
     }
 
-    public AsyncResult<TaskResponseData> show(
+    public AsyncResult<TaskResponse> show(
         @NotNull final String taskId, @NotNull final List<Include> includes
     ) throws IOException, URISyntaxException {
         final List<NameValuePair> nameValuePairs = ImmutableList.<NameValuePair>builder().addAll(includesToNameValuePairsConverter.convert(includes)).build();
 
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId), nameValuePairs);
 
-        return asyncRequestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return asyncRequestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
-    public AsyncResult<TaskResponseData> wait(
+    public AsyncResult<TaskResponse> wait(
         @NotNull final String taskId
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId, PATH_SEGMENT_WAIT));
 
-        return asyncRequestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return asyncRequestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     public AsyncResult<Pageable<TaskResponse>> list() throws IOException, URISyntaxException {
@@ -119,20 +118,20 @@ public class AsyncTasksResource extends AbstractTasksResource<AsyncResult<TaskRe
         return asyncRequestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), TASK_RESPONSE_PAGEABLE_TYPE_REFERENCE);
     }
 
-    public AsyncResult<TaskResponseData> cancel(
+    public AsyncResult<TaskResponse> cancel(
         @NotNull final String taskId
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId, PATH_SEGMENT_CANCEL));
 
-        return asyncRequestExecutor.execute(getHttpUriRequest(HttpPost.class, uri), TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return asyncRequestExecutor.execute(getHttpUriRequest(HttpPost.class, uri), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
-    public AsyncResult<TaskResponseData> retry(
+    public AsyncResult<TaskResponse> retry(
         @NotNull final String taskId
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId, PATH_SEGMENT_RETRY));
 
-        return asyncRequestExecutor.execute(getHttpUriRequest(HttpPost.class, uri), TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return asyncRequestExecutor.execute(getHttpUriRequest(HttpPost.class, uri), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     public AsyncResult<Void> delete(
@@ -171,7 +170,7 @@ public class AsyncTasksResource extends AbstractTasksResource<AsyncResult<TaskRe
     }
 
     @Override
-    public AsyncResult<TaskResponseData> convert(
+    public AsyncResult<TaskResponse> convert(
         @NotNull final ConvertFilesTaskRequest convertFilesTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractConvertFilesResource().convert(convertFilesTaskRequest);
@@ -204,35 +203,35 @@ public class AsyncTasksResource extends AbstractTasksResource<AsyncResult<TaskRe
     }
 
     @Override
-    public AsyncResult<TaskResponseData> optimize(
+    public AsyncResult<TaskResponse> optimize(
         @NotNull final OptimizeFilesTaskRequest optimizeFilesTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractOptimizeFilesResource().optimize(optimizeFilesTaskRequest);
     }
 
     @Override
-    public AsyncResult<TaskResponseData> capture(
+    public AsyncResult<TaskResponse> capture(
         @NotNull final CaptureWebsitesTaskRequest captureWebsitesTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractCaptureWebsitesResource().capture(captureWebsitesTaskRequest);
     }
 
     @Override
-    public AsyncResult<TaskResponseData> merge(
+    public AsyncResult<TaskResponse> merge(
         @NotNull final MergeFilesTaskRequest mergeFilesTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractMergeFilesResource().merge(mergeFilesTaskRequest);
     }
 
     @Override
-    public AsyncResult<TaskResponseData> archive(
+    public AsyncResult<TaskResponse> archive(
         @NotNull final CreateArchivesTaskRequest createArchivesTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractCreateArchivesResource().archive(createArchivesTaskRequest);
     }
 
     @Override
-    public AsyncResult<TaskResponseData> command(
+    public AsyncResult<TaskResponse> command(
         @NotNull final ExecuteCommandsTaskRequest executeCommandsTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractExecuteCommandsResource().command(executeCommandsTaskRequest);

@@ -7,10 +7,8 @@ import com.cloudconvert.dto.request.MergeFilesTaskRequest;
 import com.cloudconvert.dto.request.TaskRequest;
 import com.cloudconvert.dto.request.UploadImportRequest;
 import com.cloudconvert.dto.response.JobResponse;
-import com.cloudconvert.dto.response.JobResponseData;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
-import com.cloudconvert.dto.response.TaskResponseData;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.resource.params.Pagination;
 import com.cloudconvert.test.framework.AbstractTest;
@@ -79,10 +77,10 @@ public class JobsIntegrationTest extends AbstractTest {
         );
 
         // Create job
-        final Result<JobResponseData> jobResponseDataResult = cloudConvertClient.jobs().create(tasks);
-        assertThat(jobResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
+        final Result<JobResponse> jobResponseResult = cloudConvertClient.jobs().create(tasks);
+        assertThat(jobResponseResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final JobResponse jobResponse = jobResponseDataResult.getBody().getData();
+        final JobResponse jobResponse = jobResponseResult.getBody();
         assertThat(jobResponse.getTasks()).hasSize(3);
         assertThat(jobResponse.getStatus()).isEqualTo(Status.WAITING);
         assertThat(jobResponse.getTasks()).extracting(TaskResponse::getName).contains(uploadFile1TaskName, uploadFile2TaskName, mergeFile1AndFile2TaskName);
@@ -97,37 +95,37 @@ public class JobsIntegrationTest extends AbstractTest {
         assertThat(mergeFile1AndFile2TaskJobResponse.getDependsOnTaskIds()).contains(uploadFile1TaskJobResponse.getId(), uploadFile2TaskJobResponse.getId());
 
         // Upload (actual upload file 1)
-        final Result<TaskResponseData> uploadFile1TaskResponseDataResult = cloudConvertClient.importUsing()
+        final Result<TaskResponse> uploadFile1TaskResponseResult = cloudConvertClient.importUsing()
             .upload(uploadFile1TaskJobResponse.getId(), uploadFile1TaskJobResponse.getResult().getForm(), odtTest1InputStream);
-        assertThat(uploadFile1TaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(uploadFile1TaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final TaskResponse uploadFile1TaskResponse = uploadFile1TaskResponseDataResult.getBody().getData();
+        final TaskResponse uploadFile1TaskResponse = uploadFile1TaskResponseResult.getBody();
         assertThat(uploadFile1TaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Upload (actual upload file 2)
-        final Result<TaskResponseData> uploadFile2TaskResponseDataResult = cloudConvertClient.importUsing()
+        final Result<TaskResponse> uploadFile2TaskResponseResult = cloudConvertClient.importUsing()
             .upload(uploadFile2TaskJobResponse.getId(), uploadFile2TaskJobResponse.getResult().getForm(), odtTest2InputStream);
-        assertThat(uploadFile2TaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(uploadFile2TaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final TaskResponse uploadFile2TaskResponse = uploadFile2TaskResponseDataResult.getBody().getData();
+        final TaskResponse uploadFile2TaskResponse = uploadFile2TaskResponseResult.getBody();
         assertThat(uploadFile2TaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Wait
         final JobResponse waitJobResponse = await().atMost(AT_MOST).until(() ->
                 waitConditionFactoryProvider.provide(jobResponse.getId()).until(
                     () -> cloudConvertClient.jobs().wait(jobResponse.getId()),
-                    awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
-                ).getBody().getData(),
+                    awaitTaskResponseResult -> awaitTaskResponseResult.getStatus() == HttpStatus.SC_OK
+                ).getBody(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
         );
         assertThat(waitJobResponse.getStatus()).isEqualTo(Status.FINISHED);
         assertThat(waitJobResponse.getId()).isEqualTo(jobResponse.getId());
 
         // Show
-        final Result<JobResponseData> showJobResponseDataResult = cloudConvertClient.jobs().show(jobResponse.getId());
-        assertThat(showJobResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        final Result<JobResponse> showJobResponseResult = cloudConvertClient.jobs().show(jobResponse.getId());
+        assertThat(showJobResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final JobResponse showJobResponse = showJobResponseDataResult.getBody().getData();
+        final JobResponse showJobResponse = showJobResponseResult.getBody();
         assertThat(showJobResponse.getStatus()).isEqualTo(Status.FINISHED);
         assertThat(showJobResponse.getId()).isEqualTo(jobResponse.getId());
 

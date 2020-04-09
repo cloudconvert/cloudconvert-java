@@ -8,7 +8,7 @@ import com.cloudconvert.dto.request.OpenStackExportRequest;
 import com.cloudconvert.dto.request.S3ExportRequest;
 import com.cloudconvert.dto.request.SftpExportRequest;
 import com.cloudconvert.dto.request.UrlExportRequest;
-import com.cloudconvert.dto.response.TaskResponseData;
+import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.executor.RequestExecutor;
 import com.cloudconvert.resource.AbstractExportFilesResource;
@@ -24,7 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 @Slf4j
-public class ExportFilesResource extends AbstractExportFilesResource<Result<TaskResponseData>> {
+public class ExportFilesResource extends AbstractExportFilesResource<Result<TaskResponse>> {
 
     private final RequestExecutor requestExecutor;
 
@@ -38,69 +38,69 @@ public class ExportFilesResource extends AbstractExportFilesResource<Result<Task
     }
 
     @Override
-    public Result<TaskResponseData> url(
+    public Result<TaskResponse> url(
         @NotNull final UrlExportRequest urlExportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_EXPORT, PATH_SEGMENT_URL));
         final HttpEntity httpEntity = getHttpEntity(urlExportRequest);
         final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
 
-        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
-    public Result<TaskResponseData> s3(
+    public Result<TaskResponse> s3(
         @NotNull final S3ExportRequest s3ExportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_EXPORT, PATH_SEGMENT_S3));
         final HttpEntity httpEntity = getHttpEntity(s3ExportRequest);
         final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
 
-        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
-    public Result<TaskResponseData> azureBlob(
+    public Result<TaskResponse> azureBlob(
         @NotNull final AzureBlobExportRequest azureBlobExportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.<String>builder().add(PATH_SEGMENT_EXPORT).addAll(PATH_SEGMENTS_AZURE_BLOB).build());
         final HttpEntity httpEntity = getHttpEntity(azureBlobExportRequest);
         final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
 
-        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
-    public Result<TaskResponseData> googleCloudStorage(
+    public Result<TaskResponse> googleCloudStorage(
         @NotNull final GoogleCloudStorageExportRequest googleCloudStorageExportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_EXPORT, PATH_SEGMENT_GOOGLE_CLOUD_STORAGE));
         final HttpEntity httpEntity = getHttpEntity(googleCloudStorageExportRequest);
         final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
 
-        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
-    public Result<TaskResponseData> openStack(
+    public Result<TaskResponse> openStack(
         @NotNull final OpenStackExportRequest openStackExportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_EXPORT, PATH_SEGMENT_OPENSTACK));
         final HttpEntity httpEntity = getHttpEntity(openStackExportRequest);
         final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
 
-        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
-    public Result<TaskResponseData> sftp(
+    public Result<TaskResponse> sftp(
         @NotNull final SftpExportRequest sftpExportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_EXPORT, PATH_SEGMENT_SFTP));
         final HttpEntity httpEntity = getHttpEntity(sftpExportRequest);
         final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
 
-        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override

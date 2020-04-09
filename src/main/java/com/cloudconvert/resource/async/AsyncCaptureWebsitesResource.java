@@ -3,7 +3,7 @@ package com.cloudconvert.resource.async;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.CaptureWebsitesTaskRequest;
-import com.cloudconvert.dto.response.TaskResponseData;
+import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AsyncResult;
 import com.cloudconvert.executor.AsyncRequestExecutor;
 import com.cloudconvert.resource.AbstractCaptureWebsitesResource;
@@ -18,7 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 @Slf4j
-public class AsyncCaptureWebsitesResource extends AbstractCaptureWebsitesResource<AsyncResult<TaskResponseData>> {
+public class AsyncCaptureWebsitesResource extends AbstractCaptureWebsitesResource<AsyncResult<TaskResponse>> {
 
     private final AsyncRequestExecutor asyncRequestExecutor;
 
@@ -32,13 +32,13 @@ public class AsyncCaptureWebsitesResource extends AbstractCaptureWebsitesResourc
     }
 
     @Override
-    public AsyncResult<TaskResponseData> capture(
+    public AsyncResult<TaskResponse> capture(
         @NotNull final CaptureWebsitesTaskRequest captureWebsitesTaskRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_CAPTURE_WEBSITE));
         final HttpEntity httpEntity = getHttpEntity(captureWebsitesTaskRequest);
 
-        return asyncRequestExecutor.execute(getHttpUriRequest(HttpPost.class, uri, httpEntity), TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return asyncRequestExecutor.execute(getHttpUriRequest(HttpPost.class, uri, httpEntity), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override

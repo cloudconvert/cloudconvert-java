@@ -4,9 +4,8 @@ import com.cloudconvert.client.CloudConvertClient;
 import com.cloudconvert.dto.Event;
 import com.cloudconvert.dto.request.WebhookRequest;
 import com.cloudconvert.dto.response.Pageable;
-import com.cloudconvert.dto.response.UserResponseData;
+import com.cloudconvert.dto.response.UserResponse;
 import com.cloudconvert.dto.response.WebhookResponse;
-import com.cloudconvert.dto.response.WebhookResponseData;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.test.framework.AbstractTest;
 import com.cloudconvert.test.framework.IntegrationTest;
@@ -37,9 +36,9 @@ public class WebhooksIntegrationTest extends AbstractTest {
 
     @Test
     public void userLifecycle() throws Exception {
-        final Result<UserResponseData> userResponseDataResult = cloudConvertClient.users().me();
-        assertThat(userResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
-        assertThat(userResponseDataResult.getBody()).isNotNull();
+        final Result<UserResponse> userResponseResult = cloudConvertClient.users().me();
+        assertThat(userResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(userResponseResult.getBody()).isNotNull();
     }
 
     @Test
@@ -47,11 +46,11 @@ public class WebhooksIntegrationTest extends AbstractTest {
         // Create
         final WebhookRequest webhookRequest = new WebhookRequest().setUrl("http://some-url.com")
             .setEvents(ImmutableList.of(Event.JOB_CREATED, Event.JOB_FAILED, Event.JOB_FINISHED));
-        final Result<WebhookResponseData> createWebhookResponseDataResult = cloudConvertClient.webhooks().create(webhookRequest);
-        assertThat(createWebhookResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
-        assertThat(createWebhookResponseDataResult.getBody()).isNotNull();
+        final Result<WebhookResponse> createWebhookResponseResult = cloudConvertClient.webhooks().create(webhookRequest);
+        assertThat(createWebhookResponseResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
+        assertThat(createWebhookResponseResult.getBody()).isNotNull();
 
-        final WebhookResponse createWebhookResponse = createWebhookResponseDataResult.getBody().getData();
+        final WebhookResponse createWebhookResponse = createWebhookResponseResult.getBody();
         assertThat(createWebhookResponse.getSigningSecret()).isNotNull();
 
         // List
@@ -59,8 +58,8 @@ public class WebhooksIntegrationTest extends AbstractTest {
         assertThat(webhookResponsePageable.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
         // Delete
-        final Result<Void> deleteWebhookResponseDataResult = cloudConvertClient.webhooks().delete(createWebhookResponse.getId());
-        assertThat(deleteWebhookResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+        final Result<Void> deleteWebhookResponseResult = cloudConvertClient.webhooks().delete(createWebhookResponse.getId());
+        assertThat(deleteWebhookResponseResult.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
 
         // Verify
         assertThat(cloudConvertClient.webhooks().verify(WEBHOOK_PAYLOAD, WEBHOOK_SIGNATURE)).isTrue();

@@ -3,7 +3,7 @@ package com.cloudconvert.resource.async;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.OptimizeFilesTaskRequest;
-import com.cloudconvert.dto.response.TaskResponseData;
+import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AsyncResult;
 import com.cloudconvert.executor.AsyncRequestExecutor;
 import com.cloudconvert.resource.AbstractOptimizeFilesResource;
@@ -18,7 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 @Slf4j
-public class AsyncOptimizeFilesResource extends AbstractOptimizeFilesResource<AsyncResult<TaskResponseData>> {
+public class AsyncOptimizeFilesResource extends AbstractOptimizeFilesResource<AsyncResult<TaskResponse>> {
 
     private final AsyncRequestExecutor asyncRequestExecutor;
 
@@ -32,13 +32,13 @@ public class AsyncOptimizeFilesResource extends AbstractOptimizeFilesResource<As
     }
 
     @Override
-    public AsyncResult<TaskResponseData> optimize(
+    public AsyncResult<TaskResponse> optimize(
         @NotNull final OptimizeFilesTaskRequest optimizeFilesTaskRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_OPTIMIZE));
         final HttpEntity httpEntity = getHttpEntity(optimizeFilesTaskRequest);
 
-        return asyncRequestExecutor.execute(getHttpUriRequest(HttpPost.class, uri, httpEntity), TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return asyncRequestExecutor.execute(getHttpUriRequest(HttpPost.class, uri, httpEntity), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override

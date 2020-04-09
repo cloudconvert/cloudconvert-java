@@ -5,14 +5,11 @@ import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.PropertyFileSettingsProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.response.JobResponse;
-import com.cloudconvert.dto.response.JobResponseData;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
-import com.cloudconvert.dto.response.TaskResponseData;
-import com.cloudconvert.dto.response.UserResponseData;
+import com.cloudconvert.dto.response.UserResponse;
 import com.cloudconvert.dto.response.WebhookResponse;
-import com.cloudconvert.dto.response.WebhookResponseData;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.executor.RequestExecutor;
 import com.cloudconvert.extractor.ResultExtractor;
@@ -34,9 +31,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class CloudConvertClient extends AbstractCloudConvertClient<Result<Void>,
-    Result<InputStream>, Result<TaskResponseData>, Result<Pageable<TaskResponse>>,
-    Result<JobResponseData>, Result<Pageable<JobResponse>>, Result<WebhookResponseData>,
-    Result<Pageable<WebhookResponse>>, Result<UserResponseData>, Result<Pageable<OperationResponse>>> {
+    Result<InputStream>, Result<TaskResponse>, Result<Pageable<TaskResponse>>,
+    Result<JobResponse>, Result<Pageable<JobResponse>>, Result<WebhookResponse>,
+    Result<Pageable<WebhookResponse>>, Result<UserResponse>, Result<Pageable<OperationResponse>>> {
 
     public CloudConvertClient() throws IOException {
         this(new PropertyFileSettingsProvider());

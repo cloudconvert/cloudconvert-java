@@ -5,7 +5,6 @@ import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.WebhookRequest;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.WebhookResponse;
-import com.cloudconvert.dto.response.WebhookResponseData;
 import com.cloudconvert.dto.result.AbstractResult;
 import com.cloudconvert.resource.params.Filter;
 import com.cloudconvert.resource.params.Pagination;
@@ -21,7 +20,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
-public abstract class AbstractWebhooksResource<WRDAR extends AbstractResult<WebhookResponseData>,
+public abstract class AbstractWebhooksResource<WRAR extends AbstractResult<WebhookResponse>,
     WRPAR extends AbstractResult<Pageable<WebhookResponse>>, VAR extends AbstractResult<Void>> extends AbstractResource {
 
     public static final String HMAC_SHA256 = "HmacSHA256";
@@ -38,11 +37,11 @@ public abstract class AbstractWebhooksResource<WRDAR extends AbstractResult<Webh
      * Create a webhook. Requires the webhook.write scope.
      *
      * @param webhookRequest {@link WebhookRequest}
-     * @return {@link WRDAR}
+     * @return {@link WRAR}
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract WRDAR create(
+    public abstract WRAR create(
         @NotNull final WebhookRequest webhookRequest
     ) throws IOException, URISyntaxException;
 

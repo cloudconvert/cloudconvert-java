@@ -8,7 +8,7 @@ import com.cloudconvert.dto.request.OpenStackExportRequest;
 import com.cloudconvert.dto.request.S3ExportRequest;
 import com.cloudconvert.dto.request.SftpExportRequest;
 import com.cloudconvert.dto.request.UrlExportRequest;
-import com.cloudconvert.dto.response.TaskResponseData;
+import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AbstractResult;
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
-public abstract class AbstractExportFilesResource<TRDAR extends AbstractResult<TaskResponseData>> extends AbstractResource {
+public abstract class AbstractExportFilesResource<TRAR extends AbstractResult<TaskResponse>> extends AbstractResource {
 
     public static final String PATH_SEGMENT_EXPORT = "export";
     public static final String PATH_SEGMENT_URL = "url";
@@ -43,7 +43,7 @@ public abstract class AbstractExportFilesResource<TRDAR extends AbstractResult<T
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR url(
+    public abstract TRAR url(
         @NotNull final UrlExportRequest urlExportRequest
     ) throws IOException, URISyntaxException;
 
@@ -55,7 +55,7 @@ public abstract class AbstractExportFilesResource<TRDAR extends AbstractResult<T
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR s3(
+    public abstract TRAR s3(
         @NotNull final S3ExportRequest s3ExportRequest
     ) throws IOException, URISyntaxException;
 
@@ -67,7 +67,7 @@ public abstract class AbstractExportFilesResource<TRDAR extends AbstractResult<T
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR azureBlob(
+    public abstract TRAR azureBlob(
         @NotNull final AzureBlobExportRequest azureBlobExportRequest
     ) throws IOException, URISyntaxException;
 
@@ -79,7 +79,7 @@ public abstract class AbstractExportFilesResource<TRDAR extends AbstractResult<T
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR googleCloudStorage(
+    public abstract TRAR googleCloudStorage(
         @NotNull final GoogleCloudStorageExportRequest googleCloudStorageExportRequest
     ) throws IOException, URISyntaxException;
 
@@ -91,7 +91,7 @@ public abstract class AbstractExportFilesResource<TRDAR extends AbstractResult<T
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR openStack(
+    public abstract TRAR openStack(
         @NotNull final OpenStackExportRequest openStackExportRequest
     ) throws IOException, URISyntaxException;
 
@@ -103,7 +103,7 @@ public abstract class AbstractExportFilesResource<TRDAR extends AbstractResult<T
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR sftp(
+    public abstract TRAR sftp(
         @NotNull final SftpExportRequest sftpExportRequest
     ) throws IOException, URISyntaxException;
 }

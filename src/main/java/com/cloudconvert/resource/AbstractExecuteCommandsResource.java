@@ -3,14 +3,14 @@ package com.cloudconvert.resource;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.ExecuteCommandsTaskRequest;
-import com.cloudconvert.dto.response.TaskResponseData;
+import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AbstractResult;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-public abstract class AbstractExecuteCommandsResource<TRDAR extends AbstractResult<TaskResponseData>> extends AbstractResource {
+public abstract class AbstractExecuteCommandsResource<TRAR extends AbstractResult<TaskResponse>> extends AbstractResource {
 
     public static final String PATH_SEGMENT_COMMAND = "command";
 
@@ -26,11 +26,11 @@ public abstract class AbstractExecuteCommandsResource<TRDAR extends AbstractResu
      * All files that are created in the /output/ directory are available for following tasks (e.g. export tasks).
      *
      * @param executeCommandsTaskRequest {@link ExecuteCommandsTaskRequest}
-     * @return {@link TRDAR}
+     * @return {@link TRAR}
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR command(
+    public abstract TRAR command(
         @NotNull final ExecuteCommandsTaskRequest executeCommandsTaskRequest
     ) throws IOException, URISyntaxException;
 }

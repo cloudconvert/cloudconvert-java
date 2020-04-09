@@ -2,7 +2,7 @@ package com.cloudconvert.resource.async;
 
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
-import com.cloudconvert.dto.response.UserResponseData;
+import com.cloudconvert.dto.response.UserResponse;
 import com.cloudconvert.dto.result.AsyncResult;
 import com.cloudconvert.executor.AsyncRequestExecutor;
 import com.cloudconvert.resource.AbstractUsersResource;
@@ -15,7 +15,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 @Slf4j
-public class AsyncUsersResource extends AbstractUsersResource<AsyncResult<UserResponseData>> {
+public class AsyncUsersResource extends AbstractUsersResource<AsyncResult<UserResponse>> {
 
     private final AsyncRequestExecutor asyncRequestExecutor;
 
@@ -29,10 +29,10 @@ public class AsyncUsersResource extends AbstractUsersResource<AsyncResult<UserRe
     }
 
     @Override
-    public AsyncResult<UserResponseData> me() throws IOException, URISyntaxException {
+    public AsyncResult<UserResponse> me() throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_USERS, PATH_SEGMENT_ME));
 
-        return asyncRequestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), USER_RESPONSE_DATA_TYPE_REFERENCE);
+        return asyncRequestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), USER_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override

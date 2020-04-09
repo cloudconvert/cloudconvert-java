@@ -12,7 +12,6 @@ import com.cloudconvert.dto.request.UploadImportRequest;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
-import com.cloudconvert.dto.response.TaskResponseData;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.resource.params.Pagination;
 import com.cloudconvert.test.framework.AbstractTest;
@@ -64,10 +63,10 @@ public class TasksIntegrationTest extends AbstractTest {
     @Test
     public void convertFileTaskLifecycle() throws Exception {
         // Import upload (immediate upload)
-        final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream);
-        assertThat(uploadImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        final Result<TaskResponse> uploadImportTaskResponseResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream);
+        assertThat(uploadImportTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseDataResult.getBody().getData();
+        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseResult.getBody();
         assertThat(uploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // List convert formats
@@ -79,18 +78,18 @@ public class TasksIntegrationTest extends AbstractTest {
 
         // Convert
         final ConvertFilesTaskRequest convertFilesTaskRequest = new ConvertFilesTaskRequest().setInput(uploadImportTaskResponse.getId()).setInputFormat(JPG).setOutputFormat(PNG);
-        final Result<TaskResponseData> convertTaskResponseDataResult = cloudConvertClient.tasks().convert(convertFilesTaskRequest);
-        assertThat(convertTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
+        final Result<TaskResponse> convertTaskResponseResult = cloudConvertClient.tasks().convert(convertFilesTaskRequest);
+        assertThat(convertTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse convertTaskResponse = convertTaskResponseDataResult.getBody().getData();
+        final TaskResponse convertTaskResponse = convertTaskResponseResult.getBody();
         assertThat(convertTaskResponse.getOperation()).isEqualTo(Operation.CONVERT);
 
         // Wait
         final TaskResponse waitConvertTaskResponse = await().atMost(AT_MOST).until(() ->
                 waitConditionFactoryProvider.provide(convertTaskResponse.getId()).until(
                     () -> cloudConvertClient.tasks().wait(convertTaskResponse.getId()),
-                    awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
-                ).getBody().getData(),
+                    awaitTaskResponseResult -> awaitTaskResponseResult.getStatus() == HttpStatus.SC_OK
+                ).getBody(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
         );
         assertThat(waitConvertTaskResponse.getOperation()).isEqualTo(Operation.CONVERT);
@@ -98,10 +97,10 @@ public class TasksIntegrationTest extends AbstractTest {
         assertThat(waitConvertTaskResponse.getId()).isEqualTo(convertTaskResponse.getId());
 
         // Show
-        final Result<TaskResponseData> showConvertTaskResponseDataResult = cloudConvertClient.tasks().show(convertTaskResponse.getId());
-        assertThat(showConvertTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        final Result<TaskResponse> showConvertTaskResponseResult = cloudConvertClient.tasks().show(convertTaskResponse.getId());
+        assertThat(showConvertTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final TaskResponse showConvertTaskResponse = showConvertTaskResponseDataResult.getBody().getData();
+        final TaskResponse showConvertTaskResponse = showConvertTaskResponseResult.getBody();
         assertThat(showConvertTaskResponse.getOperation()).isEqualTo(Operation.CONVERT);
         assertThat(showConvertTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
         assertThat(showConvertTaskResponse.getId()).isEqualTo(convertTaskResponse.getId());
@@ -114,26 +113,26 @@ public class TasksIntegrationTest extends AbstractTest {
     @Test
     public void optimizeFileTaskLifecycle() throws Exception {
         // Import upload (immediate upload)
-        final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream);
-        assertThat(uploadImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        final Result<TaskResponse> uploadImportTaskResponseResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream);
+        assertThat(uploadImportTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseDataResult.getBody().getData();
+        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseResult.getBody();
         assertThat(uploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Optimize
         final OptimizeFilesTaskRequest optimizeFilesTaskRequest = new OptimizeFilesTaskRequest().setInput(uploadImportTaskResponse.getId()).setInputFormat(JPG);
-        final Result<TaskResponseData> optimizeTaskResponseDataResult = cloudConvertClient.tasks().optimize(optimizeFilesTaskRequest);
-        assertThat(optimizeTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
+        final Result<TaskResponse> optimizeTaskResponseResult = cloudConvertClient.tasks().optimize(optimizeFilesTaskRequest);
+        assertThat(optimizeTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse optimizeTaskResponse = optimizeTaskResponseDataResult.getBody().getData();
+        final TaskResponse optimizeTaskResponse = optimizeTaskResponseResult.getBody();
         assertThat(optimizeTaskResponse.getOperation()).isEqualTo(Operation.OPTIMIZE);
 
         // Wait
         final TaskResponse waitOptimizeTaskResponse = await().atMost(AT_MOST).until(() ->
                 waitConditionFactoryProvider.provide(optimizeTaskResponse.getId()).until(
                     () -> cloudConvertClient.tasks().wait(optimizeTaskResponse.getId()),
-                    awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
-                ).getBody().getData(),
+                    awaitTaskResponseResult -> awaitTaskResponseResult.getStatus() == HttpStatus.SC_OK
+                ).getBody(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
         );
         assertThat(waitOptimizeTaskResponse.getOperation()).isEqualTo(Operation.OPTIMIZE);
@@ -141,10 +140,10 @@ public class TasksIntegrationTest extends AbstractTest {
         assertThat(waitOptimizeTaskResponse.getId()).isEqualTo(optimizeTaskResponse.getId());
 
         // Show
-        final Result<TaskResponseData> showOptimizeTaskResponseDataResult = cloudConvertClient.tasks().show(optimizeTaskResponse.getId());
-        assertThat(showOptimizeTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        final Result<TaskResponse> showOptimizeTaskResponseResult = cloudConvertClient.tasks().show(optimizeTaskResponse.getId());
+        assertThat(showOptimizeTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final TaskResponse showOptimizeTaskResponse = showOptimizeTaskResponseDataResult.getBody().getData();
+        final TaskResponse showOptimizeTaskResponse = showOptimizeTaskResponseResult.getBody();
         assertThat(showOptimizeTaskResponse.getOperation()).isEqualTo(Operation.OPTIMIZE);
         assertThat(showOptimizeTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
         assertThat(showOptimizeTaskResponse.getId()).isEqualTo(optimizeTaskResponse.getId());
@@ -158,18 +157,18 @@ public class TasksIntegrationTest extends AbstractTest {
     public void captureWebsiteTaskLifecycle() throws Exception {
         // Capture
         final CaptureWebsitesTaskRequest captureWebsitesTaskRequest = new CaptureWebsitesTaskRequest().setUrl(URL).setOutputFormat(PDF);
-        final Result<TaskResponseData> captureTaskResponseDataResult = cloudConvertClient.tasks().capture(captureWebsitesTaskRequest);
-        assertThat(captureTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
+        final Result<TaskResponse> captureTaskResponseResult = cloudConvertClient.tasks().capture(captureWebsitesTaskRequest);
+        assertThat(captureTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse captureTaskResponse = captureTaskResponseDataResult.getBody().getData();
+        final TaskResponse captureTaskResponse = captureTaskResponseResult.getBody();
         assertThat(captureTaskResponse.getOperation()).isEqualTo(Operation.CAPTURE_WEBSITE);
 
         // Wait
         final TaskResponse waitCaptureTaskResponse = await().atMost(AT_MOST).until(() ->
                 waitConditionFactoryProvider.provide(captureTaskResponse.getId()).until(
                     () -> cloudConvertClient.tasks().wait(captureTaskResponse.getId()),
-                    awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
-                ).getBody().getData(),
+                    awaitTaskResponseResult -> awaitTaskResponseResult.getStatus() == HttpStatus.SC_OK
+                ).getBody(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
         );
         assertThat(waitCaptureTaskResponse.getOperation()).isEqualTo(Operation.CAPTURE_WEBSITE);
@@ -177,10 +176,10 @@ public class TasksIntegrationTest extends AbstractTest {
         assertThat(waitCaptureTaskResponse.getId()).isEqualTo(captureTaskResponse.getId());
 
         // Show
-        final Result<TaskResponseData> showCaptureTaskResponseDataResult = cloudConvertClient.tasks().show(captureTaskResponse.getId());
-        assertThat(showCaptureTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        final Result<TaskResponse> showCaptureTaskResponseResult = cloudConvertClient.tasks().show(captureTaskResponse.getId());
+        assertThat(showCaptureTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final TaskResponse showCaptureTaskResponse = showCaptureTaskResponseDataResult.getBody().getData();
+        final TaskResponse showCaptureTaskResponse = showCaptureTaskResponseResult.getBody();
         assertThat(showCaptureTaskResponse.getOperation()).isEqualTo(Operation.CAPTURE_WEBSITE);
         assertThat(showCaptureTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
         assertThat(showCaptureTaskResponse.getId()).isEqualTo(captureTaskResponse.getId());
@@ -193,26 +192,26 @@ public class TasksIntegrationTest extends AbstractTest {
     @Test
     public void createArchiveTaskLifecycle() throws Exception {
         // Import upload (immediate upload)
-        final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream);
-        assertThat(uploadImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        final Result<TaskResponse> uploadImportTaskResponseResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream);
+        assertThat(uploadImportTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseDataResult.getBody().getData();
+        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseResult.getBody();
         assertThat(uploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Archive
         final CreateArchivesTaskRequest createArchivesTaskRequest = new CreateArchivesTaskRequest().setInput(uploadImportTaskResponse.getId()).setOutputFormat(ZIP);
-        final Result<TaskResponseData> archiveTaskResponseDataResult = cloudConvertClient.tasks().archive(createArchivesTaskRequest);
-        assertThat(archiveTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
+        final Result<TaskResponse> archiveTaskResponseResult = cloudConvertClient.tasks().archive(createArchivesTaskRequest);
+        assertThat(archiveTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse archiveTaskResponse = archiveTaskResponseDataResult.getBody().getData();
+        final TaskResponse archiveTaskResponse = archiveTaskResponseResult.getBody();
         assertThat(archiveTaskResponse.getOperation()).isEqualTo(Operation.ARCHIVE);
 
         // Wait
         final TaskResponse waitArchiveTaskResponse = await().atMost(AT_MOST).until(() ->
                 waitConditionFactoryProvider.provide(archiveTaskResponse.getId()).until(
                     () -> cloudConvertClient.tasks().wait(archiveTaskResponse.getId()),
-                    awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
-                ).getBody().getData(),
+                    awaitTaskResponseResult -> awaitTaskResponseResult.getStatus() == HttpStatus.SC_OK
+                ).getBody(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
         );
         assertThat(waitArchiveTaskResponse.getOperation()).isEqualTo(Operation.ARCHIVE);
@@ -220,10 +219,10 @@ public class TasksIntegrationTest extends AbstractTest {
         assertThat(waitArchiveTaskResponse.getId()).isEqualTo(archiveTaskResponse.getId());
 
         // Show
-        final Result<TaskResponseData> showArchiveTaskResponseDataResult = cloudConvertClient.tasks().show(archiveTaskResponse.getId());
-        assertThat(showArchiveTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        final Result<TaskResponse> showArchiveTaskResponseResult = cloudConvertClient.tasks().show(archiveTaskResponse.getId());
+        assertThat(showArchiveTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final TaskResponse showArchiveTaskResponse = showArchiveTaskResponseDataResult.getBody().getData();
+        final TaskResponse showArchiveTaskResponse = showArchiveTaskResponseResult.getBody();
         assertThat(showArchiveTaskResponse.getOperation()).isEqualTo(Operation.ARCHIVE);
         assertThat(showArchiveTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
         assertThat(showArchiveTaskResponse.getId()).isEqualTo(archiveTaskResponse.getId());
@@ -236,28 +235,28 @@ public class TasksIntegrationTest extends AbstractTest {
     @Test
     public void executeCommandTaskLifecycle() throws Exception {
         // Import upload (immediate upload)
-        final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream);
-        assertThat(uploadImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        final Result<TaskResponse> uploadImportTaskResponseResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream);
+        assertThat(uploadImportTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseDataResult.getBody().getData();
+        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseResult.getBody();
         assertThat(uploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Command
         final ExecuteCommandsTaskRequest executeCommandsTaskRequest = new ExecuteCommandsTaskRequest()
             .setInput(uploadImportTaskResponse.getId()).setEngine(ExecuteCommandsTaskRequest.Engine.GRAPHICSMAGICK)
             .setCommand(ExecuteCommandsTaskRequest.Command.GM).setArguments("version");
-        final Result<TaskResponseData> executeTaskResponseDataResult = cloudConvertClient.tasks().command(executeCommandsTaskRequest);
-        assertThat(executeTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
+        final Result<TaskResponse> executeTaskResponseResult = cloudConvertClient.tasks().command(executeCommandsTaskRequest);
+        assertThat(executeTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse executeTaskResponse = executeTaskResponseDataResult.getBody().getData();
+        final TaskResponse executeTaskResponse = executeTaskResponseResult.getBody();
         assertThat(executeTaskResponse.getOperation()).isEqualTo(Operation.COMMAND);
 
         // Wait
         final TaskResponse waitExecuteTaskResponse = await().atMost(AT_MOST).until(() ->
                 waitConditionFactoryProvider.provide(executeTaskResponse.getId()).until(
                     () -> cloudConvertClient.tasks().wait(executeTaskResponse.getId()),
-                    awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
-                ).getBody().getData(),
+                    awaitTaskResponseResult -> awaitTaskResponseResult.getStatus() == HttpStatus.SC_OK
+                ).getBody(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
         );
         assertThat(waitExecuteTaskResponse.getOperation()).isEqualTo(Operation.COMMAND);
@@ -265,10 +264,10 @@ public class TasksIntegrationTest extends AbstractTest {
         assertThat(waitExecuteTaskResponse.getId()).isEqualTo(executeTaskResponse.getId());
 
         // Show
-        final Result<TaskResponseData> showExecuteTaskResponseDataResult = cloudConvertClient.tasks().show(executeTaskResponse.getId());
-        assertThat(showExecuteTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        final Result<TaskResponse> showExecuteTaskResponseResult = cloudConvertClient.tasks().show(executeTaskResponse.getId());
+        assertThat(showExecuteTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final TaskResponse showExecuteTaskResponse = showExecuteTaskResponseDataResult.getBody().getData();
+        final TaskResponse showExecuteTaskResponse = showExecuteTaskResponseResult.getBody();
         assertThat(showExecuteTaskResponse.getOperation()).isEqualTo(Operation.COMMAND);
         assertThat(showExecuteTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
         assertThat(showExecuteTaskResponse.getId()).isEqualTo(executeTaskResponse.getId());

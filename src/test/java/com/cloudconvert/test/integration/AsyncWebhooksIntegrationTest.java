@@ -39,7 +39,7 @@ public class AsyncWebhooksIntegrationTest extends AbstractTest {
     public void userLifecycle() throws Exception {
         final Result<UserResponseData> userResponseDataResult = asyncCloudConvertClient.users().me().get();
         assertThat(userResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
-        assertThat(userResponseDataResult.getBody()).get().isNotNull();
+        assertThat(userResponseDataResult.getBody()).isNotNull();
     }
 
     @Test
@@ -49,9 +49,9 @@ public class AsyncWebhooksIntegrationTest extends AbstractTest {
             .setEvents(ImmutableList.of(Event.JOB_CREATED, Event.JOB_FAILED, Event.JOB_FINISHED));
         final Result<WebhookResponseData> createWebhookResponseDataResult = asyncCloudConvertClient.webhooks().create(webhookRequest).get();
         assertThat(createWebhookResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
-        assertThat(createWebhookResponseDataResult.getBody()).get().isNotNull();
+        assertThat(createWebhookResponseDataResult.getBody()).isNotNull();
 
-        final WebhookResponse createWebhookResponse = createWebhookResponseDataResult.getBody().get().getData();
+        final WebhookResponse createWebhookResponse = createWebhookResponseDataResult.getBody().getData();
         assertThat(createWebhookResponse.getSigningSecret()).isNotNull();
 
         // List

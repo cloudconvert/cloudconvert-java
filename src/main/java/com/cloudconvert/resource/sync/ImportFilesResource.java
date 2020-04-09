@@ -80,7 +80,7 @@ public class ImportFilesResource extends AbstractImportFilesResource<Result<Task
         @NotNull final Result<TaskResponseData> taskResponseDataResult, @NotNull final File file
     ) throws IOException, URISyntaxException {
         if (HttpStatus.SC_CREATED == taskResponseDataResult.getStatus()) {
-            final TaskResponse taskResponse = taskResponseDataResult.getBody().get().getData();
+            final TaskResponse taskResponse = taskResponseDataResult.getBody().getData();
 
             return upload(taskResponse.getId(), taskResponse.getResult().getForm(), file);
         } else {
@@ -112,7 +112,7 @@ public class ImportFilesResource extends AbstractImportFilesResource<Result<Task
         @NotNull final Result<TaskResponseData> taskResponseDataResult, @NotNull final InputStream inputStream
     ) throws IOException, URISyntaxException {
         if (HttpStatus.SC_CREATED == taskResponseDataResult.getStatus()) {
-            final TaskResponse taskResponse = taskResponseDataResult.getBody().get().getData();
+            final TaskResponse taskResponse = taskResponseDataResult.getBody().getData();
 
             return upload(taskResponse.getId(), taskResponse.getResult().getForm(), inputStream);
         } else {

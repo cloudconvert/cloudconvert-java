@@ -72,7 +72,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest());
         assertThat(uploadImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseDataResult.getBody().getData();
         assertThat(uploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
         assertThat(uploadImportTaskResponse.getStatus()).isEqualTo(Status.WAITING);
 
@@ -80,7 +80,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> cancelUploadImportTaskResponseDataResult = cloudConvertClient.tasks().cancel(uploadImportTaskResponse.getId());
         assertThat(cancelUploadImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final TaskResponse cancelUploadImportTaskResponse = cancelUploadImportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse cancelUploadImportTaskResponse = cancelUploadImportTaskResponseDataResult.getBody().getData();
         assertThat(cancelUploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
         assertThat(cancelUploadImportTaskResponse.getStatus()).isEqualTo(Status.ERROR);
         assertThat(cancelUploadImportTaskResponse.getCode()).isEqualTo("CANCELLED");
@@ -90,7 +90,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> retryUploadImportTaskResponseDataResult = cloudConvertClient.tasks().retry(uploadImportTaskResponse.getId());
         assertThat(retryUploadImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse retryUploadImportTaskResponse = retryUploadImportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse retryUploadImportTaskResponse = retryUploadImportTaskResponseDataResult.getBody().getData();
         assertThat(retryUploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
         assertThat(retryUploadImportTaskResponse.getStatus()).isEqualTo(Status.WAITING);
 
@@ -98,7 +98,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> uploadTaskResponseDataResult = cloudConvertClient.importUsing().upload(retryUploadImportTaskResponseDataResult, jpgTest1InputStream);
         assertThat(uploadTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final TaskResponse uploadTaskResponse = uploadTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse uploadTaskResponse = uploadTaskResponseDataResult.getBody().getData();
         assertThat(uploadTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Wait import upload
@@ -106,7 +106,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
                 waitConditionFactoryProvider.provide(retryUploadImportTaskResponse.getId()).until(
                     () -> cloudConvertClient.tasks().wait(retryUploadImportTaskResponse.getId()),
                     awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
-                ).getBody().get().getData(),
+                ).getBody().getData(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
         );
         assertThat(waitRetryUploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
@@ -120,7 +120,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream);
         assertThat(uploadImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseDataResult.getBody().getData();
         assertThat(uploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Wait import upload
@@ -128,7 +128,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
                 waitConditionFactoryProvider.provide(uploadImportTaskResponse.getId()).until(
                     () -> cloudConvertClient.tasks().wait(uploadImportTaskResponse.getId()),
                     awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
-                ).getBody().get().getData(),
+                ).getBody().getData(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
         );
         assertThat(waitUploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
@@ -139,7 +139,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> urlExportTaskResponseDataResult = cloudConvertClient.exportUsing().url(urlExportRequest);
         assertThat(urlExportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse urlExportTaskResponse = urlExportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse urlExportTaskResponse = urlExportTaskResponseDataResult.getBody().getData();
         assertThat(urlExportTaskResponse.getOperation()).isEqualTo(Operation.EXPORT_URL);
 
         // Wait export url
@@ -147,7 +147,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
                 waitConditionFactoryProvider.provide(urlExportTaskResponse.getId()).until(
                     () -> cloudConvertClient.tasks().wait(urlExportTaskResponse.getId()),
                     awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
-                ).getBody().get().getData(),
+                ).getBody().getData(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
         );
         assertThat(waitUrlExportTaskResponse.getOperation()).isEqualTo(Operation.EXPORT_URL);
@@ -157,7 +157,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         // Download file
         final Result<InputStream> inputStreamResult = cloudConvertClient.files().download(waitUrlExportTaskResponse.getResult().getFiles().get(0).get("url"));
         assertThat(inputStreamResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
-        assertThat(MimeTypes.getDefaultMimeTypes().forName(tika.detect(inputStreamResult.getBody().get())).getName()).isEqualTo("image/jpeg");
+        assertThat(MimeTypes.getDefaultMimeTypes().forName(tika.detect(inputStreamResult.getBody())).getName()).isEqualTo("image/jpeg");
     }
 
     @Test
@@ -166,7 +166,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1File);
         assertThat(uploadImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseDataResult.getBody().getData();
         assertThat(uploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Wait import upload
@@ -174,7 +174,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
                 waitConditionFactoryProvider.provide(uploadImportTaskResponse.getId()).until(
                     () -> cloudConvertClient.tasks().wait(uploadImportTaskResponse.getId()),
                     awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
-                ).getBody().get().getData(),
+                ).getBody().getData(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
         );
         assertThat(waitUploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
@@ -185,7 +185,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> urlExportTaskResponseDataResult = cloudConvertClient.exportUsing().url(urlExportRequest);
         assertThat(urlExportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse urlExportTaskResponse = urlExportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse urlExportTaskResponse = urlExportTaskResponseDataResult.getBody().getData();
         assertThat(urlExportTaskResponse.getOperation()).isEqualTo(Operation.EXPORT_URL);
 
         // Wait export url
@@ -193,7 +193,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
                 waitConditionFactoryProvider.provide(urlExportTaskResponse.getId()).until(
                     () -> cloudConvertClient.tasks().wait(urlExportTaskResponse.getId()),
                     awaitTaskResponseDataResult -> awaitTaskResponseDataResult.getStatus() == HttpStatus.SC_OK
-                ).getBody().get().getData(),
+                ).getBody().getData(),
             waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
         );
         assertThat(waitUrlExportTaskResponse.getOperation()).isEqualTo(Operation.EXPORT_URL);
@@ -203,7 +203,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         // Donload file
         final Result<InputStream> inputStreamResult = cloudConvertClient.files().download(waitUrlExportTaskResponse.getResult().getFiles().get(0).get("url"));
         assertThat(inputStreamResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
-        assertThat(MimeTypes.getDefaultMimeTypes().forName(tika.detect(inputStreamResult.getBody().get())).getName()).isEqualTo("image/jpeg");
+        assertThat(MimeTypes.getDefaultMimeTypes().forName(tika.detect(inputStreamResult.getBody())).getName()).isEqualTo("image/jpeg");
     }
 
     /**
@@ -217,7 +217,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> urlImportTaskResponseDataResult = cloudConvertClient.importUsing().url(urlImportRequest);
         assertThat(urlImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse urlImportTaskResponse = urlImportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse urlImportTaskResponse = urlImportTaskResponseDataResult.getBody().getData();
         assertThat(urlImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_URL);
 
         // Import upload
@@ -225,7 +225,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(uploadImportRequest);
         assertThat(uploadImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseDataResult.getBody().getData();
         assertThat(uploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Import s3
@@ -234,7 +234,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> s3ImportTaskResponseDataResult = cloudConvertClient.importUsing().s3(s3ImportRequest);
         assertThat(s3ImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse s3ImportTaskResponse = s3ImportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse s3ImportTaskResponse = s3ImportTaskResponseDataResult.getBody().getData();
         assertThat(s3ImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_S3);
 
         // Import Azure Blob
@@ -243,7 +243,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> azureBlobImportTaskResponseDataResult = cloudConvertClient.importUsing().azureBlob(azureBlobImportRequest);
         assertThat(azureBlobImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse azureBlobImportTaskResponse = azureBlobImportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse azureBlobImportTaskResponse = azureBlobImportTaskResponseDataResult.getBody().getData();
         assertThat(azureBlobImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_AZURE_BLOB);
 
         // Import Google Cloud Storage
@@ -253,7 +253,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> googleCloudStorageImportTaskResponseDataResult = cloudConvertClient.importUsing().googleCloudStorage(googleCloudStorageImportRequest);
         assertThat(googleCloudStorageImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse googleCloudStorageImportTaskResponse = googleCloudStorageImportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse googleCloudStorageImportTaskResponse = googleCloudStorageImportTaskResponseDataResult.getBody().getData();
         assertThat(googleCloudStorageImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_GOOGLE_CLOUD_STORAGE);
 
         // Import Open Stack
@@ -263,7 +263,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> openStackImportTaskResponseDataResult = cloudConvertClient.importUsing().openStack(openStackImportRequest);
         assertThat(openStackImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse openStackImportTaskResponse = openStackImportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse openStackImportTaskResponse = openStackImportTaskResponseDataResult.getBody().getData();
         assertThat(openStackImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_OPENSTACK);
 
         // Import SFTP
@@ -272,7 +272,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> sftpImportTaskResponseDataResult = cloudConvertClient.importUsing().sftp(sftpImportRequest);
         assertThat(sftpImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse sftpImportTaskResponse = sftpImportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse sftpImportTaskResponse = sftpImportTaskResponseDataResult.getBody().getData();
         assertThat(sftpImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_SFTP);
     }
 
@@ -286,7 +286,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> uploadImportTaskResponseDataResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream);
         assertThat(uploadImportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 
-        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseDataResult.getBody().getData();
         assertThat(uploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Export url
@@ -294,7 +294,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> urlExportTaskResponseDataResult = cloudConvertClient.exportUsing().url(urlExportRequest);
         assertThat(urlExportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse urlExportTaskResponse = urlExportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse urlExportTaskResponse = urlExportTaskResponseDataResult.getBody().getData();
         assertThat(urlExportTaskResponse.getOperation()).isEqualTo(Operation.EXPORT_URL);
 
         // Export s3
@@ -304,7 +304,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> s3ExportTaskResponseDataResult = cloudConvertClient.exportUsing().s3(s3ExportRequest);
         assertThat(s3ExportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse s3ExportTaskResponse = s3ExportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse s3ExportTaskResponse = s3ExportTaskResponseDataResult.getBody().getData();
         assertThat(s3ExportTaskResponse.getOperation()).isEqualTo(Operation.EXPORT_S3);
 
         // Export Azure Blob
@@ -314,7 +314,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> azureBlobExportTaskResponseDataResult = cloudConvertClient.exportUsing().azureBlob(azureBlobExportRequest);
         assertThat(azureBlobExportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse azureBlobExportTaskResponse = azureBlobExportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse azureBlobExportTaskResponse = azureBlobExportTaskResponseDataResult.getBody().getData();
         assertThat(azureBlobExportTaskResponse.getOperation()).isEqualTo(Operation.EXPORT_AZURE_BLOB);
 
         // Export Google Cloud Storage
@@ -324,7 +324,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> googleCloudStorageExportTaskResponseDataResult = cloudConvertClient.exportUsing().googleCloudStorage(googleCloudStorageExportRequest);
         assertThat(googleCloudStorageExportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse googleCloudStorageExportTaskResponse = googleCloudStorageExportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse googleCloudStorageExportTaskResponse = googleCloudStorageExportTaskResponseDataResult.getBody().getData();
         assertThat(googleCloudStorageExportTaskResponse.getOperation()).isEqualTo(Operation.EXPORT_GOOGLE_CLOUD_STORAGE);
 
         // Export Open Stack
@@ -334,7 +334,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> openStackExportTaskResponseDataResult = cloudConvertClient.exportUsing().openStack(openStackExportRequest);
         assertThat(openStackExportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse openStackExportTaskResponse = openStackExportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse openStackExportTaskResponse = openStackExportTaskResponseDataResult.getBody().getData();
         assertThat(openStackExportTaskResponse.getOperation()).isEqualTo(Operation.EXPORT_OPENSTACK);
 
         // Export SFTP
@@ -343,7 +343,7 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
         final Result<TaskResponseData> sftpExportTaskResponseDataResult = cloudConvertClient.exportUsing().sftp(sftpExportRequest);
         assertThat(sftpExportTaskResponseDataResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
 
-        final TaskResponse sftpExportTaskResponse = sftpExportTaskResponseDataResult.getBody().get().getData();
+        final TaskResponse sftpExportTaskResponse = sftpExportTaskResponseDataResult.getBody().getData();
         assertThat(sftpExportTaskResponse.getOperation()).isEqualTo(Operation.EXPORT_SFTP);
     }
 

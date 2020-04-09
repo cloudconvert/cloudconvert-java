@@ -1,7 +1,7 @@
-package com.cloudconvert.processor.successful;
+package com.cloudconvert.processor.response.successful;
 
 import com.cloudconvert.dto.result.Result;
-import com.cloudconvert.processor.ResponseProcessor;
+import com.cloudconvert.processor.response.ResponseProcessor;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.http.Header;
 

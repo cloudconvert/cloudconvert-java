@@ -5,9 +5,8 @@ import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.WebhookRequest;
 import com.cloudconvert.dto.response.Pageable;
-import com.cloudconvert.dto.response.UserResponseData;
+import com.cloudconvert.dto.response.UserResponse;
 import com.cloudconvert.dto.response.WebhookResponse;
-import com.cloudconvert.dto.response.WebhookResponseData;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.executor.RequestExecutor;
 import com.cloudconvert.resource.AbstractResource;
@@ -73,11 +72,11 @@ public class WebhooksUnitTest extends AbstractTest {
 
     @Test
     public void users_me() throws Exception {
-        final Result<UserResponseData> userResponseDataResult = Result.<UserResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.USER_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(userResponseDataResult);
+        final Result<UserResponse> userResponseResult = Result.<UserResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.USER_RESPONSE_TYPE_REFERENCE))).thenReturn(userResponseResult);
 
-        assertThat(cloudConvertClient.users().me()).isEqualTo(userResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.USER_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.users().me()).isEqualTo(userResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.USER_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -94,11 +93,11 @@ public class WebhooksUnitTest extends AbstractTest {
     @Test
     public void webhooks_create() throws Exception {
         final WebhookRequest expectedWebhookRequest = new WebhookRequest().setUrl("webhooks-url");
-        final Result<WebhookResponseData> webhookResponseDataResult = Result.<WebhookResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.WEBHOOKS_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(webhookResponseDataResult);
+        final Result<WebhookResponse> webhookResponseResult = Result.<WebhookResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.WEBHOOKS_RESPONSE_TYPE_REFERENCE))).thenReturn(webhookResponseResult);
 
-        assertThat(cloudConvertClient.webhooks().create(expectedWebhookRequest)).isEqualTo(webhookResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.WEBHOOKS_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.webhooks().create(expectedWebhookRequest)).isEqualTo(webhookResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.WEBHOOKS_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 

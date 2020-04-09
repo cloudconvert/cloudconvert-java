@@ -5,7 +5,7 @@ import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.ConvertFilesTaskRequest;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
-import com.cloudconvert.dto.response.TaskResponseData;
+import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.executor.RequestExecutor;
 import com.cloudconvert.resource.AbstractConvertFilesResource;
@@ -32,7 +32,7 @@ import java.util.Map;
 
 @Slf4j
 public class ConvertFilesResource extends AbstractConvertFilesResource<
-    Result<TaskResponseData>, Result<Pageable<OperationResponse>>> {
+    Result<TaskResponse>, Result<Pageable<OperationResponse>>> {
 
     private final RequestExecutor requestExecutor;
 
@@ -54,13 +54,13 @@ public class ConvertFilesResource extends AbstractConvertFilesResource<
     }
 
     @Override
-    public Result<TaskResponseData> convert(
+    public Result<TaskResponse> convert(
         @NotNull final ConvertFilesTaskRequest convertFilesTaskRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_CONVERT));
         final HttpEntity httpEntity = getHttpEntity(convertFilesTaskRequest);
 
-        return requestExecutor.execute(getHttpUriRequest(HttpPost.class, uri, httpEntity), TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(getHttpUriRequest(HttpPost.class, uri, httpEntity), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override

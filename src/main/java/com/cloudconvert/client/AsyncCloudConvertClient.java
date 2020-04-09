@@ -5,14 +5,11 @@ import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.PropertyFileSettingsProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.response.JobResponse;
-import com.cloudconvert.dto.response.JobResponseData;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
-import com.cloudconvert.dto.response.TaskResponseData;
-import com.cloudconvert.dto.response.UserResponseData;
+import com.cloudconvert.dto.response.UserResponse;
 import com.cloudconvert.dto.response.WebhookResponse;
-import com.cloudconvert.dto.response.WebhookResponseData;
 import com.cloudconvert.dto.result.AsyncResult;
 import com.cloudconvert.executor.AsyncRequestExecutor;
 import com.cloudconvert.extractor.ResultExtractor;
@@ -34,9 +31,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class AsyncCloudConvertClient extends AbstractCloudConvertClient<AsyncResult<Void>,
-    AsyncResult<InputStream>, AsyncResult<TaskResponseData>, AsyncResult<Pageable<TaskResponse>>,
-    AsyncResult<JobResponseData>, AsyncResult<Pageable<JobResponse>>, AsyncResult<WebhookResponseData>,
-    AsyncResult<Pageable<WebhookResponse>>, AsyncResult<UserResponseData>, AsyncResult<Pageable<OperationResponse>>> {
+    AsyncResult<InputStream>, AsyncResult<TaskResponse>, AsyncResult<Pageable<TaskResponse>>,
+    AsyncResult<JobResponse>, AsyncResult<Pageable<JobResponse>>, AsyncResult<WebhookResponse>,
+    AsyncResult<Pageable<WebhookResponse>>, AsyncResult<UserResponse>, AsyncResult<Pageable<OperationResponse>>> {
 
     public AsyncCloudConvertClient() throws IOException {
         this(new PropertyFileSettingsProvider());

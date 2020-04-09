@@ -10,7 +10,6 @@ import com.cloudconvert.dto.request.SftpImportRequest;
 import com.cloudconvert.dto.request.UploadImportRequest;
 import com.cloudconvert.dto.request.UrlImportRequest;
 import com.cloudconvert.dto.response.TaskResponse;
-import com.cloudconvert.dto.response.TaskResponseData;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.executor.RequestExecutor;
 import com.cloudconvert.resource.AbstractImportFilesResource;
@@ -30,7 +29,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 @Slf4j
-public class ImportFilesResource extends AbstractImportFilesResource<Result<TaskResponseData>> {
+public class ImportFilesResource extends AbstractImportFilesResource<Result<TaskResponse>> {
 
     private final RequestExecutor requestExecutor;
     private final TasksResource tasksResource;
@@ -47,49 +46,49 @@ public class ImportFilesResource extends AbstractImportFilesResource<Result<Task
     }
 
     @Override
-    public Result<TaskResponseData> url(
+    public Result<TaskResponse> url(
         @NotNull final UrlImportRequest urlImportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_URL));
         final HttpEntity httpEntity = getHttpEntity(urlImportRequest);
         final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
 
-        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
-    public Result<TaskResponseData> upload(
+    public Result<TaskResponse> upload(
         @NotNull final UploadImportRequest uploadImportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_UPLOAD));
         final HttpEntity httpEntity = getHttpEntity(uploadImportRequest);
         final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
 
-        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
-    public Result<TaskResponseData> upload(
+    public Result<TaskResponse> upload(
         @NotNull final UploadImportRequest uploadImportRequest, @NotNull final File file
     ) throws IOException, URISyntaxException {
         return upload(upload(uploadImportRequest), file);
     }
 
     @Override
-    public Result<TaskResponseData> upload(
-        @NotNull final Result<TaskResponseData> taskResponseDataResult, @NotNull final File file
+    public Result<TaskResponse> upload(
+        @NotNull final Result<TaskResponse> TaskResponseResult, @NotNull final File file
     ) throws IOException, URISyntaxException {
-        if (HttpStatus.SC_CREATED == taskResponseDataResult.getStatus()) {
-            final TaskResponse taskResponse = taskResponseDataResult.getBody().getData();
+        if (HttpStatus.SC_CREATED == TaskResponseResult.getStatus()) {
+            final TaskResponse taskResponse = TaskResponseResult.getBody();
 
             return upload(taskResponse.getId(), taskResponse.getResult().getForm(), file);
         } else {
-            return Result.<TaskResponseData>builder().status(taskResponseDataResult.getStatus()).message(taskResponseDataResult.getMessage()).build();
+            return Result.<TaskResponse>builder().status(TaskResponseResult.getStatus()).message(TaskResponseResult.getMessage()).build();
         }
     }
 
     @Override
-    public Result<TaskResponseData> upload(
+    public Result<TaskResponse> upload(
         @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final File file
     ) throws IOException, URISyntaxException {
 
@@ -101,27 +100,27 @@ public class ImportFilesResource extends AbstractImportFilesResource<Result<Task
     }
 
     @Override
-    public Result<TaskResponseData> upload(
+    public Result<TaskResponse> upload(
         @NotNull final UploadImportRequest uploadImportRequest, @NotNull final InputStream inputStream
     ) throws IOException, URISyntaxException {
         return upload(upload(uploadImportRequest), inputStream);
     }
 
     @Override
-    public Result<TaskResponseData> upload(
-        @NotNull final Result<TaskResponseData> taskResponseDataResult, @NotNull final InputStream inputStream
+    public Result<TaskResponse> upload(
+        @NotNull final Result<TaskResponse> TaskResponseResult, @NotNull final InputStream inputStream
     ) throws IOException, URISyntaxException {
-        if (HttpStatus.SC_CREATED == taskResponseDataResult.getStatus()) {
-            final TaskResponse taskResponse = taskResponseDataResult.getBody().getData();
+        if (HttpStatus.SC_CREATED == TaskResponseResult.getStatus()) {
+            final TaskResponse taskResponse = TaskResponseResult.getBody();
 
             return upload(taskResponse.getId(), taskResponse.getResult().getForm(), inputStream);
         } else {
-            return Result.<TaskResponseData>builder().status(taskResponseDataResult.getStatus()).message(taskResponseDataResult.getMessage()).build();
+            return Result.<TaskResponse>builder().status(TaskResponseResult.getStatus()).message(TaskResponseResult.getMessage()).build();
         }
     }
 
     @Override
-    public Result<TaskResponseData> upload(
+    public Result<TaskResponse> upload(
         @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final InputStream inputStream
     ) throws IOException, URISyntaxException {
         final URI multipartUri = new URI(taskResponseResultForm.getUrl());
@@ -131,7 +130,7 @@ public class ImportFilesResource extends AbstractImportFilesResource<Result<Task
         return uploadPostProcess(taskId, requestExecutor.execute(multipartHttpUriRequest, VOID_TYPE_REFERENCE));
     }
 
-    private Result<TaskResponseData> uploadPostProcess(
+    private Result<TaskResponse> uploadPostProcess(
         final String taskId, final Result<Void> multipartVoidResult
     ) throws IOException, URISyntaxException {
         if (HttpStatus.SC_CREATED == multipartVoidResult.getStatus()) {
@@ -145,66 +144,66 @@ public class ImportFilesResource extends AbstractImportFilesResource<Result<Task
             if (HttpStatus.SC_CREATED == redirectVoidResult.getStatus()) {
                 return tasksResource.show(taskId);
             } else {
-                return Result.<TaskResponseData>builder().status(redirectVoidResult.getStatus()).message(redirectVoidResult.getMessage()).build();
+                return Result.<TaskResponse>builder().status(redirectVoidResult.getStatus()).message(redirectVoidResult.getMessage()).build();
             }
         } else {
-            return Result.<TaskResponseData>builder().status(multipartVoidResult.getStatus()).message(multipartVoidResult.getMessage()).build();
+            return Result.<TaskResponse>builder().status(multipartVoidResult.getStatus()).message(multipartVoidResult.getMessage()).build();
         }
     }
 
     @Override
-    public Result<TaskResponseData> s3(
+    public Result<TaskResponse> s3(
         @NotNull final S3ImportRequest s3ImportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_S3));
         final HttpEntity httpEntity = getHttpEntity(s3ImportRequest);
         final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
 
-        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
-    public Result<TaskResponseData> azureBlob(
+    public Result<TaskResponse> azureBlob(
         @NotNull final AzureBlobImportRequest azureBlobImportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.<String>builder().add(PATH_SEGMENT_IMPORT).addAll(PATH_SEGMENTS_AZURE_BLOB).build());
         final HttpEntity httpEntity = getHttpEntity(azureBlobImportRequest);
         final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
 
-        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
-    public Result<TaskResponseData> googleCloudStorage(
+    public Result<TaskResponse> googleCloudStorage(
         @NotNull final GoogleCloudStorageImportRequest googleCloudStorageImportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_GOOGLE_CLOUD_STORAGE));
         final HttpEntity httpEntity = getHttpEntity(googleCloudStorageImportRequest);
         final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
 
-        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
-    public Result<TaskResponseData> openStack(
+    public Result<TaskResponse> openStack(
         @NotNull final OpenStackImportRequest openStackImportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_OPENSTACK));
         final HttpEntity httpEntity = getHttpEntity(openStackImportRequest);
         final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
 
-        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
-    public Result<TaskResponseData> sftp(
+    public Result<TaskResponse> sftp(
         @NotNull final SftpImportRequest sftpImportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_SFTP));
         final HttpEntity httpEntity = getHttpEntity(sftpImportRequest);
         final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
 
-        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(httpUriRequest, TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override

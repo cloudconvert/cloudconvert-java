@@ -11,7 +11,6 @@ import com.cloudconvert.dto.request.OptimizeFilesTaskRequest;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
-import com.cloudconvert.dto.response.TaskResponseData;
 import com.cloudconvert.dto.result.AbstractResult;
 import com.cloudconvert.resource.params.Filter;
 import com.cloudconvert.resource.params.Include;
@@ -25,7 +24,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractTasksResource<TRDAR extends AbstractResult<TaskResponseData>,
+public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResponse>,
     TRPAR extends AbstractResult<Pageable<TaskResponse>>, VAR extends AbstractResult<Void>,
     ORPAR extends AbstractResult<Pageable<OperationResponse>>> extends AbstractResource {
 
@@ -36,28 +35,28 @@ public abstract class AbstractTasksResource<TRDAR extends AbstractResult<TaskRes
     public static final String PATH_SEGMENT_RETRY = "retry";
 
     @Getter
-    private final AbstractConvertFilesResource<TRDAR, ORPAR> abstractConvertFilesResource;
+    private final AbstractConvertFilesResource<TRAR, ORPAR> abstractConvertFilesResource;
 
     @Getter
-    private final AbstractOptimizeFilesResource<TRDAR> abstractOptimizeFilesResource;
+    private final AbstractOptimizeFilesResource<TRAR> abstractOptimizeFilesResource;
 
     @Getter
-    private final AbstractCaptureWebsitesResource<TRDAR> abstractCaptureWebsitesResource;
+    private final AbstractCaptureWebsitesResource<TRAR> abstractCaptureWebsitesResource;
 
     @Getter
-    private final AbstractMergeFilesResource<TRDAR> abstractMergeFilesResource;
+    private final AbstractMergeFilesResource<TRAR> abstractMergeFilesResource;
 
     @Getter
-    private final AbstractCreateArchivesResource<TRDAR> abstractCreateArchivesResource;
+    private final AbstractCreateArchivesResource<TRAR> abstractCreateArchivesResource;
 
     @Getter
-    private final AbstractExecuteCommandsResource<TRDAR> abstractExecuteCommandsResource;
+    private final AbstractExecuteCommandsResource<TRAR> abstractExecuteCommandsResource;
 
     public AbstractTasksResource(
         final SettingsProvider settingsProvider, final ObjectMapperProvider objectMapperProvider,
-        final AbstractConvertFilesResource<TRDAR, ORPAR> abstractConvertFilesResource, final AbstractOptimizeFilesResource<TRDAR> abstractOptimizeFilesResource,
-        final AbstractCaptureWebsitesResource<TRDAR> abstractCaptureWebsitesResource, final AbstractMergeFilesResource<TRDAR> abstractMergeFilesResource,
-        final AbstractCreateArchivesResource<TRDAR> abstractCreateArchivesResource, final AbstractExecuteCommandsResource<TRDAR> abstractExecuteCommandsResource
+        final AbstractConvertFilesResource<TRAR, ORPAR> abstractConvertFilesResource, final AbstractOptimizeFilesResource<TRAR> abstractOptimizeFilesResource,
+        final AbstractCaptureWebsitesResource<TRAR> abstractCaptureWebsitesResource, final AbstractMergeFilesResource<TRAR> abstractMergeFilesResource,
+        final AbstractCreateArchivesResource<TRAR> abstractCreateArchivesResource, final AbstractExecuteCommandsResource<TRAR> abstractExecuteCommandsResource
     ) {
         super(settingsProvider, objectMapperProvider);
 
@@ -73,11 +72,11 @@ public abstract class AbstractTasksResource<TRDAR extends AbstractResult<TaskRes
      * Show a task. Requires the task.read scope.
      *
      * @param taskId task id
-     * @return {@link TRDAR}
+     * @return {@link TRAR}
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR show(
+    public abstract TRAR show(
         @NotNull final String taskId
     ) throws IOException, URISyntaxException;
 
@@ -86,11 +85,11 @@ public abstract class AbstractTasksResource<TRDAR extends AbstractResult<TaskRes
      *
      * @param taskId   task id
      * @param includes (optional) Include retries, depends_on_tasks, payload and/or job in the result. Multiple include values are separated by , (comma).
-     * @return {@link TRDAR}
+     * @return {@link TRAR}
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR show(
+    public abstract TRAR show(
         @NotNull final String taskId, @NotNull final List<Include> includes
     ) throws IOException, URISyntaxException;
 
@@ -105,11 +104,11 @@ public abstract class AbstractTasksResource<TRDAR extends AbstractResult<TaskRes
      * Using an asynchronous approach with webhooks is beneficial in such cases.
      *
      * @param taskId task id
-     * @return {@link TRDAR}
+     * @return {@link TRAR}
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR wait(
+    public abstract TRAR wait(
         @NotNull final String taskId
     ) throws IOException, URISyntaxException;
 
@@ -176,11 +175,11 @@ public abstract class AbstractTasksResource<TRDAR extends AbstractResult<TaskRes
      * Cancel a task that is in status waiting or processing. Requires the task.write scope.
      *
      * @param taskId task id
-     * @return {@link TRDAR}
+     * @return {@link TRAR}
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR cancel(
+    public abstract TRAR cancel(
         @NotNull final String taskId
     ) throws IOException, URISyntaxException;
 
@@ -188,11 +187,11 @@ public abstract class AbstractTasksResource<TRDAR extends AbstractResult<TaskRes
      * Create a new task, based on the payload of another task. Requires the task.write scope.
      *
      * @param taskId task id
-     * @return {@link TRDAR}
+     * @return {@link TRAR}
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR retry(
+    public abstract TRAR retry(
         @NotNull final String taskId
     ) throws IOException, URISyntaxException;
 
@@ -277,11 +276,11 @@ public abstract class AbstractTasksResource<TRDAR extends AbstractResult<TaskRes
      * Create a task to convert one input file from input_format to output_format. Requires the task.write scope.
      *
      * @param convertFilesTaskRequest {@link ConvertFilesTaskRequest}
-     * @return {@link TRDAR}
+     * @return {@link TRAR}
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR convert(
+    public abstract TRAR convert(
         @NotNull final ConvertFilesTaskRequest convertFilesTaskRequest
     ) throws IOException, URISyntaxException;
 
@@ -350,11 +349,11 @@ public abstract class AbstractTasksResource<TRDAR extends AbstractResult<TaskRes
      * Create a task to optimize and compress a file. Currently supported formats are PDF, PNG and JPG.
      *
      * @param optimizeFilesTaskRequest {@link OptimizeFilesTaskRequest}
-     * @return {@link TRDAR}
+     * @return {@link TRAR}
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR optimize(
+    public abstract TRAR optimize(
         @NotNull final OptimizeFilesTaskRequest optimizeFilesTaskRequest
     ) throws IOException, URISyntaxException;
 
@@ -362,11 +361,11 @@ public abstract class AbstractTasksResource<TRDAR extends AbstractResult<TaskRes
      * Create a task to convert a website to PDF or to capture a screenshot of a website (png, jpg).
      *
      * @param captureWebsitesTaskRequest {@link CaptureWebsitesTaskRequest}
-     * @return {@link TRDAR}
+     * @return {@link TRAR}
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR capture(
+    public abstract TRAR capture(
         @NotNull final CaptureWebsitesTaskRequest captureWebsitesTaskRequest
     ) throws IOException, URISyntaxException;
 
@@ -374,11 +373,11 @@ public abstract class AbstractTasksResource<TRDAR extends AbstractResult<TaskRes
      * Create a task to merge at least two files to one PDF. If input files are not PDFs yet, they are automatically converted to PDF.
      *
      * @param mergeFilesTaskRequest {@link MergeFilesTaskRequest}
-     * @return {@link TRDAR}
+     * @return {@link TRAR}
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR merge(
+    public abstract TRAR merge(
         @NotNull final MergeFilesTaskRequest mergeFilesTaskRequest
     ) throws IOException, URISyntaxException;
 
@@ -386,11 +385,11 @@ public abstract class AbstractTasksResource<TRDAR extends AbstractResult<TaskRes
      * Create a task to create a ZIP, RAR, 7Z, TAR, TAR.GZ or TAR.BZ2 archive.
      *
      * @param createArchivesTaskRequest {@link CreateArchivesTaskRequest}
-     * @return {@link TRDAR}
+     * @return {@link TRAR}
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR archive(
+    public abstract TRAR archive(
         @NotNull final CreateArchivesTaskRequest createArchivesTaskRequest
     ) throws IOException, URISyntaxException;
 
@@ -400,11 +399,11 @@ public abstract class AbstractTasksResource<TRDAR extends AbstractResult<TaskRes
      * All files that are created in the /output/ directory are available for following tasks (e.g. export tasks).
      *
      * @param executeCommandsTaskRequest {@link ExecuteCommandsTaskRequest}
-     * @return {@link TRDAR}
+     * @return {@link TRAR}
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR command(
+    public abstract TRAR command(
         @NotNull final ExecuteCommandsTaskRequest executeCommandsTaskRequest
     ) throws IOException, URISyntaxException;
 

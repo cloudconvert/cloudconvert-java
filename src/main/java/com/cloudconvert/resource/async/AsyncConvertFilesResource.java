@@ -5,7 +5,7 @@ import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.ConvertFilesTaskRequest;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
-import com.cloudconvert.dto.response.TaskResponseData;
+import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AsyncResult;
 import com.cloudconvert.executor.AsyncRequestExecutor;
 import com.cloudconvert.resource.AbstractConvertFilesResource;
@@ -32,7 +32,7 @@ import java.util.Map;
 
 @Slf4j
 public class AsyncConvertFilesResource extends AbstractConvertFilesResource<
-    AsyncResult<TaskResponseData>, AsyncResult<Pageable<OperationResponse>>> {
+    AsyncResult<TaskResponse>, AsyncResult<Pageable<OperationResponse>>> {
 
     private final AsyncRequestExecutor asyncRequestExecutor;
 
@@ -54,13 +54,13 @@ public class AsyncConvertFilesResource extends AbstractConvertFilesResource<
     }
 
     @Override
-    public AsyncResult<TaskResponseData> convert(
+    public AsyncResult<TaskResponse> convert(
         @NotNull final ConvertFilesTaskRequest convertFilesTaskRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_CONVERT));
         final HttpEntity httpEntity = getHttpEntity(convertFilesTaskRequest);
 
-        return asyncRequestExecutor.execute(getHttpUriRequest(HttpPost.class, uri, httpEntity), TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return asyncRequestExecutor.execute(getHttpUriRequest(HttpPost.class, uri, httpEntity), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override

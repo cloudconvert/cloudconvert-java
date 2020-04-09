@@ -9,7 +9,6 @@ import com.cloudconvert.dto.request.ExecuteCommandsTaskRequest;
 import com.cloudconvert.dto.request.MergeFilesTaskRequest;
 import com.cloudconvert.dto.request.TaskRequest;
 import com.cloudconvert.dto.response.JobResponse;
-import com.cloudconvert.dto.response.JobResponseData;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.executor.RequestExecutor;
@@ -89,11 +88,11 @@ public class JobsUnitTest extends AbstractTest {
             "execute-commands", new ExecuteCommandsTaskRequest().setInput("execute-commands-task-input"),
             "merge-files", new MergeFilesTaskRequest().setInput("merge-files-task-input")
         );
-        final Result<JobResponseData> jobResponseDataResult = Result.<JobResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.JOB_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(jobResponseDataResult);
+        final Result<JobResponse> jobResponseResult = Result.<JobResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.JOB_RESPONSE_TYPE_REFERENCE))).thenReturn(jobResponseResult);
 
-        assertThat(cloudConvertClient.jobs().create(tasks)).isEqualTo(jobResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.JOB_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.jobs().create(tasks)).isEqualTo(jobResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.JOB_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -121,11 +120,11 @@ public class JobsUnitTest extends AbstractTest {
 
     @Test
     public void jobs_show() throws Exception {
-        final Result<JobResponseData> jobResponseDataResult = Result.<JobResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.JOB_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(jobResponseDataResult);
+        final Result<JobResponse> jobResponseResult = Result.<JobResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.JOB_RESPONSE_TYPE_REFERENCE))).thenReturn(jobResponseResult);
 
-        assertThat(cloudConvertClient.jobs().show(JOB_ID)).isEqualTo(jobResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.JOB_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.jobs().show(JOB_ID)).isEqualTo(jobResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.JOB_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -141,11 +140,11 @@ public class JobsUnitTest extends AbstractTest {
 
     @Test
     public void jobs_wait() throws Exception {
-        final Result<JobResponseData> jobResponseDataResult = Result.<JobResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.JOB_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(jobResponseDataResult);
+        final Result<JobResponse> jobResponseResult = Result.<JobResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.JOB_RESPONSE_TYPE_REFERENCE))).thenReturn(jobResponseResult);
 
-        assertThat(cloudConvertClient.jobs().wait(JOB_ID)).isEqualTo(jobResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.JOB_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.jobs().wait(JOB_ID)).isEqualTo(jobResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.JOB_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 

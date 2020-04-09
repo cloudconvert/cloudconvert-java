@@ -9,7 +9,6 @@ import com.cloudconvert.dto.request.ExecuteCommandsTaskRequest;
 import com.cloudconvert.dto.request.MergeFilesTaskRequest;
 import com.cloudconvert.dto.request.TaskRequest;
 import com.cloudconvert.dto.response.JobResponse;
-import com.cloudconvert.dto.response.JobResponseData;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.result.AsyncResult;
 import com.cloudconvert.dto.result.FutureAsyncResult;
@@ -90,11 +89,11 @@ public class AsyncJobsUnitTest extends AbstractTest {
             "execute-commands", new ExecuteCommandsTaskRequest().setInput("execute-commands-task-input"),
             "merge-files", new MergeFilesTaskRequest().setInput("merge-files-task-input")
         );
-        final AsyncResult<JobResponseData> jobResponseDataAsyncResult = FutureAsyncResult.<JobResponseData>builder().build();
-        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.JOB_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(jobResponseDataAsyncResult);
+        final AsyncResult<JobResponse> jobResponseAsyncResult = FutureAsyncResult.<JobResponse>builder().build();
+        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.JOB_RESPONSE_TYPE_REFERENCE))).thenReturn(jobResponseAsyncResult);
 
-        assertThat(asyncCloudConvertClient.jobs().create(tasks)).isEqualTo(jobResponseDataAsyncResult);
-        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.JOB_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(asyncCloudConvertClient.jobs().create(tasks)).isEqualTo(jobResponseAsyncResult);
+        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.JOB_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -122,11 +121,11 @@ public class AsyncJobsUnitTest extends AbstractTest {
 
     @Test
     public void jobs_show() throws Exception {
-        final AsyncResult<JobResponseData> jobResponseDataAsyncResult = FutureAsyncResult.<JobResponseData>builder().build();
-        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.JOB_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(jobResponseDataAsyncResult);
+        final AsyncResult<JobResponse> jobResponseAsyncResult = FutureAsyncResult.<JobResponse>builder().build();
+        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.JOB_RESPONSE_TYPE_REFERENCE))).thenReturn(jobResponseAsyncResult);
 
-        assertThat(asyncCloudConvertClient.jobs().show(JOB_ID)).isEqualTo(jobResponseDataAsyncResult);
-        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.JOB_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(asyncCloudConvertClient.jobs().show(JOB_ID)).isEqualTo(jobResponseAsyncResult);
+        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.JOB_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -142,11 +141,11 @@ public class AsyncJobsUnitTest extends AbstractTest {
 
     @Test
     public void jobs_wait() throws Exception {
-        final AsyncResult<JobResponseData> jobResponseDataAsyncResult = FutureAsyncResult.<JobResponseData>builder().build();
-        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.JOB_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(jobResponseDataAsyncResult);
+        final AsyncResult<JobResponse> jobResponseAsyncResult = FutureAsyncResult.<JobResponse>builder().build();
+        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.JOB_RESPONSE_TYPE_REFERENCE))).thenReturn(jobResponseAsyncResult);
 
-        assertThat(asyncCloudConvertClient.jobs().wait(JOB_ID)).isEqualTo(jobResponseDataAsyncResult);
-        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.JOB_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(asyncCloudConvertClient.jobs().wait(JOB_ID)).isEqualTo(jobResponseAsyncResult);
+        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.JOB_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 

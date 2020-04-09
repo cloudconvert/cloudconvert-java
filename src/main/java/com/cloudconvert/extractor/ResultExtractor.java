@@ -2,11 +2,11 @@ package com.cloudconvert.extractor;
 
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.dto.result.Result;
-import com.cloudconvert.processor.DefaultResponseProcessor;
-import com.cloudconvert.processor.ResponseProcessor;
-import com.cloudconvert.processor.successful.ContentResponseProcessor;
-import com.cloudconvert.processor.successful.InputStreamResponseProcessor;
-import com.cloudconvert.processor.successful.NoContentResponseProcessor;
+import com.cloudconvert.processor.response.DefaultResponseProcessor;
+import com.cloudconvert.processor.response.ResponseProcessor;
+import com.cloudconvert.processor.response.successful.ContentResponseProcessor;
+import com.cloudconvert.processor.response.successful.InputStreamResponseProcessor;
+import com.cloudconvert.processor.response.successful.NoContentResponseProcessor;
 import com.cloudconvert.resource.AbstractResource;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.ImmutableMap;
@@ -24,27 +24,23 @@ import java.util.Optional;
 public class ResultExtractor {
 
     private final ResponseProcessor defaultResponseProcessor;
-    private final ContentResponseProcessor contentResponseProcessor;
-    private final NoContentResponseProcessor noContentResponseProcessor;
-    private final InputStreamResponseProcessor inputStreamResponseProcessor;
-
     private final Map<TypeReference<?>, ResponseProcessor> responseProcessors;
 
     public ResultExtractor(final ObjectMapperProvider objectMapperProvider) {
-        this.defaultResponseProcessor = new DefaultResponseProcessor();
-        this.contentResponseProcessor = new ContentResponseProcessor(objectMapperProvider);
-        this.noContentResponseProcessor = new NoContentResponseProcessor();
-        this.inputStreamResponseProcessor = new InputStreamResponseProcessor();
+        final ContentResponseProcessor contentResponseProcessor = new ContentResponseProcessor(objectMapperProvider);
+        final NoContentResponseProcessor noContentResponseProcessor = new NoContentResponseProcessor();
+        final InputStreamResponseProcessor inputStreamResponseProcessor = new InputStreamResponseProcessor();
 
+        this.defaultResponseProcessor = new DefaultResponseProcessor();
         this.responseProcessors = ImmutableMap.<TypeReference<?>, ResponseProcessor>builder()
             .put(AbstractResource.VOID_TYPE_REFERENCE, noContentResponseProcessor)
             .put(AbstractResource.INPUT_STREAM_TYPE_REFERENCE, inputStreamResponseProcessor)
 
             .put(AbstractResource.MAP_STRING_TO_OBJECT_TYPE_REFERENCE, contentResponseProcessor)
-            .put(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE, contentResponseProcessor)
-            .put(AbstractResource.JOB_RESPONSE_DATA_TYPE_REFERENCE, contentResponseProcessor)
-            .put(AbstractResource.USER_RESPONSE_DATA_TYPE_REFERENCE, contentResponseProcessor)
-            .put(AbstractResource.WEBHOOKS_RESPONSE_DATA_TYPE_REFERENCE, contentResponseProcessor)
+            .put(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE, contentResponseProcessor)
+            .put(AbstractResource.JOB_RESPONSE_TYPE_REFERENCE, contentResponseProcessor)
+            .put(AbstractResource.USER_RESPONSE_TYPE_REFERENCE, contentResponseProcessor)
+            .put(AbstractResource.WEBHOOKS_RESPONSE_TYPE_REFERENCE, contentResponseProcessor)
 
             .put(AbstractResource.OPERATION_RESPONSE_PAGEABLE_TYPE_REFERENCE, contentResponseProcessor)
             .put(AbstractResource.TASK_RESPONSE_PAGEABLE_TYPE_REFERENCE, contentResponseProcessor)

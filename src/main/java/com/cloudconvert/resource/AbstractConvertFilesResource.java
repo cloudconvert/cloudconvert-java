@@ -5,7 +5,7 @@ import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.ConvertFilesTaskRequest;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
-import com.cloudconvert.dto.response.TaskResponseData;
+import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AbstractResult;
 import com.cloudconvert.resource.params.Filter;
 import com.cloudconvert.resource.params.Include;
@@ -17,7 +17,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractConvertFilesResource<TRDAR extends AbstractResult<TaskResponseData>,
+public abstract class AbstractConvertFilesResource<TRAR extends AbstractResult<TaskResponse>,
     ORP extends AbstractResult<Pageable<OperationResponse>>> extends AbstractResource {
 
     public static final String PATH_SEGMENT_CONVERT = "convert";
@@ -33,11 +33,11 @@ public abstract class AbstractConvertFilesResource<TRDAR extends AbstractResult<
      * Create a task to convert one input file from input_format to output_format. Requires the task.write scope.
      *
      * @param convertFilesTaskRequest {@link ConvertFilesTaskRequest}
-     * @return {@link TRDAR}
+     * @return {@link TRAR}
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR convert(
+    public abstract TRAR convert(
         @NotNull final ConvertFilesTaskRequest convertFilesTaskRequest
     ) throws IOException, URISyntaxException;
 

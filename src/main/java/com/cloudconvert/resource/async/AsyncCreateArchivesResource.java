@@ -3,7 +3,7 @@ package com.cloudconvert.resource.async;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.CreateArchivesTaskRequest;
-import com.cloudconvert.dto.response.TaskResponseData;
+import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AsyncResult;
 import com.cloudconvert.executor.AsyncRequestExecutor;
 import com.cloudconvert.resource.AbstractCreateArchivesResource;
@@ -18,7 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 @Slf4j
-public class AsyncCreateArchivesResource extends AbstractCreateArchivesResource<AsyncResult<TaskResponseData>> {
+public class AsyncCreateArchivesResource extends AbstractCreateArchivesResource<AsyncResult<TaskResponse>> {
 
     private final AsyncRequestExecutor asyncRequestExecutor;
 
@@ -32,13 +32,13 @@ public class AsyncCreateArchivesResource extends AbstractCreateArchivesResource<
     }
 
     @Override
-    public AsyncResult<TaskResponseData> archive(
+    public AsyncResult<TaskResponse> archive(
         @NotNull final CreateArchivesTaskRequest createArchivesTaskRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_ARCHIVE));
         final HttpEntity httpEntity = getHttpEntity(createArchivesTaskRequest);
 
-        return asyncRequestExecutor.execute(getHttpUriRequest(HttpPost.class, uri, httpEntity), TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return asyncRequestExecutor.execute(getHttpUriRequest(HttpPost.class, uri, httpEntity), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override

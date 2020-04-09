@@ -4,14 +4,11 @@ import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.Request;
 import com.cloudconvert.dto.response.JobResponse;
-import com.cloudconvert.dto.response.JobResponseData;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
-import com.cloudconvert.dto.response.TaskResponseData;
-import com.cloudconvert.dto.response.UserResponseData;
+import com.cloudconvert.dto.response.UserResponse;
 import com.cloudconvert.dto.response.WebhookResponse;
-import com.cloudconvert.dto.response.WebhookResponseData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.ImmutableList;
@@ -56,10 +53,10 @@ public abstract class AbstractResource implements Closeable {
     public static final TypeReference<InputStream> INPUT_STREAM_TYPE_REFERENCE = new TypeReference<InputStream>() {};
     public static final TypeReference<Map<String, Object>> MAP_STRING_TO_OBJECT_TYPE_REFERENCE = new TypeReference<Map<String, Object>>() {};
 
-    public static final TypeReference<TaskResponseData> TASK_RESPONSE_DATA_TYPE_REFERENCE = new TypeReference<TaskResponseData>() {};
-    public static final TypeReference<JobResponseData> JOB_RESPONSE_DATA_TYPE_REFERENCE = new TypeReference<JobResponseData>() {};
-    public static final TypeReference<UserResponseData> USER_RESPONSE_DATA_TYPE_REFERENCE = new TypeReference<UserResponseData>() {};
-    public static final TypeReference<WebhookResponseData> WEBHOOKS_RESPONSE_DATA_TYPE_REFERENCE = new TypeReference<WebhookResponseData>() {};
+    public static final TypeReference<TaskResponse> TASK_RESPONSE_TYPE_REFERENCE = new TypeReference<TaskResponse>() {};
+    public static final TypeReference<JobResponse> JOB_RESPONSE_TYPE_REFERENCE = new TypeReference<JobResponse>() {};
+    public static final TypeReference<UserResponse> USER_RESPONSE_TYPE_REFERENCE = new TypeReference<UserResponse>() {};
+    public static final TypeReference<WebhookResponse> WEBHOOKS_RESPONSE_TYPE_REFERENCE = new TypeReference<WebhookResponse>() {};
 
     public static final TypeReference<Pageable<OperationResponse>> OPERATION_RESPONSE_PAGEABLE_TYPE_REFERENCE = new TypeReference<Pageable<OperationResponse>>() {};
     public static final TypeReference<Pageable<TaskResponse>> TASK_RESPONSE_PAGEABLE_TYPE_REFERENCE = new TypeReference<Pageable<TaskResponse>>() {};

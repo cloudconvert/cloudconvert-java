@@ -5,7 +5,6 @@ import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.WebhookRequest;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.WebhookResponse;
-import com.cloudconvert.dto.response.WebhookResponseData;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.executor.RequestExecutor;
 import com.cloudconvert.resource.AbstractUsersResource;
@@ -32,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 public class WebhookResource extends AbstractWebhooksResource<
-    Result<WebhookResponseData>, Result<Pageable<WebhookResponse>>, Result<Void>> {
+    Result<WebhookResponse>, Result<Pageable<WebhookResponse>>, Result<Void>> {
 
     private final RequestExecutor requestExecutor;
 
@@ -52,14 +51,14 @@ public class WebhookResource extends AbstractWebhooksResource<
     }
 
     @Override
-    public Result<WebhookResponseData> create(
+    public Result<WebhookResponse> create(
         @NotNull final WebhookRequest webhookRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_WEBHOOKS));
         final HttpEntity httpEntity = getHttpEntity(webhookRequest);
         final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
 
-        return requestExecutor.execute(httpUriRequest, WEBHOOKS_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(httpUriRequest, WEBHOOKS_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override

@@ -11,7 +11,6 @@ import com.cloudconvert.dto.request.SftpImportRequest;
 import com.cloudconvert.dto.request.UploadImportRequest;
 import com.cloudconvert.dto.request.UrlImportRequest;
 import com.cloudconvert.dto.response.TaskResponse;
-import com.cloudconvert.dto.response.TaskResponseData;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.executor.RequestExecutor;
 import com.cloudconvert.resource.AbstractResource;
@@ -77,11 +76,11 @@ public class ImportsUnitTest extends AbstractTest {
     @Test
     public void import_url() throws Exception {
         final UrlImportRequest expectedUrlImportRequest = new UrlImportRequest().setFilename("import-url-filename");
-        final Result<TaskResponseData> taskResponseDataResult = Result.<TaskResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataResult);
+        final Result<TaskResponse> taskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseResult);
 
-        assertThat(cloudConvertClient.importUsing().url(expectedUrlImportRequest)).isEqualTo(taskResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.importUsing().url(expectedUrlImportRequest)).isEqualTo(taskResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -103,11 +102,11 @@ public class ImportsUnitTest extends AbstractTest {
     @Test
     public void import_upload_noImmediateUpload() throws Exception {
         final UploadImportRequest expectedUploadImportRequest = new UploadImportRequest().setRedirect("import-upload-redirect");
-        final Result<TaskResponseData> taskResponseDataResult = Result.<TaskResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataResult);
+        final Result<TaskResponse> taskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseResult);
 
-        assertThat(cloudConvertClient.importUsing().upload(expectedUploadImportRequest)).isEqualTo(taskResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.importUsing().upload(expectedUploadImportRequest)).isEqualTo(taskResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -133,15 +132,14 @@ public class ImportsUnitTest extends AbstractTest {
             "max-file-size", "max-file-size", "redirect", "redirect", "signature", "signature");
         final TaskResponse taskResponse = new TaskResponse().setId("import-upload-task-id").setResult(
             new TaskResponse.Result().setForm(new TaskResponse.Result.Form().setUrl("import-upload-task-result-form-url").setParameters(parameters)));
-        final TaskResponseData taskResponseData = new TaskResponseData().setData(taskResponse);
-        final Result<TaskResponseData> showTaskResponseDataResult = Result.<TaskResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE)))
-            .thenReturn(Result.<TaskResponseData>builder().status(HttpStatus.SC_CREATED).body(taskResponseData).build()).thenReturn(showTaskResponseDataResult);
+        final Result<TaskResponse> showTaskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE)))
+            .thenReturn(Result.<TaskResponse>builder().status(HttpStatus.SC_CREATED).body(taskResponse).build()).thenReturn(showTaskResponseResult);
         when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.VOID_TYPE_REFERENCE)))
             .thenReturn(Result.<Void>builder().status(HttpStatus.SC_CREATED).build());
 
-        assertThat(cloudConvertClient.importUsing().upload(expectedUploadImportRequest, inputStream)).isEqualTo(showTaskResponseDataResult);
-        verify(requestExecutor, times(2)).execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.importUsing().upload(expectedUploadImportRequest, inputStream)).isEqualTo(showTaskResponseResult);
+        verify(requestExecutor, times(2)).execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
         verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.VOID_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
@@ -159,11 +157,11 @@ public class ImportsUnitTest extends AbstractTest {
     @Test
     public void import_s3() throws Exception {
         final S3ImportRequest expectedS3ImportRequest = new S3ImportRequest().setBucket("import-s3-bucket");
-        final Result<TaskResponseData> taskResponseDataResult = Result.<TaskResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataResult);
+        final Result<TaskResponse> taskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseResult);
 
-        assertThat(cloudConvertClient.importUsing().s3(expectedS3ImportRequest)).isEqualTo(taskResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.importUsing().s3(expectedS3ImportRequest)).isEqualTo(taskResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -185,11 +183,11 @@ public class ImportsUnitTest extends AbstractTest {
     @Test
     public void import_azureBlob() throws Exception {
         final AzureBlobImportRequest expectedAzureBlobImportRequest = new AzureBlobImportRequest().setStorageAccount("import-azure-blob-storage-account");
-        final Result<TaskResponseData> taskResponseDataResult = Result.<TaskResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataResult);
+        final Result<TaskResponse> taskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseResult);
 
-        assertThat(cloudConvertClient.importUsing().azureBlob(expectedAzureBlobImportRequest)).isEqualTo(taskResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.importUsing().azureBlob(expectedAzureBlobImportRequest)).isEqualTo(taskResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -211,11 +209,11 @@ public class ImportsUnitTest extends AbstractTest {
     @Test
     public void import_googleCloudStorage() throws Exception {
         final GoogleCloudStorageImportRequest expectedGoogleCloudStorageImportRequest = new GoogleCloudStorageImportRequest().setBucket("import-google-cloud-storage-bucket");
-        final Result<TaskResponseData> taskResponseDataResult = Result.<TaskResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataResult);
+        final Result<TaskResponse> taskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseResult);
 
-        assertThat(cloudConvertClient.importUsing().googleCloudStorage(expectedGoogleCloudStorageImportRequest)).isEqualTo(taskResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.importUsing().googleCloudStorage(expectedGoogleCloudStorageImportRequest)).isEqualTo(taskResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -237,11 +235,11 @@ public class ImportsUnitTest extends AbstractTest {
     @Test
     public void import_openStack() throws Exception {
         final OpenStackImportRequest expectedOpenStackImportRequest = new OpenStackImportRequest().setContainer("import-open-stack-container");
-        final Result<TaskResponseData> taskResponseDataResult = Result.<TaskResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataResult);
+        final Result<TaskResponse> taskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseResult);
 
-        assertThat(cloudConvertClient.importUsing().openStack(expectedOpenStackImportRequest)).isEqualTo(taskResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.importUsing().openStack(expectedOpenStackImportRequest)).isEqualTo(taskResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -263,11 +261,11 @@ public class ImportsUnitTest extends AbstractTest {
     @Test
     public void import_sftp() throws Exception {
         final SftpImportRequest expectedSftpImportRequest = new SftpImportRequest().setFilename("import-sftp-filename");
-        final Result<TaskResponseData> taskResponseDataResult = Result.<TaskResponseData>builder().build();
-        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataResult);
+        final Result<TaskResponse> taskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseResult);
 
-        assertThat(cloudConvertClient.importUsing().sftp(expectedSftpImportRequest)).isEqualTo(taskResponseDataResult);
-        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(cloudConvertClient.importUsing().sftp(expectedSftpImportRequest)).isEqualTo(taskResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 

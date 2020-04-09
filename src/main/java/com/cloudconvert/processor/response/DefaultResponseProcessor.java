@@ -1,4 +1,4 @@
-package com.cloudconvert.processor;
+package com.cloudconvert.processor.response;
 
 import com.cloudconvert.dto.result.Result;
 import com.fasterxml.jackson.core.type.TypeReference;

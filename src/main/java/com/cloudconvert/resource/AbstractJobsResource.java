@@ -4,7 +4,6 @@ import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.TaskRequest;
 import com.cloudconvert.dto.response.JobResponse;
-import com.cloudconvert.dto.response.JobResponseData;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.result.AbstractResult;
 import com.cloudconvert.resource.params.Filter;
@@ -18,7 +17,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractJobsResource<JRDAR extends AbstractResult<JobResponseData>,
+public abstract class AbstractJobsResource<JRAR extends AbstractResult<JobResponse>,
     JRPAR extends AbstractResult<Pageable<JobResponse>>, VAR extends AbstractResult<Void>> extends AbstractResource {
 
     public static final String PATH_SEGMENT_JOBS = "jobs";
@@ -39,11 +38,11 @@ public abstract class AbstractJobsResource<JRDAR extends AbstractResult<JobRespo
      *              Each task has a operation, which is the endpoint for creating the task (for example: convert, import/s3 or export/s3).
      *              The other parameters are the same as for creating the task using their direct endpoint.
      *              The input parameter allows it to directly reference the name of another task, created with the same job request.
-     * @return {@link JRDAR}
+     * @return {@link JRAR}
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract JRDAR create(
+    public abstract JRAR create(
         @NotNull final Map<String, TaskRequest> tasks
     ) throws IOException, URISyntaxException;
 
@@ -59,11 +58,11 @@ public abstract class AbstractJobsResource<JRDAR extends AbstractResult<JobRespo
      *              The input parameter allows it to directly reference the name of another task, created with the same job request.
      * @param tag   An arbitrary string to identify the job.
      *              Does not have any effect and can be used to associate the job with an ID in your application.
-     * @return {@link JRDAR}
+     * @return {@link JRAR}
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract JRDAR create(
+    public abstract JRAR create(
         @NotNull final Map<String, TaskRequest> tasks, @NotNull final String tag
     ) throws IOException, URISyntaxException;
 
@@ -71,11 +70,11 @@ public abstract class AbstractJobsResource<JRDAR extends AbstractResult<JobRespo
      * Show a job. Requires the task.read scope.
      *
      * @param jobId job id
-     * @return {@link JRDAR}
+     * @return {@link JRAR}
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract JRDAR show(
+    public abstract JRAR show(
         @NotNull final String jobId
     ) throws IOException, URISyntaxException;
 
@@ -90,11 +89,11 @@ public abstract class AbstractJobsResource<JRDAR extends AbstractResult<JobRespo
      * Using an asynchronous approach with webhooks is beneficial in such cases.
      *
      * @param jobId job id
-     * @return {@link JRDAR}
+     * @return {@link JRAR}
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract JRDAR wait(
+    public abstract JRAR wait(
         @NotNull final String jobId
     ) throws IOException, URISyntaxException;
 

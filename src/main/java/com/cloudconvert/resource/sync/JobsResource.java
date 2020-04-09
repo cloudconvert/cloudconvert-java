@@ -4,7 +4,6 @@ import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.TaskRequest;
 import com.cloudconvert.dto.response.JobResponse;
-import com.cloudconvert.dto.response.JobResponseData;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.executor.RequestExecutor;
@@ -37,7 +36,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class JobsResource extends AbstractJobsResource<
-    Result<JobResponseData>, Result<Pageable<JobResponse>>, Result<Void>> {
+    Result<JobResponse>, Result<Pageable<JobResponse>>, Result<Void>> {
 
     private final RequestExecutor requestExecutor;
     private final ObjectMapperProvider objectMapperProvider;
@@ -61,14 +60,14 @@ public class JobsResource extends AbstractJobsResource<
     }
 
     @Override
-    public Result<JobResponseData> create(
+    public Result<JobResponse> create(
         @NotNull final Map<String, TaskRequest> tasks
     ) throws IOException, URISyntaxException {
         return create(tasks, "");
     }
 
     @Override
-    public Result<JobResponseData> create(
+    public Result<JobResponse> create(
         @NotNull final Map<String, TaskRequest> tasks, @NotNull final String tag
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_JOBS));
@@ -79,25 +78,25 @@ public class JobsResource extends AbstractJobsResource<
         final HttpEntity httpEntity = new ByteArrayEntity(objectMapperProvider.provide()
             .writeValueAsBytes(ImmutableMap.of("tasks", tasksAsJson, "tag", tag)), ContentType.APPLICATION_JSON);
 
-        return requestExecutor.execute(getHttpUriRequest(HttpPost.class, uri, httpEntity), JOB_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(getHttpUriRequest(HttpPost.class, uri, httpEntity), JOB_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
-    public Result<JobResponseData> show(
+    public Result<JobResponse> show(
         @NotNull final String jobId
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_JOBS, jobId));
 
-        return requestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), JOB_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), JOB_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
-    public Result<JobResponseData> wait(
+    public Result<JobResponse> wait(
         @NotNull final String jobId
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_JOBS, jobId, PATH_SEGMENT_WAIT));
 
-        return requestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), JOB_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), JOB_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override

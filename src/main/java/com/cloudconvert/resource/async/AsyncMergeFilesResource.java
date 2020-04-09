@@ -3,7 +3,7 @@ package com.cloudconvert.resource.async;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.MergeFilesTaskRequest;
-import com.cloudconvert.dto.response.TaskResponseData;
+import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AsyncResult;
 import com.cloudconvert.executor.AsyncRequestExecutor;
 import com.cloudconvert.resource.AbstractMergeFilesResource;
@@ -18,7 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 @Slf4j
-public class AsyncMergeFilesResource extends AbstractMergeFilesResource<AsyncResult<TaskResponseData>> {
+public class AsyncMergeFilesResource extends AbstractMergeFilesResource<AsyncResult<TaskResponse>> {
 
     private final AsyncRequestExecutor asyncRequestExecutor;
 
@@ -32,13 +32,13 @@ public class AsyncMergeFilesResource extends AbstractMergeFilesResource<AsyncRes
     }
 
     @Override
-    public AsyncResult<TaskResponseData> merge(
+    public AsyncResult<TaskResponse> merge(
         @NotNull final MergeFilesTaskRequest mergeFilesTaskRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_MERGE));
         final HttpEntity httpEntity = getHttpEntity(mergeFilesTaskRequest);
 
-        return asyncRequestExecutor.execute(getHttpUriRequest(HttpPost.class, uri, httpEntity), TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return asyncRequestExecutor.execute(getHttpUriRequest(HttpPost.class, uri, httpEntity), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override

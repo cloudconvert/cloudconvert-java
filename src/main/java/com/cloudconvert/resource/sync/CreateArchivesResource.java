@@ -3,7 +3,7 @@ package com.cloudconvert.resource.sync;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.CreateArchivesTaskRequest;
-import com.cloudconvert.dto.response.TaskResponseData;
+import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.executor.RequestExecutor;
 import com.cloudconvert.resource.AbstractCreateArchivesResource;
@@ -18,7 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 @Slf4j
-public class CreateArchivesResource extends AbstractCreateArchivesResource<Result<TaskResponseData>> {
+public class CreateArchivesResource extends AbstractCreateArchivesResource<Result<TaskResponse>> {
 
     private final RequestExecutor requestExecutor;
 
@@ -32,13 +32,13 @@ public class CreateArchivesResource extends AbstractCreateArchivesResource<Resul
     }
 
     @Override
-    public Result<TaskResponseData> archive(
+    public Result<TaskResponse> archive(
         @NotNull final CreateArchivesTaskRequest createArchivesTaskRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_ARCHIVE));
         final HttpEntity httpEntity = getHttpEntity(createArchivesTaskRequest);
 
-        return requestExecutor.execute(getHttpUriRequest(HttpPost.class, uri, httpEntity), TASK_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(getHttpUriRequest(HttpPost.class, uri, httpEntity), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override

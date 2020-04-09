@@ -9,7 +9,7 @@ import com.cloudconvert.dto.request.OpenStackExportRequest;
 import com.cloudconvert.dto.request.S3ExportRequest;
 import com.cloudconvert.dto.request.SftpExportRequest;
 import com.cloudconvert.dto.request.UrlExportRequest;
-import com.cloudconvert.dto.response.TaskResponseData;
+import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AsyncResult;
 import com.cloudconvert.dto.result.FutureAsyncResult;
 import com.cloudconvert.executor.AsyncRequestExecutor;
@@ -67,11 +67,11 @@ public class AsyncExportsUnitTest extends AbstractTest {
     @Test
     public void export_url() throws Exception {
         final UrlExportRequest expectedUrlExportRequest = new UrlExportRequest().setInput("export-url-input");
-        final AsyncResult<TaskResponseData> taskResponseDataAsyncResult = FutureAsyncResult.<TaskResponseData>builder().build();
-        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataAsyncResult);
+        final AsyncResult<TaskResponse> TaskResponseAsyncResult = FutureAsyncResult.<TaskResponse>builder().build();
+        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(TaskResponseAsyncResult);
 
-        assertThat(asyncCloudConvertClient.exportUsing().url(expectedUrlExportRequest)).isEqualTo(taskResponseDataAsyncResult);
-        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(asyncCloudConvertClient.exportUsing().url(expectedUrlExportRequest)).isEqualTo(TaskResponseAsyncResult);
+        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -93,11 +93,11 @@ public class AsyncExportsUnitTest extends AbstractTest {
     @Test
     public void export_s3() throws Exception {
         final S3ExportRequest expectedS3ExportRequest = new S3ExportRequest().setInput("export-s3-input");
-        final AsyncResult<TaskResponseData> taskResponseDataAsyncResult = FutureAsyncResult.<TaskResponseData>builder().build();
-        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataAsyncResult);
+        final AsyncResult<TaskResponse> TaskResponseAsyncResult = FutureAsyncResult.<TaskResponse>builder().build();
+        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(TaskResponseAsyncResult);
 
-        assertThat(asyncCloudConvertClient.exportUsing().s3(expectedS3ExportRequest)).isEqualTo(taskResponseDataAsyncResult);
-        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(asyncCloudConvertClient.exportUsing().s3(expectedS3ExportRequest)).isEqualTo(TaskResponseAsyncResult);
+        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -119,11 +119,11 @@ public class AsyncExportsUnitTest extends AbstractTest {
     @Test
     public void export_azureBlob() throws Exception {
         final AzureBlobExportRequest expectedAzureBlobExportRequest = new AzureBlobExportRequest().setInput("export-azure-blob-input");
-        final AsyncResult<TaskResponseData> taskResponseDataAsyncResult = FutureAsyncResult.<TaskResponseData>builder().build();
-        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataAsyncResult);
+        final AsyncResult<TaskResponse> TaskResponseAsyncResult = FutureAsyncResult.<TaskResponse>builder().build();
+        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(TaskResponseAsyncResult);
 
-        assertThat(asyncCloudConvertClient.exportUsing().azureBlob(expectedAzureBlobExportRequest)).isEqualTo(taskResponseDataAsyncResult);
-        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(asyncCloudConvertClient.exportUsing().azureBlob(expectedAzureBlobExportRequest)).isEqualTo(TaskResponseAsyncResult);
+        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -145,11 +145,11 @@ public class AsyncExportsUnitTest extends AbstractTest {
     @Test
     public void export_googleCloudStorage() throws Exception {
         final GoogleCloudStorageExportRequest expectedGoogleCloudStorageExportRequest = new GoogleCloudStorageExportRequest().setBucket("export-google-cloud-storage-bucket");
-        final AsyncResult<TaskResponseData> taskResponseDataAsyncResult = FutureAsyncResult.<TaskResponseData>builder().build();
-        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataAsyncResult);
+        final AsyncResult<TaskResponse> TaskResponseAsyncResult = FutureAsyncResult.<TaskResponse>builder().build();
+        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(TaskResponseAsyncResult);
 
-        assertThat(asyncCloudConvertClient.exportUsing().googleCloudStorage(expectedGoogleCloudStorageExportRequest)).isEqualTo(taskResponseDataAsyncResult);
-        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(asyncCloudConvertClient.exportUsing().googleCloudStorage(expectedGoogleCloudStorageExportRequest)).isEqualTo(TaskResponseAsyncResult);
+        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -171,11 +171,11 @@ public class AsyncExportsUnitTest extends AbstractTest {
     @Test
     public void export_openStack() throws Exception {
         final OpenStackExportRequest expectedOpenStackExportRequest = new OpenStackExportRequest().setContainer("export-open-stack-container");
-        final AsyncResult<TaskResponseData> taskResponseDataAsyncResult = FutureAsyncResult.<TaskResponseData>builder().build();
-        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataAsyncResult);
+        final AsyncResult<TaskResponse> TaskResponseAsyncResult = FutureAsyncResult.<TaskResponse>builder().build();
+        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(TaskResponseAsyncResult);
 
-        assertThat(asyncCloudConvertClient.exportUsing().openStack(expectedOpenStackExportRequest)).isEqualTo(taskResponseDataAsyncResult);
-        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(asyncCloudConvertClient.exportUsing().openStack(expectedOpenStackExportRequest)).isEqualTo(TaskResponseAsyncResult);
+        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -197,11 +197,11 @@ public class AsyncExportsUnitTest extends AbstractTest {
     @Test
     public void export_sftp() throws Exception {
         final SftpExportRequest expectedSftpExportRequest = new SftpExportRequest().setInput("export-sftp-input");
-        final AsyncResult<TaskResponseData> taskResponseDataAsyncResult = FutureAsyncResult.<TaskResponseData>builder().build();
-        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(taskResponseDataAsyncResult);
+        final AsyncResult<TaskResponse> TaskResponseAsyncResult = FutureAsyncResult.<TaskResponse>builder().build();
+        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(TaskResponseAsyncResult);
 
-        assertThat(asyncCloudConvertClient.exportUsing().sftp(expectedSftpExportRequest)).isEqualTo(taskResponseDataAsyncResult);
-        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(asyncCloudConvertClient.exportUsing().sftp(expectedSftpExportRequest)).isEqualTo(TaskResponseAsyncResult);
+        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 

@@ -10,7 +10,6 @@ import com.cloudconvert.dto.request.SftpImportRequest;
 import com.cloudconvert.dto.request.UploadImportRequest;
 import com.cloudconvert.dto.request.UrlImportRequest;
 import com.cloudconvert.dto.response.TaskResponse;
-import com.cloudconvert.dto.response.TaskResponseData;
 import com.cloudconvert.dto.result.AbstractResult;
 import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpEntity;
@@ -33,7 +32,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.List;
 
-public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<TaskResponseData>> extends AbstractResource {
+public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<TaskResponse>> extends AbstractResource {
 
     public static final String PATH_SEGMENT_IMPORT = "import";
     public static final String PATH_SEGMENT_URL = "url";
@@ -62,7 +61,7 @@ public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<T
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR url(
+    public abstract TRAR url(
         @NotNull final UrlImportRequest urlImportRequest
     ) throws IOException, URISyntaxException;
 
@@ -77,7 +76,7 @@ public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<T
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR upload(
+    public abstract TRAR upload(
         @NotNull final UploadImportRequest uploadImportRequest
     ) throws IOException, URISyntaxException;
 
@@ -93,7 +92,7 @@ public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<T
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR upload(
+    public abstract TRAR upload(
         @NotNull final UploadImportRequest uploadImportRequest, @NotNull final File file
     ) throws IOException, URISyntaxException;
 
@@ -103,14 +102,14 @@ public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<T
      * <p>
      * Upload file using existing task response data result
      *
-     * @param taskResponseDataResult {@link TRDAR}
+     * @param taskResponseResult {@link TRAR}
      * @param file                   {@link File} file which will be uploaded
      * @return TRD
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR upload(
-        @NotNull final TRDAR taskResponseDataResult, @NotNull final File file
+    public abstract TRAR upload(
+        @NotNull final TRAR taskResponseResult, @NotNull final File file
     ) throws IOException, URISyntaxException;
 
     /**
@@ -126,7 +125,7 @@ public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<T
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR upload(
+    public abstract TRAR upload(
         @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final File file
     ) throws IOException, URISyntaxException;
 
@@ -142,7 +141,7 @@ public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<T
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR upload(
+    public abstract TRAR upload(
         @NotNull final UploadImportRequest uploadImportRequest, @NotNull final InputStream inputStream
     ) throws IOException, URISyntaxException;
 
@@ -152,14 +151,14 @@ public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<T
      * <p>
      * Upload file using existing task response data result
      *
-     * @param taskResponseDataResult {@link TRDAR}
+     * @param taskResponseResult {@link TRAR}
      * @param inputStream            {@link InputStream} of file which will be uploaded
      * @return TRD
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR upload(
-        @NotNull final TRDAR taskResponseDataResult, @NotNull final InputStream inputStream
+    public abstract TRAR upload(
+        @NotNull final TRAR taskResponseResult, @NotNull final InputStream inputStream
     ) throws IOException, URISyntaxException;
 
     /**
@@ -175,7 +174,7 @@ public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<T
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR upload(
+    public abstract TRAR upload(
         @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final InputStream inputStream
     ) throws IOException, URISyntaxException;
 
@@ -187,7 +186,7 @@ public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<T
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR s3(
+    public abstract TRAR s3(
         @NotNull final S3ImportRequest s3ImportRequest
     ) throws IOException, URISyntaxException;
 
@@ -199,7 +198,7 @@ public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<T
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR azureBlob(
+    public abstract TRAR azureBlob(
         @NotNull final AzureBlobImportRequest azureBlobImportRequest
     ) throws IOException, URISyntaxException;
 
@@ -211,7 +210,7 @@ public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<T
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR googleCloudStorage(
+    public abstract TRAR googleCloudStorage(
         @NotNull final GoogleCloudStorageImportRequest googleCloudStorageImportRequest
     ) throws IOException, URISyntaxException;
 
@@ -223,7 +222,7 @@ public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<T
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR openStack(
+    public abstract TRAR openStack(
         @NotNull final OpenStackImportRequest openStackImportRequest
     ) throws IOException, URISyntaxException;
 
@@ -235,7 +234,7 @@ public abstract class AbstractImportFilesResource<TRDAR extends AbstractResult<T
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRDAR sftp(
+    public abstract TRAR sftp(
         @NotNull final SftpImportRequest sftpImportRequest
     ) throws IOException, URISyntaxException;
 

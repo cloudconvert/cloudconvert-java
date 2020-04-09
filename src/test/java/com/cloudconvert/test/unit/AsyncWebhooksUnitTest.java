@@ -5,9 +5,8 @@ import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.WebhookRequest;
 import com.cloudconvert.dto.response.Pageable;
-import com.cloudconvert.dto.response.UserResponseData;
+import com.cloudconvert.dto.response.UserResponse;
 import com.cloudconvert.dto.response.WebhookResponse;
-import com.cloudconvert.dto.response.WebhookResponseData;
 import com.cloudconvert.dto.result.AsyncResult;
 import com.cloudconvert.dto.result.FutureAsyncResult;
 import com.cloudconvert.executor.AsyncRequestExecutor;
@@ -74,11 +73,11 @@ public class AsyncWebhooksUnitTest extends AbstractTest {
 
     @Test
     public void users_me() throws Exception {
-        final AsyncResult<UserResponseData> userResponseDataAsyncResult = FutureAsyncResult.<UserResponseData>builder().build();
-        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.USER_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(userResponseDataAsyncResult);
+        final AsyncResult<UserResponse> userResponseAsyncResult = FutureAsyncResult.<UserResponse>builder().build();
+        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.USER_RESPONSE_TYPE_REFERENCE))).thenReturn(userResponseAsyncResult);
 
-        assertThat(asyncCloudConvertClient.users().me()).isEqualTo(userResponseDataAsyncResult);
-        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.USER_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(asyncCloudConvertClient.users().me()).isEqualTo(userResponseAsyncResult);
+        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.USER_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 
@@ -95,11 +94,11 @@ public class AsyncWebhooksUnitTest extends AbstractTest {
     @Test
     public void webhooks_create() throws Exception {
         final WebhookRequest expectedWebhookRequest = new WebhookRequest().setUrl("webhooks-url");
-        final AsyncResult<WebhookResponseData> webhookResponseDataAsyncResult = FutureAsyncResult.<WebhookResponseData>builder().build();
-        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.WEBHOOKS_RESPONSE_DATA_TYPE_REFERENCE))).thenReturn(webhookResponseDataAsyncResult);
+        final AsyncResult<WebhookResponse> webhookResponseAsyncResult = FutureAsyncResult.<WebhookResponse>builder().build();
+        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.WEBHOOKS_RESPONSE_TYPE_REFERENCE))).thenReturn(webhookResponseAsyncResult);
 
-        assertThat(asyncCloudConvertClient.webhooks().create(expectedWebhookRequest)).isEqualTo(webhookResponseDataAsyncResult);
-        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.WEBHOOKS_RESPONSE_DATA_TYPE_REFERENCE));
+        assertThat(asyncCloudConvertClient.webhooks().create(expectedWebhookRequest)).isEqualTo(webhookResponseAsyncResult);
+        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.WEBHOOKS_RESPONSE_TYPE_REFERENCE));
 
         final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
 

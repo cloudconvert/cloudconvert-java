@@ -2,7 +2,7 @@ package com.cloudconvert.resource.sync;
 
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
-import com.cloudconvert.dto.response.UserResponseData;
+import com.cloudconvert.dto.response.UserResponse;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.executor.RequestExecutor;
 import com.cloudconvert.resource.AbstractUsersResource;
@@ -15,7 +15,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 @Slf4j
-public class UsersResource extends AbstractUsersResource<Result<UserResponseData>> {
+public class UsersResource extends AbstractUsersResource<Result<UserResponse>> {
 
     private final RequestExecutor requestExecutor;
 
@@ -29,10 +29,10 @@ public class UsersResource extends AbstractUsersResource<Result<UserResponseData
     }
 
     @Override
-    public Result<UserResponseData> me() throws IOException, URISyntaxException {
+    public Result<UserResponse> me() throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_USERS, PATH_SEGMENT_ME));
 
-        return requestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), USER_RESPONSE_DATA_TYPE_REFERENCE);
+        return requestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), USER_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override

@@ -12,5 +12,5 @@ public abstract class AbstractTest {
 
     public static final String VALUE_AUTHORIZATION = AbstractResource.BEARER + " " + API_KEY;
 
-    public static final Duration AT_MOST = Duration.of(30000, ChronoUnit.MILLIS);
+    public static final Duration AT_MOST = Duration.of(300000, ChronoUnit.MILLIS);
 }

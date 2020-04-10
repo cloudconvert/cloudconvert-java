@@ -66,7 +66,7 @@ final CloudConvertClient cloudConvertClient = new CloudConvertClient();
 final JobResponse createJobResponse = cloudConvertClient.jobs().create(
     ImmutableMap.of(
         "import-my-file", new UrlImportRequest().setUrl("import-url"),
-        "convert-my-file", new ConvertFilesTaskRequest().setInput("import-my-file"),
+        "convert-my-file", new ConvertFilesTaskRequest().setInput("import-my-file").set("width", "100").set("height", "100"),
         "export-my-file", new UrlExportRequest().setInput("convert-my-file")
     )
 ).getBody();
@@ -90,7 +90,7 @@ final AsyncCloudConvertClient asyncCloudConvertClient = new AsyncCloudConvertCli
 final JobResponse createJobResponse = asyncCloudConvertClient.jobs().create(
     ImmutableMap.of(
         "import-my-file", new UrlImportRequest().setUrl("import-url"),
-        "convert-my-file", new ConvertFilesTaskRequest().setInput("import-my-file"),
+        "convert-my-file", new ConvertFilesTaskRequest().setInput("import-my-file").set("width", "100").set("height", "100"),
         "export-my-file", new UrlExportRequest().setInput("convert-my-file")
     )
 ).get().getBody();

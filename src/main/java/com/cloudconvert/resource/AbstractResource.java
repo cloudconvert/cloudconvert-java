@@ -82,6 +82,15 @@ public abstract class AbstractResource implements Closeable {
             .put(HttpPatch.class, RequestBuilder::patch).put(HttpTrace.class, RequestBuilder::trace).build();
     }
 
+    protected Map<String, Object> requestToMap(
+        final Request request
+    ) {
+        final Map<String, Object> map = objectMapperProvider.provide().convertValue(request, MAP_STRING_TO_OBJECT_TYPE_REFERENCE);
+        // Use .putIfAbsent(), so request properties were not rewritten
+        request.getProperties().forEach(map::putIfAbsent);
+        return map;
+    }
+
     protected URI getUri(
         final List<String> pathSegments
     ) throws URISyntaxException {
@@ -99,7 +108,13 @@ public abstract class AbstractResource implements Closeable {
     protected HttpEntity getHttpEntity(
         final Request request
     ) throws JsonProcessingException {
-        return new ByteArrayEntity(objectMapperProvider.provide().writeValueAsBytes(request), ContentType.APPLICATION_JSON);
+        return getHttpEntity(requestToMap(request));
+    }
+
+    protected HttpEntity getHttpEntity(
+        final Map<String, Object> map
+    ) throws JsonProcessingException {
+        return new ByteArrayEntity(objectMapperProvider.provide().writeValueAsBytes(map), ContentType.APPLICATION_JSON);
     }
 
     protected HttpUriRequest getHttpUriRequest(

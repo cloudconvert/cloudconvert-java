@@ -41,57 +41,6 @@ public class CaptureWebsitesTaskRequest extends TaskRequest {
      * (optional) Choose a filename (including extension) for the output file.
      */
     private String filename;
-
-    /**
-     * (optional) Page range (e.g. 1-3) or comma separated list (e.g. 1,2,3) of pages.
-     */
-    private String pages;
-
-    /**
-     * (optional) Zoom level to display the website. Defaults to 1.
-     */
-    private Float zoom;
-
-    /**
-     * (optional) Page width in cm.
-     */
-    private Float pageWidth;
-
-    /**
-     * (optional) Page height in cm.
-     */
-    private Float pageHeight;
-
-    /**
-     * (optional) Page top margin in mm. Defaults to 10.
-     */
-    private Float marginTop;
-
-    /**
-     * (optional) Page bottom margin in mm. Defaults to 10.
-     */
-    private Float marginBottom;
-
-    /**
-     * (optional) Page left margin in mm. Defaults to 10.
-     */
-    private Float marginLeft;
-
-    /**
-     * (optional) Page right margin in mm. Defaults to 10.
-     */
-    private Float marginRight;
-
-    /**
-     * (optional) Render the background of websites. Defaults to true.
-     */
-    private Boolean printBackground;
-
-    /**
-     * (optional) Create a header and a footer with the URL and page numbers.
-     */
-    private Boolean displayHeaderFooter;
-
     /**
      * (optional) load: consider navigation to be finished when the load event is fired.
      * domcontentloaded: consider navigation to be finished when the DOMContentLoaded event is fired.

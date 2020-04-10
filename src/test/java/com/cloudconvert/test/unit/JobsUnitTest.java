@@ -83,8 +83,8 @@ public class JobsUnitTest extends AbstractTest {
     @Test
     public void jobs_create() throws Exception {
         final Map<String, TaskRequest> tasks = ImmutableMap.of(
-            "capture-website", new CaptureWebsitesTaskRequest().setUrl("capture-website-task-url"),
-            "convert-files", new ConvertFilesTaskRequest().setInput("convert-files-task-input"),
+            "capture-website", new CaptureWebsitesTaskRequest().setUrl("capture-website-task-url").setOutputFormat("pdf").set("zoom", "1.3"),
+            "convert-files", new ConvertFilesTaskRequest().setInput("convert-files-task-input").set("width", "100").set("height", "100"),
             "execute-commands", new ExecuteCommandsTaskRequest().setInput("execute-commands-task-input"),
             "merge-files", new MergeFilesTaskRequest().setInput("merge-files-task-input")
         );
@@ -108,9 +108,10 @@ public class JobsUnitTest extends AbstractTest {
             };
 
             final String request = ThrowingSupplier.unchecked(() -> byteSource.asCharSource(Charsets.UTF_8).read()).get();
-            assertThat(request).isEqualTo("{\"tasks\":{\"merge-files\":{\"input\":[\"merge-files-task-input\"],\"operation\":\"merge\"},\"capture-website\":" +
-                "{\"url\":\"capture-website-task-url\",\"operation\":\"capture-website\"},\"execute-commands\":{\"input\":[\"execute-commands-task-input\"]," +
-                "\"operation\":\"command\"},\"convert-files\":{\"input\":[\"convert-files-task-input\"],\"operation\":\"convert\"}},\"tag\":\"\"}");
+            assertThat(request).isEqualTo("{\"tasks\":{\"merge-files\":{\"input\":[\"merge-files-task-input\"],\"operation\":\"merge\"}," +
+                "\"capture-website\":{\"url\":\"capture-website-task-url\",\"output_format\":\"pdf\",\"operation\":\"capture-website\"," +
+                "\"zoom\":\"1.3\"},\"execute-commands\":{\"input\":[\"execute-commands-task-input\"],\"operation\":\"command\"},\"convert-files\":" +
+                "{\"input\":[\"convert-files-task-input\"],\"operation\":\"convert\",\"width\":\"100\",\"height\":\"100\"}},\"tag\":\"\"}");
         });
         assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_AUTHORIZATION)).hasSize(1).allSatisfy(header ->
             assertThat(VALUE_AUTHORIZATION).isEqualTo(header.getValue()));

@@ -22,17 +22,15 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.ContentType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class AsyncJobsResource extends AbstractJobsResource<
@@ -70,13 +68,13 @@ public class AsyncJobsResource extends AbstractJobsResource<
     public AsyncResult<JobResponse> create(
         @NotNull final Map<String, TaskRequest> tasks, @NotNull final String tag
     ) throws IOException, URISyntaxException {
+        final Map<String, Object> tasksAsMap = new HashMap<>();
+        for (Map.Entry<String, TaskRequest> entry : tasks.entrySet()) {
+            tasksAsMap.put(entry.getKey(), requestToMap(entry.getValue()));
+        }
+
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_JOBS));
-
-        final Map<String, Object> tasksAsJson = tasks.entrySet().stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, entry -> objectMapperProvider.provide().convertValue(entry.getValue(), MAP_STRING_TO_OBJECT_TYPE_REFERENCE)));
-
-        final HttpEntity httpEntity = new ByteArrayEntity(objectMapperProvider.provide()
-            .writeValueAsBytes(ImmutableMap.of("tasks", tasksAsJson, "tag", tag)), ContentType.APPLICATION_JSON);
+        final HttpEntity httpEntity = getHttpEntity(ImmutableMap.of("tasks", tasksAsMap, "tag", tag));
 
         return asyncRequestExecutor.execute(getHttpUriRequest(HttpPost.class, uri, httpEntity), JOB_RESPONSE_TYPE_REFERENCE);
     }

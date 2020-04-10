@@ -2,9 +2,6 @@ package com.cloudconvert.test.framework;
 
 import com.cloudconvert.resource.AbstractResource;
 
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-
 public abstract class AbstractTest {
 
     public static final String API_URL = "https://api.sandbox.cloudconvert.com";
@@ -12,5 +9,5 @@ public abstract class AbstractTest {
 
     public static final String VALUE_AUTHORIZATION = AbstractResource.BEARER + " " + API_KEY;
 
-    public static final Duration AT_MOST = Duration.of(300000, ChronoUnit.MILLIS);
+    public static final long TIMEOUT = 300000L;
 }

@@ -21,7 +21,6 @@ import com.cloudconvert.dto.result.AsyncResult;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.test.framework.AbstractTest;
 import com.cloudconvert.test.framework.IntegrationTest;
-import com.cloudconvert.test.framework.WaitConditionFactoryProvider;
 import org.apache.http.HttpStatus;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MimeTypes;
@@ -36,7 +35,6 @@ import java.io.File;
 import java.io.InputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 @Category(IntegrationTest.class)
 @RunWith(JUnit4.class)
@@ -52,8 +50,6 @@ public class AsyncImportsAndExportsIntegrationTest extends AbstractTest {
 
     private InputStream jpgTest1InputStream;
 
-    private WaitConditionFactoryProvider waitConditionFactoryProvider;
-
     @Before
     public void before() throws Exception {
         tika = new Tika();
@@ -62,11 +58,9 @@ public class AsyncImportsAndExportsIntegrationTest extends AbstractTest {
         jpgTest1File = new File(AsyncImportsAndExportsIntegrationTest.class.getClassLoader().getResource(JPG_TEST_FILE_1).toURI());
 
         jpgTest1InputStream = AsyncImportsAndExportsIntegrationTest.class.getClassLoader().getResourceAsStream(JPG_TEST_FILE_1);
-
-        waitConditionFactoryProvider = new WaitConditionFactoryProvider();
     }
 
-    @Test
+    @Test(timeout = TIMEOUT)
     public void cancelAndRetryUploadImportTaskLifecycle() throws Exception {
         // Import upload (not immediate upload)
         final Result<TaskResponse> uploadImportTaskResponseResult = asyncCloudConvertClient.importUsing().upload(new UploadImportRequest()).get();
@@ -105,19 +99,16 @@ public class AsyncImportsAndExportsIntegrationTest extends AbstractTest {
         assertThat(uploadTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Wait import upload
-        final TaskResponse waitRetryUploadImportTaskResponse = await().atMost(AT_MOST).until(() ->
-                waitConditionFactoryProvider.provide(retryUploadImportTaskResponse.getId()).until(
-                    () -> asyncCloudConvertClient.tasks().wait(retryUploadImportTaskResponse.getId()).get(),
-                    awaitTaskResponseResult -> awaitTaskResponseResult.getStatus() == HttpStatus.SC_OK
-                ).getBody(),
-            awaitTaskResponse -> awaitTaskResponse.getStatus() == Status.FINISHED
-        );
+        final Result<TaskResponse> waitRetryUploadImportTaskResponseResult = asyncCloudConvertClient.tasks().wait(retryUploadImportTaskResponse.getId()).get();
+        assertThat(waitRetryUploadImportTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse waitRetryUploadImportTaskResponse = waitRetryUploadImportTaskResponseResult.getBody();
         assertThat(waitRetryUploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
         assertThat(waitRetryUploadImportTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
         assertThat(waitRetryUploadImportTaskResponse.getId()).isEqualTo(retryUploadImportTaskResponse.getId());
     }
 
-    @Test
+    @Test(timeout = TIMEOUT)
     public void uploadImportInputStreamAndExportUrlTaskLifecycle() throws Exception {
         // Import upload (immediate upload)
         final Result<TaskResponse> uploadImportTaskResponseResult = asyncCloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream).get();
@@ -127,13 +118,10 @@ public class AsyncImportsAndExportsIntegrationTest extends AbstractTest {
         assertThat(uploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Wait import upload
-        final TaskResponse waitUploadImportTaskResponse = await().atMost(AT_MOST).until(() ->
-                waitConditionFactoryProvider.provide(uploadImportTaskResponse.getId()).until(
-                    () -> asyncCloudConvertClient.tasks().wait(uploadImportTaskResponse.getId()).get(),
-                    awaitTaskResponseResult -> awaitTaskResponseResult.getStatus() == HttpStatus.SC_OK
-                ).getBody(),
-            awaitTaskResponse -> awaitTaskResponse.getStatus() == Status.FINISHED
-        );
+        final Result<TaskResponse> waitUploadImportTaskResponseResult = asyncCloudConvertClient.tasks().wait(uploadImportTaskResponse.getId()).get();
+        assertThat(waitUploadImportTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse waitUploadImportTaskResponse = waitUploadImportTaskResponseResult.getBody();
         assertThat(waitUploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
         assertThat(waitUploadImportTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
 
@@ -146,13 +134,10 @@ public class AsyncImportsAndExportsIntegrationTest extends AbstractTest {
         assertThat(urlExportTaskResponse.getOperation()).isEqualTo(Operation.EXPORT_URL);
 
         // Wait export url
-        final TaskResponse waitUrlExportTaskResponse = await().atMost(AT_MOST).until(() ->
-                waitConditionFactoryProvider.provide(urlExportTaskResponse.getId()).until(
-                    () -> asyncCloudConvertClient.tasks().wait(urlExportTaskResponse.getId()).get(),
-                    awaitTaskResponseResult -> awaitTaskResponseResult.getStatus() == HttpStatus.SC_OK
-                ).getBody(),
-            awaitTaskResponse -> awaitTaskResponse.getStatus() == Status.FINISHED
-        );
+        final Result<TaskResponse> waitUrlExportTaskResponseResult = asyncCloudConvertClient.tasks().wait(urlExportTaskResponse.getId()).get();
+        assertThat(waitUploadImportTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse waitUrlExportTaskResponse = waitUrlExportTaskResponseResult.getBody();
         assertThat(waitUrlExportTaskResponse.getOperation()).isEqualTo(Operation.EXPORT_URL);
         assertThat(waitUrlExportTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
         assertThat(waitUrlExportTaskResponse.getResult().getFiles()).hasSize(1).hasOnlyOneElementSatisfying(map -> assertThat(map.get("url")).isNotNull());
@@ -163,7 +148,7 @@ public class AsyncImportsAndExportsIntegrationTest extends AbstractTest {
         assertThat(MimeTypes.getDefaultMimeTypes().forName(tika.detect(inputStreamResult.getBody())).getName()).isEqualTo("image/jpeg");
     }
 
-    @Test
+    @Test(timeout = TIMEOUT)
     public void uploadImportFileAndExportUrlTaskLifecycle() throws Exception {
         // Import upload (immediate upload)
         final Result<TaskResponse> uploadImportTaskResponseResult = asyncCloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1File).get();
@@ -173,13 +158,10 @@ public class AsyncImportsAndExportsIntegrationTest extends AbstractTest {
         assertThat(uploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Wait import upload
-        final TaskResponse waitUploadImportTaskResponse = await().atMost(AT_MOST).until(() ->
-                waitConditionFactoryProvider.provide(uploadImportTaskResponse.getId()).until(
-                    () -> asyncCloudConvertClient.tasks().wait(uploadImportTaskResponse.getId()).get(),
-                    awaitTaskResponseResult -> awaitTaskResponseResult.getStatus() == HttpStatus.SC_OK
-                ).getBody(),
-            waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
-        );
+        final Result<TaskResponse> waitUploadImportTaskResponseResult = asyncCloudConvertClient.tasks().wait(uploadImportTaskResponse.getId()).get();
+        assertThat(waitUploadImportTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse waitUploadImportTaskResponse = waitUploadImportTaskResponseResult.getBody();
         assertThat(waitUploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
         assertThat(waitUploadImportTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
 
@@ -192,13 +174,10 @@ public class AsyncImportsAndExportsIntegrationTest extends AbstractTest {
         assertThat(urlExportTaskResponse.getOperation()).isEqualTo(Operation.EXPORT_URL);
 
         // Wait export url
-        final TaskResponse waitUrlExportTaskResponse = await().atMost(AT_MOST).until(() ->
-                waitConditionFactoryProvider.provide(urlExportTaskResponse.getId()).until(
-                    () -> asyncCloudConvertClient.tasks().wait(urlExportTaskResponse.getId()).get(),
-                    awaitTaskResponseResult -> awaitTaskResponseResult.getStatus() == HttpStatus.SC_OK
-                ).getBody(),
-            waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
-        );
+        final Result<TaskResponse> waitUrlExportTaskResponseResult = asyncCloudConvertClient.tasks().wait(urlExportTaskResponse.getId()).get();
+        assertThat(waitUploadImportTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse waitUrlExportTaskResponse = waitUrlExportTaskResponseResult.getBody();
         assertThat(waitUrlExportTaskResponse.getOperation()).isEqualTo(Operation.EXPORT_URL);
         assertThat(waitUrlExportTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
         assertThat(waitUrlExportTaskResponse.getResult().getFiles()).hasSize(1).hasOnlyOneElementSatisfying(map -> assertThat(map.get("url")).isNotNull());
@@ -213,7 +192,7 @@ public class AsyncImportsAndExportsIntegrationTest extends AbstractTest {
      * As most of the imports are cloud-based, we do not test full lifecycle of all imports, but make sure that import tasks are created
      * The only import, which has the whole lifecycle tested is import with upload
      */
-    @Test
+    @Test(timeout = TIMEOUT)
     public void importTasksCreation() throws Exception {
         // Import url
         final UrlImportRequest urlImportRequest = new UrlImportRequest().setUrl("http://some-url.com").setFilename("some-filename.jpg");
@@ -284,7 +263,7 @@ public class AsyncImportsAndExportsIntegrationTest extends AbstractTest {
      * As most of the exports are cloud-based, we do not test full lifecycle of all exports, but make sure that export tasks are created
      * The only export, which has the whole lifecycle tested is export with url
      */
-    @Test
+    @Test(timeout = TIMEOUT)
     public void exportTasksCreation() throws Exception {
         // Import upload (immediate upload)
         final Result<TaskResponse> uploadImportTaskResponseResult = asyncCloudConvertClient.importUsing()

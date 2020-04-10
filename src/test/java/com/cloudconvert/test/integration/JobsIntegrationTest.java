@@ -13,7 +13,6 @@ import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.resource.params.Pagination;
 import com.cloudconvert.test.framework.AbstractTest;
 import com.cloudconvert.test.framework.IntegrationTest;
-import com.cloudconvert.test.framework.WaitConditionFactoryProvider;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apache.http.HttpStatus;
@@ -28,7 +27,6 @@ import java.io.InputStream;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 @Category(IntegrationTest.class)
 @RunWith(JUnit4.class)
@@ -45,16 +43,12 @@ public class JobsIntegrationTest extends AbstractTest {
 
     private InputStream odtTest2InputStream;
 
-    private WaitConditionFactoryProvider waitConditionFactoryProvider;
-
     @Before
     public void before() throws Exception {
         cloudConvertClient = new CloudConvertClient();
 
         odtTest1InputStream = JobsIntegrationTest.class.getClassLoader().getResourceAsStream(ODT_TEST_FILE_1);
         odtTest2InputStream = JobsIntegrationTest.class.getClassLoader().getResourceAsStream(ODT_TEST_FILE_2);
-
-        waitConditionFactoryProvider = new WaitConditionFactoryProvider();
     }
 
     /**
@@ -64,7 +58,7 @@ public class JobsIntegrationTest extends AbstractTest {
      * <p>
      * So this integration test tests job lifecycle, which contains (upload + upload + merge + export url) tasks then delete the job
      */
-    @Test
+    @Test(timeout = TIMEOUT)
     public void mergeFileTaskAsJobLifecycle() throws Exception {
         final String uploadFile1TaskName = "import-image-test-file-1";
         final String uploadFile2TaskName = "import-image-test-file-2";
@@ -111,13 +105,10 @@ public class JobsIntegrationTest extends AbstractTest {
         assertThat(uploadFile2TaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Wait
-        final JobResponse waitJobResponse = await().atMost(AT_MOST).until(() ->
-                waitConditionFactoryProvider.provide(jobResponse.getId()).until(
-                    () -> cloudConvertClient.jobs().wait(jobResponse.getId()),
-                    awaitTaskResponseResult -> awaitTaskResponseResult.getStatus() == HttpStatus.SC_OK
-                ).getBody(),
-            waitTaskResponse -> waitTaskResponse.getStatus() == Status.FINISHED
-        );
+        final Result<JobResponse> waitJobResponseResult = cloudConvertClient.jobs().wait(jobResponse.getId());
+        assertThat(waitJobResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final JobResponse waitJobResponse = waitJobResponseResult.getBody();
         assertThat(waitJobResponse.getStatus()).isEqualTo(Status.FINISHED);
         assertThat(waitJobResponse.getId()).isEqualTo(jobResponse.getId());
 
@@ -134,7 +125,7 @@ public class JobsIntegrationTest extends AbstractTest {
         assertThat(deleteVoidResult.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
     }
 
-    @Test
+    @Test(timeout = TIMEOUT)
     public void listJobsLifecycle() throws Exception {
         // List jobs
         final Result<Pageable<JobResponse>> jobResponsePageable = cloudConvertClient.jobs().list(ImmutableMap.of(), ImmutableList.of(), new Pagination(10, 1));

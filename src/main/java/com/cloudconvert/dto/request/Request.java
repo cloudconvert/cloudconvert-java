@@ -15,7 +15,7 @@ public abstract class Request {
      */
     @Getter
     @JsonIgnore
-    private final Map<String, String> properties;
+    private final Map<String, Object> properties;
 
     public Request() {
         properties = new HashMap<>();
@@ -28,7 +28,7 @@ public abstract class Request {
      * @param value value. If null, then specific option is removed
      * @return {@link TaskRequest}
      */
-    public <T extends Request> T setProperty(@NotNull final String key, @Nullable final String value) {
+    public <T extends Request> T setProperty(@NotNull final String key, @Nullable final Object value) {
         if (value == null) {
             properties.remove(key);
         } else {
@@ -39,13 +39,13 @@ public abstract class Request {
     }
 
     /**
-     * Set specific option. Shortcut for {@link #setProperty(String, String)}
+     * Set specific option. Shortcut for {@link #setProperty(String, Object)}
      *
      * @param key   key
      * @param value value. If null, then specific option is removed
      * @return {@link TaskRequest}
      */
-    public <T extends Request> T set(@NotNull final String key, @Nullable final String value) {
+    public <T extends Request> T set(@NotNull final String key, @Nullable final Object value) {
         return setProperty(key, value);
     }
 
@@ -55,7 +55,7 @@ public abstract class Request {
      * @param key key
      * @return specific option value
      */
-    public String getProperty(@NotNull final String key) {
+    public Object getProperty(@NotNull final String key) {
         return properties.get(key);
     }
 
@@ -65,7 +65,7 @@ public abstract class Request {
      * @param key key
      * @return specific option value
      */
-    public String get(@NotNull final String key) {
+    public Object get(@NotNull final String key) {
         return properties.get(key);
     }
 }

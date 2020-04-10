@@ -9,7 +9,6 @@ import lombok.experimental.Accessors;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
@@ -48,11 +47,6 @@ public class ConvertFilesTaskRequest extends TaskRequest {
      * (optional) Choose a filename (including extension) for the output file.
      */
     private String filename;
-
-    /**
-     * Conversion and engine specific options. Depends on input_format and output_format.
-     */
-    private Map<String, String> specificOptions;
 
     public ConvertFilesTaskRequest setInput(final String... input) {
         this.input = Arrays.stream(input).collect(Collectors.toList());

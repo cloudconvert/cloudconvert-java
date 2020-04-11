@@ -6,12 +6,9 @@ import com.cloudconvert.dto.response.UserResponse;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.executor.RequestExecutor;
 import com.cloudconvert.resource.AbstractUsersResource;
-import com.google.common.collect.ImmutableList;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.methods.HttpGet;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 
 @Slf4j
@@ -30,9 +27,7 @@ public class UsersResource extends AbstractUsersResource<Result<UserResponse>> {
 
     @Override
     public Result<UserResponse> me() throws IOException, URISyntaxException {
-        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_USERS, PATH_SEGMENT_ME));
-
-        return requestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), USER_RESPONSE_TYPE_REFERENCE);
+        return requestExecutor.execute(getMeHttpUriRequest(), USER_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override

@@ -9,10 +9,20 @@ import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AbstractResult;
 import com.cloudconvert.resource.params.Filter;
 import com.cloudconvert.resource.params.Include;
+import com.cloudconvert.resource.params.converter.AlternativeToNameValuePairsConverter;
+import com.cloudconvert.resource.params.converter.FiltersToNameValuePairsConverter;
+import com.cloudconvert.resource.params.converter.IncludesToNameValuePairsConverter;
+import com.google.common.collect.ImmutableList;
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
@@ -23,10 +33,18 @@ public abstract class AbstractConvertFilesResource<TRAR extends AbstractResult<T
     public static final String PATH_SEGMENT_CONVERT = "convert";
     public static final String PATH_SEGMENT_FORMATS = "formats";
 
+    private final IncludesToNameValuePairsConverter includesToNameValuePairsConverter;
+    private final FiltersToNameValuePairsConverter filtersToNameValuePairsConverter;
+    private final AlternativeToNameValuePairsConverter alternativeToNameValuePairsConverter;
+
     public AbstractConvertFilesResource(
         final SettingsProvider settingsProvider, final ObjectMapperProvider objectMapperProvider
     ) {
         super(settingsProvider, objectMapperProvider);
+
+        this.includesToNameValuePairsConverter = new IncludesToNameValuePairsConverter();
+        this.filtersToNameValuePairsConverter = new FiltersToNameValuePairsConverter();
+        this.alternativeToNameValuePairsConverter = new AlternativeToNameValuePairsConverter();
     }
 
     /**
@@ -40,6 +58,15 @@ public abstract class AbstractConvertFilesResource<TRAR extends AbstractResult<T
     public abstract TRAR convert(
         @NotNull final ConvertFilesTaskRequest convertFilesTaskRequest
     ) throws IOException, URISyntaxException;
+
+    protected HttpUriRequest getConvertHttpUriRequest(
+        @NotNull final ConvertFilesTaskRequest convertFilesTaskRequest
+    ) throws IOException, URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_CONVERT));
+        final HttpEntity httpEntity = getHttpEntity(convertFilesTaskRequest);
+
+        return getHttpUriRequest(HttpPost.class, uri, httpEntity);
+    }
 
     /**
      * List all supported formats, their engines and possible options.
@@ -101,4 +128,15 @@ public abstract class AbstractConvertFilesResource<TRAR extends AbstractResult<T
     public abstract ORP convertFormats(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Boolean alternative
     ) throws IOException, URISyntaxException;
+
+    protected HttpUriRequest getConvertFormatsHttpUriRequest(
+        @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Boolean alternative
+    ) throws IOException, URISyntaxException {
+        final List<NameValuePair> nameValuePairs = ImmutableList.<NameValuePair>builder().addAll(filtersToNameValuePairsConverter.convert(filters))
+            .addAll(includesToNameValuePairsConverter.convert(includes)).addAll(alternativeToNameValuePairsConverter.convert(alternative)).build();
+
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_CONVERT, PATH_SEGMENT_FORMATS), nameValuePairs);
+
+        return getHttpUriRequest(HttpGet.class, uri);
+    }
 }

@@ -35,10 +35,7 @@ public class ExecuteCommandsResource extends AbstractExecuteCommandsResource<Res
     public Result<TaskResponse> command(
         @NotNull final ExecuteCommandsTaskRequest executeCommandsTaskRequest
     ) throws IOException, URISyntaxException {
-        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_COMMAND));
-        final HttpEntity httpEntity = getHttpEntity(executeCommandsTaskRequest);
-
-        return requestExecutor.execute(getHttpUriRequest(HttpPost.class, uri, httpEntity), TASK_RESPONSE_TYPE_REFERENCE);
+        return requestExecutor.execute(getCommandHttpUriRequest(executeCommandsTaskRequest), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override

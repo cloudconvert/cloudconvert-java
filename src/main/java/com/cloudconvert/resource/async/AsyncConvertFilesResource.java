@@ -11,21 +11,13 @@ import com.cloudconvert.executor.AsyncRequestExecutor;
 import com.cloudconvert.resource.AbstractConvertFilesResource;
 import com.cloudconvert.resource.params.Filter;
 import com.cloudconvert.resource.params.Include;
-import com.cloudconvert.resource.params.converter.AlternativeToNameValuePairsConverter;
-import com.cloudconvert.resource.params.converter.FiltersToNameValuePairsConverter;
-import com.cloudconvert.resource.params.converter.IncludesToNameValuePairsConverter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
@@ -36,10 +28,6 @@ public class AsyncConvertFilesResource extends AbstractConvertFilesResource<
 
     private final AsyncRequestExecutor asyncRequestExecutor;
 
-    private final IncludesToNameValuePairsConverter includesToNameValuePairsConverter;
-    private final FiltersToNameValuePairsConverter filtersToNameValuePairsConverter;
-    private final AlternativeToNameValuePairsConverter alternativeToNameValuePairsConverter;
-
     public AsyncConvertFilesResource(
         final SettingsProvider settingsProvider,
         final ObjectMapperProvider objectMapperProvider, final AsyncRequestExecutor asyncRequestExecutor
@@ -47,20 +35,13 @@ public class AsyncConvertFilesResource extends AbstractConvertFilesResource<
         super(settingsProvider, objectMapperProvider);
 
         this.asyncRequestExecutor = asyncRequestExecutor;
-
-        this.includesToNameValuePairsConverter = new IncludesToNameValuePairsConverter();
-        this.filtersToNameValuePairsConverter = new FiltersToNameValuePairsConverter();
-        this.alternativeToNameValuePairsConverter = new AlternativeToNameValuePairsConverter();
     }
 
     @Override
     public AsyncResult<TaskResponse> convert(
         @NotNull final ConvertFilesTaskRequest convertFilesTaskRequest
     ) throws IOException, URISyntaxException {
-        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_CONVERT));
-        final HttpEntity httpEntity = getHttpEntity(convertFilesTaskRequest);
-
-        return asyncRequestExecutor.execute(getHttpUriRequest(HttpPost.class, uri, httpEntity), TASK_RESPONSE_TYPE_REFERENCE);
+        return asyncRequestExecutor.execute(getConvertHttpUriRequest(convertFilesTaskRequest), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
@@ -86,12 +67,7 @@ public class AsyncConvertFilesResource extends AbstractConvertFilesResource<
     public AsyncResult<Pageable<OperationResponse>> convertFormats(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Boolean alternative
     ) throws IOException, URISyntaxException {
-        final List<NameValuePair> nameValuePairs = ImmutableList.<NameValuePair>builder().addAll(filtersToNameValuePairsConverter.convert(filters))
-            .addAll(includesToNameValuePairsConverter.convert(includes)).addAll(alternativeToNameValuePairsConverter.convert(alternative)).build();
-
-        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_CONVERT, PATH_SEGMENT_FORMATS), nameValuePairs);
-
-        return asyncRequestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), OPERATION_RESPONSE_PAGEABLE_TYPE_REFERENCE);
+        return asyncRequestExecutor.execute(getConvertFormatsHttpUriRequest(filters, includes, alternative), OPERATION_RESPONSE_PAGEABLE_TYPE_REFERENCE);
     }
 
     @Override

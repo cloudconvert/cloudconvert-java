@@ -52,11 +52,7 @@ public class AsyncImportFilesResource extends AbstractImportFilesResource<AsyncR
     public AsyncResult<TaskResponse> url(
         @NotNull final UrlImportRequest urlImportRequest
     ) throws IOException, URISyntaxException {
-        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_URL));
-        final HttpEntity httpEntity = getHttpEntity(urlImportRequest);
-        final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
-
-        return asyncRequestExecutor.execute(httpUriRequest, TASK_RESPONSE_TYPE_REFERENCE);
+        return asyncRequestExecutor.execute(getUrlHttpUriRequest(urlImportRequest), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
@@ -184,55 +180,35 @@ public class AsyncImportFilesResource extends AbstractImportFilesResource<AsyncR
     public AsyncResult<TaskResponse> s3(
         @NotNull final S3ImportRequest s3ImportRequest
     ) throws IOException, URISyntaxException {
-        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_S3));
-        final HttpEntity httpEntity = getHttpEntity(s3ImportRequest);
-        final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
-
-        return asyncRequestExecutor.execute(httpUriRequest, TASK_RESPONSE_TYPE_REFERENCE);
+        return asyncRequestExecutor.execute(getS3HttpUriRequest(s3ImportRequest), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
     public AsyncResult<TaskResponse> azureBlob(
         @NotNull final AzureBlobImportRequest azureBlobImportRequest
     ) throws IOException, URISyntaxException {
-        final URI uri = getUri(ImmutableList.<String>builder().add(PATH_SEGMENT_IMPORT).addAll(PATH_SEGMENTS_AZURE_BLOB).build());
-        final HttpEntity httpEntity = getHttpEntity(azureBlobImportRequest);
-        final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
-
-        return asyncRequestExecutor.execute(httpUriRequest, TASK_RESPONSE_TYPE_REFERENCE);
+        return asyncRequestExecutor.execute(getAzureBlobHttpUriRequest(azureBlobImportRequest), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
     public AsyncResult<TaskResponse> googleCloudStorage(
         @NotNull final GoogleCloudStorageImportRequest googleCloudStorageImportRequest
     ) throws IOException, URISyntaxException {
-        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_GOOGLE_CLOUD_STORAGE));
-        final HttpEntity httpEntity = getHttpEntity(googleCloudStorageImportRequest);
-        final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
-
-        return asyncRequestExecutor.execute(httpUriRequest, TASK_RESPONSE_TYPE_REFERENCE);
+        return asyncRequestExecutor.execute(getGoogleCloudHttpUriRequest(googleCloudStorageImportRequest), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
     public AsyncResult<TaskResponse> openStack(
         @NotNull final OpenStackImportRequest openStackImportRequest
     ) throws IOException, URISyntaxException {
-        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_OPENSTACK));
-        final HttpEntity httpEntity = getHttpEntity(openStackImportRequest);
-        final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
-
-        return asyncRequestExecutor.execute(httpUriRequest, TASK_RESPONSE_TYPE_REFERENCE);
+        return asyncRequestExecutor.execute(getOpenStackHttpUriRequest(openStackImportRequest), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
     public AsyncResult<TaskResponse> sftp(
         @NotNull final SftpImportRequest sftpImportRequest
     ) throws IOException, URISyntaxException {
-        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_SFTP));
-        final HttpEntity httpEntity = getHttpEntity(sftpImportRequest);
-        final HttpUriRequest httpUriRequest = getHttpUriRequest(HttpPost.class, uri, httpEntity);
-
-        return asyncRequestExecutor.execute(httpUriRequest, TASK_RESPONSE_TYPE_REFERENCE);
+        return asyncRequestExecutor.execute(getSftpHttpUriRequest(sftpImportRequest), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override

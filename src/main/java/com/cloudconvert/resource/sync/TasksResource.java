@@ -17,17 +17,9 @@ import com.cloudconvert.resource.AbstractTasksResource;
 import com.cloudconvert.resource.params.Filter;
 import com.cloudconvert.resource.params.Include;
 import com.cloudconvert.resource.params.Pagination;
-import com.cloudconvert.resource.params.converter.AlternativeToNameValuePairsConverter;
-import com.cloudconvert.resource.params.converter.FiltersToNameValuePairsConverter;
-import com.cloudconvert.resource.params.converter.IncludesToNameValuePairsConverter;
-import com.cloudconvert.resource.params.converter.PaginationToNameValuePairsConverter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,11 +35,6 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponse>,
 
     private final RequestExecutor requestExecutor;
 
-    private final IncludesToNameValuePairsConverter includesToNameValuePairsConverter;
-    private final FiltersToNameValuePairsConverter filtersToNameValuePairsConverter;
-    private final AlternativeToNameValuePairsConverter alternativeToNameValuePairsConverter;
-    private final PaginationToNameValuePairsConverter paginationToNameValuePairsConverter;
-
     public TasksResource(
         final SettingsProvider settingsProvider,
         final ObjectMapperProvider objectMapperProvider, final RequestExecutor requestExecutor,
@@ -59,11 +46,6 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponse>,
             mergeFilesResource, createArchivesResource, executeCommandsResource);
 
         this.requestExecutor = requestExecutor;
-
-        this.includesToNameValuePairsConverter = new IncludesToNameValuePairsConverter();
-        this.filtersToNameValuePairsConverter = new FiltersToNameValuePairsConverter();
-        this.alternativeToNameValuePairsConverter = new AlternativeToNameValuePairsConverter();
-        this.paginationToNameValuePairsConverter = new PaginationToNameValuePairsConverter();
     }
 
     public Result<TaskResponse> show(
@@ -75,11 +57,7 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponse>,
     public Result<TaskResponse> show(
         @NotNull final String taskId, @NotNull final List<Include> includes
     ) throws IOException, URISyntaxException {
-        final List<NameValuePair> nameValuePairs = ImmutableList.<NameValuePair>builder().addAll(includesToNameValuePairsConverter.convert(includes)).build();
-
-        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId), nameValuePairs);
-
-        return requestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), TASK_RESPONSE_TYPE_REFERENCE);
+        return requestExecutor.execute(getShowHttpUriRequest(taskId, includes), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     public Result<TaskResponse> wait(
@@ -87,7 +65,7 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponse>,
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId, PATH_SEGMENT_WAIT));
 
-        return requestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), TASK_RESPONSE_TYPE_REFERENCE);
+        return requestExecutor.execute(getWaitHttpUriRequest(taskId), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     public Result<Pageable<TaskResponse>> list() throws IOException, URISyntaxException {
@@ -111,36 +89,25 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponse>,
     public Result<Pageable<TaskResponse>> list(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Pagination pagination
     ) throws IOException, URISyntaxException {
-        final List<NameValuePair> nameValuePairs = ImmutableList.<NameValuePair>builder().addAll(filtersToNameValuePairsConverter.convert(filters))
-            .addAll(includesToNameValuePairsConverter.convert(includes)).addAll(paginationToNameValuePairsConverter.convert(pagination)).build();
-
-        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS), nameValuePairs);
-
-        return requestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), TASK_RESPONSE_PAGEABLE_TYPE_REFERENCE);
+        return requestExecutor.execute(getListHttpUriRequest(filters, includes, pagination), TASK_RESPONSE_PAGEABLE_TYPE_REFERENCE);
     }
 
     public Result<TaskResponse> cancel(
         @NotNull final String taskId
     ) throws IOException, URISyntaxException {
-        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId, PATH_SEGMENT_CANCEL));
-
-        return requestExecutor.execute(getHttpUriRequest(HttpPost.class, uri), TASK_RESPONSE_TYPE_REFERENCE);
+        return requestExecutor.execute(getCancelHttpUriRequest(taskId), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     public Result<TaskResponse> retry(
         @NotNull final String taskId
     ) throws IOException, URISyntaxException {
-        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId, PATH_SEGMENT_RETRY));
-
-        return requestExecutor.execute(getHttpUriRequest(HttpPost.class, uri), TASK_RESPONSE_TYPE_REFERENCE);
+        return requestExecutor.execute(getRetryHttpUriRequest(taskId), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     public Result<Void> delete(
         @NotNull final String taskId
     ) throws IOException, URISyntaxException {
-        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId));
-
-        return requestExecutor.execute(getHttpUriRequest(HttpDelete.class, uri), VOID_TYPE_REFERENCE);
+        return requestExecutor.execute(getDeleteHttpUriRequest(taskId), VOID_TYPE_REFERENCE);
     }
 
     public Result<Pageable<OperationResponse>> operations() throws IOException, URISyntaxException {
@@ -162,12 +129,7 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponse>,
     public Result<Pageable<OperationResponse>> operations(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Boolean alternative
     ) throws IOException, URISyntaxException {
-        final List<NameValuePair> nameValuePairs = ImmutableList.<NameValuePair>builder().addAll(filtersToNameValuePairsConverter.convert(filters))
-            .addAll(includesToNameValuePairsConverter.convert(includes)).addAll(alternativeToNameValuePairsConverter.convert(alternative)).build();
-
-        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_OPERATIONS), nameValuePairs);
-
-        return requestExecutor.execute(getHttpUriRequest(HttpGet.class, uri), OPERATION_RESPONSE_PAGEABLE_TYPE_REFERENCE);
+        return requestExecutor.execute(getOperationsHttpUriRequest(filters, includes, alternative), OPERATION_RESPONSE_PAGEABLE_TYPE_REFERENCE);
     }
 
     @Override

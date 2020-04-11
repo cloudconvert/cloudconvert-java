@@ -13,6 +13,8 @@ import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AbstractResult;
 import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.FormBodyPartBuilder;
@@ -29,6 +31,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -64,6 +67,15 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
     public abstract TRAR url(
         @NotNull final UrlImportRequest urlImportRequest
     ) throws IOException, URISyntaxException;
+
+    protected HttpUriRequest getUrlHttpUriRequest(
+        @NotNull final UrlImportRequest urlImportRequest
+    ) throws IOException, URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_URL));
+        final HttpEntity httpEntity = getHttpEntity(urlImportRequest);
+
+        return getHttpUriRequest(HttpPost.class, uri, httpEntity);
+    }
 
     /**
      * Create a task which uploads one input file.
@@ -103,7 +115,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      * Upload file using existing task response data result
      *
      * @param taskResponseResult {@link TRAR}
-     * @param file                   {@link File} file which will be uploaded
+     * @param file               {@link File} file which will be uploaded
      * @return TRD
      * @throws IOException
      * @throws URISyntaxException
@@ -152,7 +164,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      * Upload file using existing task response data result
      *
      * @param taskResponseResult {@link TRAR}
-     * @param inputStream            {@link InputStream} of file which will be uploaded
+     * @param inputStream        {@link InputStream} of file which will be uploaded
      * @return TRD
      * @throws IOException
      * @throws URISyntaxException
@@ -190,6 +202,15 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
         @NotNull final S3ImportRequest s3ImportRequest
     ) throws IOException, URISyntaxException;
 
+    protected HttpUriRequest getS3HttpUriRequest(
+        @NotNull final S3ImportRequest s3ImportRequest
+    ) throws IOException, URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_S3));
+        final HttpEntity httpEntity = getHttpEntity(s3ImportRequest);
+
+        return getHttpUriRequest(HttpPost.class, uri, httpEntity);
+    }
+
     /**
      * Create a task to import files by downloading it from a Azure blob container.
      *
@@ -201,6 +222,15 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
     public abstract TRAR azureBlob(
         @NotNull final AzureBlobImportRequest azureBlobImportRequest
     ) throws IOException, URISyntaxException;
+
+    protected HttpUriRequest getAzureBlobHttpUriRequest(
+        @NotNull final AzureBlobImportRequest azureBlobImportRequest
+    ) throws IOException, URISyntaxException {
+        final URI uri = getUri(ImmutableList.<String>builder().add(PATH_SEGMENT_IMPORT).addAll(PATH_SEGMENTS_AZURE_BLOB).build());
+        final HttpEntity httpEntity = getHttpEntity(azureBlobImportRequest);
+
+        return getHttpUriRequest(HttpPost.class, uri, httpEntity);
+    }
 
     /**
      * Create a task to import files by downloading it from a Google Cloud Storage bucket.
@@ -214,6 +244,15 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
         @NotNull final GoogleCloudStorageImportRequest googleCloudStorageImportRequest
     ) throws IOException, URISyntaxException;
 
+    protected HttpUriRequest getGoogleCloudHttpUriRequest(
+        @NotNull final GoogleCloudStorageImportRequest googleCloudStorageImportRequest
+    ) throws IOException, URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_GOOGLE_CLOUD_STORAGE));
+        final HttpEntity httpEntity = getHttpEntity(googleCloudStorageImportRequest);
+
+        return getHttpUriRequest(HttpPost.class, uri, httpEntity);
+    }
+
     /**
      * Create a task to import files by downloading it from OpenStack Object Storage (Swift).
      *
@@ -226,6 +265,15 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
         @NotNull final OpenStackImportRequest openStackImportRequest
     ) throws IOException, URISyntaxException;
 
+    protected HttpUriRequest getOpenStackHttpUriRequest(
+        @NotNull final OpenStackImportRequest openStackImportRequest
+    ) throws IOException, URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_OPENSTACK));
+        final HttpEntity httpEntity = getHttpEntity(openStackImportRequest);
+
+        return getHttpUriRequest(HttpPost.class, uri, httpEntity);
+    }
+
     /**
      * Create a task to import files by downloading it from a SFTP server.
      *
@@ -237,6 +285,15 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
     public abstract TRAR sftp(
         @NotNull final SftpImportRequest sftpImportRequest
     ) throws IOException, URISyntaxException;
+
+    protected HttpUriRequest getSftpHttpUriRequest(
+        @NotNull final SftpImportRequest sftpImportRequest
+    ) throws IOException, URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_SFTP));
+        final HttpEntity httpEntity = getHttpEntity(sftpImportRequest);
+
+        return getHttpUriRequest(HttpPost.class, uri, httpEntity);
+    }
 
     protected HttpEntity getMultipartHttpEntity(
         final TaskResponse.Result.Form uploadImportResponseResultForm, final File file

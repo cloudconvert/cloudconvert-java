@@ -11,9 +11,13 @@ import com.cloudconvert.dto.request.UrlExportRequest;
 import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AbstractResult;
 import com.google.common.collect.ImmutableList;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -47,6 +51,15 @@ public abstract class AbstractExportFilesResource<TRAR extends AbstractResult<Ta
         @NotNull final UrlExportRequest urlExportRequest
     ) throws IOException, URISyntaxException;
 
+    protected HttpUriRequest getUrlHttpUriRequest(
+        @NotNull final UrlExportRequest urlExportRequest
+    ) throws IOException, URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_EXPORT, PATH_SEGMENT_URL));
+        final HttpEntity httpEntity = getHttpEntity(urlExportRequest);
+
+        return getHttpUriRequest(HttpPost.class, uri, httpEntity);
+    }
+
     /**
      * Create a task to export files to a S3 bucket.
      *
@@ -58,6 +71,15 @@ public abstract class AbstractExportFilesResource<TRAR extends AbstractResult<Ta
     public abstract TRAR s3(
         @NotNull final S3ExportRequest s3ExportRequest
     ) throws IOException, URISyntaxException;
+
+    protected HttpUriRequest getS3HttpUriRequest(
+        @NotNull final S3ExportRequest s3ExportRequest
+    ) throws IOException, URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_EXPORT, PATH_SEGMENT_S3));
+        final HttpEntity httpEntity = getHttpEntity(s3ExportRequest);
+
+        return getHttpUriRequest(HttpPost.class, uri, httpEntity);
+    }
 
     /**
      * Create a task to export files to a Azure blob container.
@@ -71,6 +93,15 @@ public abstract class AbstractExportFilesResource<TRAR extends AbstractResult<Ta
         @NotNull final AzureBlobExportRequest azureBlobExportRequest
     ) throws IOException, URISyntaxException;
 
+    protected HttpUriRequest getAzureBlobHttpUriRequest(
+        @NotNull final AzureBlobExportRequest azureBlobExportRequest
+    ) throws IOException, URISyntaxException {
+        final URI uri = getUri(ImmutableList.<String>builder().add(PATH_SEGMENT_EXPORT).addAll(PATH_SEGMENTS_AZURE_BLOB).build());
+        final HttpEntity httpEntity = getHttpEntity(azureBlobExportRequest);
+
+        return getHttpUriRequest(HttpPost.class, uri, httpEntity);
+    }
+
     /**
      * Create a task to export files to a Google Cloud Storage bucket.
      *
@@ -82,6 +113,15 @@ public abstract class AbstractExportFilesResource<TRAR extends AbstractResult<Ta
     public abstract TRAR googleCloudStorage(
         @NotNull final GoogleCloudStorageExportRequest googleCloudStorageExportRequest
     ) throws IOException, URISyntaxException;
+
+    protected HttpUriRequest getGoogleCloudStorageHttpUriRequest(
+        @NotNull final GoogleCloudStorageExportRequest googleCloudStorageExportRequest
+    ) throws IOException, URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_EXPORT, PATH_SEGMENT_GOOGLE_CLOUD_STORAGE));
+        final HttpEntity httpEntity = getHttpEntity(googleCloudStorageExportRequest);
+
+        return getHttpUriRequest(HttpPost.class, uri, httpEntity);
+    }
 
     /**
      * Create a task to export files to OpenStack Object Storage (Swift).
@@ -95,6 +135,15 @@ public abstract class AbstractExportFilesResource<TRAR extends AbstractResult<Ta
         @NotNull final OpenStackExportRequest openStackExportRequest
     ) throws IOException, URISyntaxException;
 
+    protected HttpUriRequest getOpenStackStorageHttpUriRequest(
+        @NotNull final OpenStackExportRequest openStackExportRequest
+    ) throws IOException, URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_EXPORT, PATH_SEGMENT_OPENSTACK));
+        final HttpEntity httpEntity = getHttpEntity(openStackExportRequest);
+
+        return getHttpUriRequest(HttpPost.class, uri, httpEntity);
+    }
+
     /**
      * Create a task to export files to a SFTP server.
      *
@@ -106,4 +155,13 @@ public abstract class AbstractExportFilesResource<TRAR extends AbstractResult<Ta
     public abstract TRAR sftp(
         @NotNull final SftpExportRequest sftpExportRequest
     ) throws IOException, URISyntaxException;
+
+    protected HttpUriRequest getSftpStorageHttpUriRequest(
+        @NotNull final SftpExportRequest sftpExportRequest
+    ) throws IOException, URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_EXPORT, PATH_SEGMENT_SFTP));
+        final HttpEntity httpEntity = getHttpEntity(sftpExportRequest);
+
+        return getHttpUriRequest(HttpPost.class, uri, httpEntity);
+    }
 }

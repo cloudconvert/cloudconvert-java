@@ -9,11 +9,24 @@ import com.cloudconvert.dto.result.AbstractResult;
 import com.cloudconvert.resource.params.Filter;
 import com.cloudconvert.resource.params.Include;
 import com.cloudconvert.resource.params.Pagination;
+import com.cloudconvert.resource.params.converter.FiltersToNameValuePairsConverter;
+import com.cloudconvert.resource.params.converter.IncludesToNameValuePairsConverter;
+import com.cloudconvert.resource.params.converter.PaginationToNameValuePairsConverter;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,10 +36,18 @@ public abstract class AbstractJobsResource<JRAR extends AbstractResult<JobRespon
     public static final String PATH_SEGMENT_JOBS = "jobs";
     public static final String PATH_SEGMENT_WAIT = "wait";
 
+    private final IncludesToNameValuePairsConverter includesToNameValuePairsConverter;
+    private final FiltersToNameValuePairsConverter filtersToNameValuePairsConverter;
+    private final PaginationToNameValuePairsConverter paginationToNameValuePairsConverter;
+
     public AbstractJobsResource(
         final SettingsProvider settingsProvider, final ObjectMapperProvider objectMapperProvider
     ) {
         super(settingsProvider, objectMapperProvider);
+
+        this.includesToNameValuePairsConverter = new IncludesToNameValuePairsConverter();
+        this.filtersToNameValuePairsConverter = new FiltersToNameValuePairsConverter();
+        this.paginationToNameValuePairsConverter = new PaginationToNameValuePairsConverter();
     }
 
     /**
@@ -45,7 +66,6 @@ public abstract class AbstractJobsResource<JRAR extends AbstractResult<JobRespon
     public abstract JRAR create(
         @NotNull final Map<String, TaskRequest> tasks
     ) throws IOException, URISyntaxException;
-
 
     /**
      * Create a job with one ore more tasks. Requires the task.write scope.
@@ -66,6 +86,20 @@ public abstract class AbstractJobsResource<JRAR extends AbstractResult<JobRespon
         @NotNull final Map<String, TaskRequest> tasks, @NotNull final String tag
     ) throws IOException, URISyntaxException;
 
+    protected HttpUriRequest getCreateHttpUriRequest(
+        @NotNull final Map<String, TaskRequest> tasks, @NotNull final String tag
+    ) throws IOException, URISyntaxException {
+        final Map<String, Object> tasksAsMap = new HashMap<>();
+        for (Map.Entry<String, TaskRequest> entry : tasks.entrySet()) {
+            tasksAsMap.put(entry.getKey(), requestToMap(entry.getValue()));
+        }
+
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_JOBS));
+        final HttpEntity httpEntity = getHttpEntity(ImmutableMap.of("tasks", tasksAsMap, "tag", tag));
+
+        return getHttpUriRequest(HttpPost.class, uri, httpEntity);
+    }
+
     /**
      * Show a job. Requires the task.read scope.
      *
@@ -77,6 +111,14 @@ public abstract class AbstractJobsResource<JRAR extends AbstractResult<JobRespon
     public abstract JRAR show(
         @NotNull final String jobId
     ) throws IOException, URISyntaxException;
+
+    protected HttpUriRequest getShowHttpUriRequest(
+        @NotNull final String jobId
+    ) throws URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_JOBS, jobId));
+
+        return getHttpUriRequest(HttpGet.class, uri);
+    }
 
     /**
      * Wait until the job status is finished or error. This makes the request block until the job has been completed. Requires the task.read scope.
@@ -96,6 +138,14 @@ public abstract class AbstractJobsResource<JRAR extends AbstractResult<JobRespon
     public abstract JRAR wait(
         @NotNull final String jobId
     ) throws IOException, URISyntaxException;
+
+    protected HttpUriRequest getWaitHttpUriRequest(
+        @NotNull final String jobId
+    ) throws URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_JOBS, jobId, PATH_SEGMENT_WAIT));
+
+        return getHttpUriRequest(HttpGet.class, uri);
+    }
 
     /**
      * List all jobs. Requires the task.read scope.
@@ -153,6 +203,17 @@ public abstract class AbstractJobsResource<JRAR extends AbstractResult<JobRespon
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Pagination pagination
     ) throws IOException, URISyntaxException;
 
+    protected HttpUriRequest getListHttpUriRequest(
+        @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Pagination pagination
+    ) throws IOException, URISyntaxException {
+        final List<NameValuePair> nameValuePairs = ImmutableList.<NameValuePair>builder().addAll(filtersToNameValuePairsConverter.convert(filters))
+            .addAll(includesToNameValuePairsConverter.convert(includes)).addAll(paginationToNameValuePairsConverter.convert(pagination)).build();
+
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_JOBS), nameValuePairs);
+
+        return getHttpUriRequest(HttpGet.class, uri);
+    }
+
     /**
      * Delete a job, including all tasks and data. Requires the task.write scope.
      * Jobs are deleted automatically 24 hours after they have ended.
@@ -165,4 +226,12 @@ public abstract class AbstractJobsResource<JRAR extends AbstractResult<JobRespon
     public abstract VAR delete(
         @NotNull final String jobId
     ) throws IOException, URISyntaxException;
+
+    protected HttpUriRequest getDeleteHttpUriRequest(
+        @NotNull final String jobId
+    ) throws URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_JOBS, jobId));
+
+        return getHttpUriRequest(HttpDelete.class, uri);
+    }
 }

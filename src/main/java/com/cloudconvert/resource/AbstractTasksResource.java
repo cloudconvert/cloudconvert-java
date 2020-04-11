@@ -15,11 +15,22 @@ import com.cloudconvert.dto.result.AbstractResult;
 import com.cloudconvert.resource.params.Filter;
 import com.cloudconvert.resource.params.Include;
 import com.cloudconvert.resource.params.Pagination;
+import com.cloudconvert.resource.params.converter.AlternativeToNameValuePairsConverter;
+import com.cloudconvert.resource.params.converter.FiltersToNameValuePairsConverter;
+import com.cloudconvert.resource.params.converter.IncludesToNameValuePairsConverter;
+import com.cloudconvert.resource.params.converter.PaginationToNameValuePairsConverter;
+import com.google.common.collect.ImmutableList;
 import lombok.Getter;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +63,11 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
     @Getter
     private final AbstractExecuteCommandsResource<TRAR> abstractExecuteCommandsResource;
 
+    private final IncludesToNameValuePairsConverter includesToNameValuePairsConverter;
+    private final FiltersToNameValuePairsConverter filtersToNameValuePairsConverter;
+    private final AlternativeToNameValuePairsConverter alternativeToNameValuePairsConverter;
+    private final PaginationToNameValuePairsConverter paginationToNameValuePairsConverter;
+
     public AbstractTasksResource(
         final SettingsProvider settingsProvider, final ObjectMapperProvider objectMapperProvider,
         final AbstractConvertFilesResource<TRAR, ORPAR> abstractConvertFilesResource, final AbstractOptimizeFilesResource<TRAR> abstractOptimizeFilesResource,
@@ -66,6 +82,11 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
         this.abstractMergeFilesResource = abstractMergeFilesResource;
         this.abstractCreateArchivesResource = abstractCreateArchivesResource;
         this.abstractExecuteCommandsResource = abstractExecuteCommandsResource;
+
+        this.includesToNameValuePairsConverter = new IncludesToNameValuePairsConverter();
+        this.filtersToNameValuePairsConverter = new FiltersToNameValuePairsConverter();
+        this.alternativeToNameValuePairsConverter = new AlternativeToNameValuePairsConverter();
+        this.paginationToNameValuePairsConverter = new PaginationToNameValuePairsConverter();
     }
 
     /**
@@ -93,6 +114,15 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
         @NotNull final String taskId, @NotNull final List<Include> includes
     ) throws IOException, URISyntaxException;
 
+    protected HttpUriRequest getShowHttpUriRequest(
+        @NotNull final String taskId, @NotNull final List<Include> includes
+    ) throws URISyntaxException {
+        final List<NameValuePair> nameValuePairs = ImmutableList.<NameValuePair>builder().addAll(includesToNameValuePairsConverter.convert(includes)).build();
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId), nameValuePairs);
+
+        return getHttpUriRequest(HttpGet.class, uri);
+    }
+
     /**
      * Wait until the task status is finished or error. This makes the request block until the task has been completed. Requires the task.read scope.
      * <p>
@@ -111,6 +141,14 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
     public abstract TRAR wait(
         @NotNull final String taskId
     ) throws IOException, URISyntaxException;
+
+    protected HttpUriRequest getWaitHttpUriRequest(
+        @NotNull final String taskId
+    ) throws URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId, PATH_SEGMENT_WAIT));
+
+        return getHttpUriRequest(HttpGet.class, uri);
+    }
 
     /**
      * List all tasks with their status, payload and result. Requires the task.read scope.
@@ -171,6 +209,17 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Pagination pagination
     ) throws IOException, URISyntaxException;
 
+    protected HttpUriRequest getListHttpUriRequest(
+        @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Pagination pagination
+    ) throws URISyntaxException {
+        final List<NameValuePair> nameValuePairs = ImmutableList.<NameValuePair>builder().addAll(filtersToNameValuePairsConverter.convert(filters))
+            .addAll(includesToNameValuePairsConverter.convert(includes)).addAll(paginationToNameValuePairsConverter.convert(pagination)).build();
+
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS), nameValuePairs);
+
+        return getHttpUriRequest(HttpGet.class, uri);
+    }
+
     /**
      * Cancel a task that is in status waiting or processing. Requires the task.write scope.
      *
@@ -182,6 +231,14 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
     public abstract TRAR cancel(
         @NotNull final String taskId
     ) throws IOException, URISyntaxException;
+
+    protected HttpUriRequest getCancelHttpUriRequest(
+        @NotNull final String taskId
+    ) throws URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId, PATH_SEGMENT_CANCEL));
+
+        return getHttpUriRequest(HttpPost.class, uri);
+    }
 
     /**
      * Create a new task, based on the payload of another task. Requires the task.write scope.
@@ -195,6 +252,14 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
         @NotNull final String taskId
     ) throws IOException, URISyntaxException;
 
+    protected HttpUriRequest getRetryHttpUriRequest(
+        @NotNull final String taskId
+    ) throws URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId, PATH_SEGMENT_RETRY));
+
+        return getHttpUriRequest(HttpPost.class, uri);
+    }
+
     /**
      * Delete a task, including all data. Requires the task.write scope.
      * Tasks are deleted automatically 24 hours after they have ended.
@@ -207,6 +272,14 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
     public abstract VAR delete(
         @NotNull final String taskId
     ) throws IOException, URISyntaxException;
+
+    protected HttpUriRequest getDeleteHttpUriRequest(
+        @NotNull final String taskId
+    ) throws URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId));
+
+        return getHttpUriRequest(HttpDelete.class, uri);
+    }
 
     /**
      * List all possible operations, formats, engines and possible options.
@@ -271,6 +344,17 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
     public abstract ORPAR operations(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Boolean alternative
     ) throws IOException, URISyntaxException;
+
+    protected HttpUriRequest getOperationsHttpUriRequest(
+        @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Boolean alternative
+    ) throws URISyntaxException {
+        final List<NameValuePair> nameValuePairs = ImmutableList.<NameValuePair>builder().addAll(filtersToNameValuePairsConverter.convert(filters))
+            .addAll(includesToNameValuePairsConverter.convert(includes)).addAll(alternativeToNameValuePairsConverter.convert(alternative)).build();
+
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_OPERATIONS), nameValuePairs);
+
+        return getHttpUriRequest(HttpGet.class, uri);
+    }
 
     /**
      * Create a task to convert one input file from input_format to output_format. Requires the task.write scope.

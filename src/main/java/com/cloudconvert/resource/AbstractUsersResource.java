@@ -4,8 +4,12 @@ import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.response.UserResponse;
 import com.cloudconvert.dto.result.AbstractResult;
+import com.google.common.collect.ImmutableList;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 
 public abstract class AbstractUsersResource<URAR extends AbstractResult<UserResponse>> extends AbstractResource {
@@ -27,4 +31,9 @@ public abstract class AbstractUsersResource<URAR extends AbstractResult<UserResp
      * @throws URISyntaxException
      */
     public abstract URAR me() throws IOException, URISyntaxException;
+
+    protected HttpUriRequest getMeHttpUriRequest() throws URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_USERS, PATH_SEGMENT_ME));
+        return getHttpUriRequest(HttpGet.class, uri);
+    }
 }

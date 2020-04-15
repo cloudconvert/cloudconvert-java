@@ -1,6 +1,8 @@
 ## cloudconvert-java
-This is the official Java SDK v2 for the [CloudConvert](https://cloudconvert.com/api/v2) _API v2_.
+
 [![Build Status](https://travis-ci.org/cloudconvert/cloudconvert-java.svg?branch=master)](https://travis-ci.org/cloudconvert/cloudconvert-java)
+
+This is the official Java SDK v2 for the [CloudConvert](https://cloudconvert.com/api/v2) _API v2_.
 
 ## Installation
 ```
@@ -232,6 +234,13 @@ $ mvn clean install -U -Punit-tests
 ```
 $ mvn clean install -U -Pintegration-tests
 ```
+       
+By default, this runs the integration tests against the Sandbox API with an official CloudConvert account. If you would like to use your own account, you can set your API key in the `application.properties` file. In this case you need to whitelist the following MD5 hashes for Sandbox API (using the CloudConvert dashboard).
+
+    07db6477193bf8313e8082a1e1b5eaf6  image-test-file-1.jpg
+    7ef166ecc65949f6f2e7eb94a3dac0d4  image-test-file-2.jpg
+    ccbb000ef5bd9dad0fab600d2fff02fb  odt-test-file-1.odt
+    3a3b4d07338b51db19056a73a89a186b  odt-test-file-2.odt
        
 ## Resources
 * [API v2 Documentation](https://cloudconvert.com/api/v2)

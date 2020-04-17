@@ -16,7 +16,7 @@ By default, API Key, Sandbox and Webhook Signing Secret are being read from `app
 ```properties
 CLOUDCONVERT_API_KEY=<api-key>
 CLOUDCONVERT_SANDBOX=<true|false>
-CLOUDCONVERT_WEBHOOK_SIGNING_SECRET=<api-url>
+CLOUDCONVERT_WEBHOOK_SIGNING_SECRET=<secret>
 ```
 It is also possible to provide configuration above using environment variables, custom properties file, system properties and string variables.
 For all options, `CLOUDCONVERT_API_KEY`, `CLOUDCONVERT_SANDBOX` and `CLOUDCONVERT_WEBHOOK_SIGNING_SECRET` variable names should be used.
@@ -33,7 +33,7 @@ new CloudConvertClient(new EnvironmentVariableSettingsProvider());
 new CloudConvertClient(new PropertyFileSettingsProvider("custom.properties"));
 
 // Using configuration from string variables
-new CloudConvertClient(new StringSettingsProvider("api-url", "webhook-signing-secret"));
+new CloudConvertClient(new StringSettingsProvider("api-url", "webhook-signing-secret", false));
 
 // Using configuration from system properties
 new CloudConvertClient(new SystemPropertySettingsProvider()); 
@@ -51,7 +51,7 @@ new AsyncCloudConvertClient(new EnvironmentVariableSettingsProvider());
 new AsyncCloudConvertClient(new PropertyFileSettingsProvider("custom.properties"));
 
 // Using configuration from string variables
-new AsyncCloudConvertClient(new StringSettingsProvider("api-url", "webhook-signing-secret"));
+new AsyncCloudConvertClient(new StringSettingsProvider("api-url", "webhook-signing-secret", false));
 
 // Using configuration from system properties
 new AsyncCloudConvertClient(new SystemPropertySettingsProvider());
@@ -68,7 +68,10 @@ final CloudConvertClient cloudConvertClient = new CloudConvertClient();
 final JobResponse createJobResponse = cloudConvertClient.jobs().create(
     ImmutableMap.of(
         "import-my-file", new UrlImportRequest().setUrl("import-url"),
-        "convert-my-file", new ConvertFilesTaskRequest().setInput("import-my-file").set("width", 100).set("height", 100),
+        "convert-my-file", new ConvertFilesTaskRequest()
+                    .setInput("import-my-file")
+                    .set("width", 100)
+                    .set("height", 100),
         "export-my-file", new UrlExportRequest().setInput("convert-my-file")
     )
 ).getBody();
@@ -92,7 +95,10 @@ final AsyncCloudConvertClient asyncCloudConvertClient = new AsyncCloudConvertCli
 final JobResponse createJobResponse = asyncCloudConvertClient.jobs().create(
     ImmutableMap.of(
         "import-my-file", new UrlImportRequest().setUrl("import-url"),
-        "convert-my-file", new ConvertFilesTaskRequest().setInput("import-my-file").set("width", 100).set("height", 100),
+        "convert-my-file", new ConvertFilesTaskRequest()
+                    .setInput("import-my-file")
+                    .set("width", 100)
+                    .set("height", 100),
         "export-my-file", new UrlExportRequest().setInput("convert-my-file")
     )
 ).get().getBody();
@@ -112,44 +118,36 @@ CloudConvert can generate public URLs using `export/url` tasks. You can use thes
 
 ###### Default (synchronous) client
 ```java
-// Create a client
-final CloudConvertClient cloudConvertClient = new CloudConvertClient();
-
-// Create an export/url task
-final TaskResponse exportUrlTaskResponse = cloudConvertClient.exportUsing().url(new UrlExportRequest()).getBody();
-
-// Get an export/url task id
-final String exportUrlTaskId = exportUrlTaskResponse.getId();
-
 // Wait for an export/url task to be finished
 final TaskResponse waitUrlExportTaskResponse = cloudConvertClient.tasks().wait(exportUrlTaskId).getBody();
 
-// Get a url of export/url task
+// Get url and filename of export/url task
 final String exportUrl = waitUrlExportTaskResponse.getResult().getFiles().get(0).get("url");
+final String filename = waitUrlExportTaskResponse.getResult().getFiles().get(0).get("filename");
 
 // Get file as input stream using url of export/url task
 final InputStream inputStream = cloudConvertClient.files().download(exportUrl).getBody();
+
+// Save to local file
+OutputStream outputStream = new FileOutputStream(new File(filename));
+IOUtils.copy(inputStream, outputStream);
 ```
 
 ###### Asynchronous client
 ```java
-// Create a client
-final AsyncCloudConvertClient asyncCloudConvertClient = new AsyncCloudConvertClient();
-
-// Create an export/url task
-final TaskResponse exportUrlTaskResponse = asyncCloudConvertClient.exportUsing().url(new UrlExportRequest()).get().getBody();
-
-// Get an export/url task id
-final String exportUrlTaskId = exportUrlTaskResponse.getId();
-
 // Wait for an export/url task to be finished
 final TaskResponse waitUrlExportTaskResponse = asyncCloudConvertClient.tasks().wait(exportUrlTaskId).get().getBody();
 
 // Get a url of export/url task
 final String exportUrl = waitUrlExportTaskResponse.getResult().getFiles().get(0).get("url");
+final String filename = waitUrlExportTaskResponse.getResult().getFiles().get(0).get("filename");
 
 // Get file as input stream using url of export/url task
 final InputStream inputStream = asyncCloudConvertClient.files().download(exportUrl).get().getBody();
+
+// Save to local file
+OutputStream outputStream = new FileOutputStream(new File(filename));
+IOUtils.copy(inputStream, outputStream);
 ```
 
 ## Uploading Files
@@ -189,7 +187,6 @@ final TaskResponse waitUploadImportTaskResponse = asyncCloudConvertClient.tasks(
 ## Signing Webhook 
 The node SDK allows to verify webhook requests received from CloudConvert.
 
-###### Default (synchronous) client
 ```java
 // Create a client
 final CloudConvertClient cloudConvertClient = new CloudConvertClient();
@@ -200,29 +197,8 @@ final String payload = "payload";
 // The value of the "CloudConvert-Signature" header.
 final String signature = "signature";
 
-// You can find it in your webhook settings.
-final String secret = "secret";
-
 // Returns true if signature is valid, and false if signature is invalid
 final boolean isValid = cloudConvertClient.webhooks().verify(payload, signature);
-```
-
-###### Asynchronous client
-```java
-// Create a client
-final AsyncCloudConvertClient asyncCloudConvertClient = new AsyncCloudConvertClient();
-
-// The JSON payload from the raw request body.
-final String payload = "payload";
-
-// The value of the "CloudConvert-Signature" header.
-final String signature = "signature";
-
-// You can find it in your webhook settings.
-final String secret = "secret";
-
-// Returns true if signature is valid, and false if signature is invalid
-final boolean isValid = asyncCloudConvertClient.webhooks().verify(payload, signature);
 ```
 
 ## Unit Tests

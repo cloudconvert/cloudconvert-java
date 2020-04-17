@@ -60,7 +60,7 @@ public abstract class Request {
     }
 
     /**
-     * Get specific option. Shortcut for {@link #getProperties()}
+     * Get specific option. Shortcut for {@link #getProperty(String)}
      *
      * @param key key
      * @return specific option value

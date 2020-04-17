@@ -5,8 +5,13 @@
 This is the official Java SDK v2 for the [CloudConvert](https://cloudconvert.com/api/v2) _API v2_.
 
 ## Installation
+Add the following dependency to your pom.xml:
 ```
-$ mvn clean install -U
+<dependency>
+    <groupId>com.cloudconvert</groupId>
+    <artifactId>cloudconvert-java</artifactId>
+    <version>1.0</version>
+</dependency>
 ```
 
 ## Creating API Client

@@ -7,10 +7,48 @@
 
     <groupId>com.cloudconvert</groupId>
     <artifactId>cloudconvert-java</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <name>cloudconvert-java</name>
+    <description>CloudConvert is an online file converter API - more than 200 different audio, video, document, ebook, archive, image, spreadsheet and presentation formats supported.</description>
     <url>https://cloudconvert.com/api/v2</url>
+
+    <licenses>
+        <license>
+            <name>The MIT License</name>
+            <url>https://raw.githubusercontent.com/ConvertAPI/convertapi-java/master/LICENSE.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Josias Montag</name>
+            <email>montag@lunaweb.de</email>
+            <organization>Lunaweb GmbH</organization>
+            <organizationUrl>https://www.lunaweb.de</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/cloudconvert/cloudconvert-java.git</connection>
+        <developerConnection>scm:git:git@github.com:cloudconvert/cloudconvert-java.git</developerConnection>
+        <url>https://github.com/cloudconvert/cloudconvert-java</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -37,6 +75,10 @@
         <system-rules.version>1.19.0</system-rules.version>
 
         <maven-surefire-plugin.version>3.0.0-M3</maven-surefire-plugin.version>
+        <nexus-staging-plugin.version>1.6.7</nexus-staging-plugin.version>
+        <maven-source-plugin.version>3.1.0</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
+        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
     </properties>
 
     <dependencies>
@@ -161,6 +203,70 @@
                 </dependencies>
                 <configuration>
                     <groups>${test.groups}</groups>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>${nexus-staging-plugin.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <configuration>
+                    <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>${maven-gpg-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <gpgArguments>
+                        <arg>--pinentry-mode</arg>
+                        <arg>loopback</arg>
+                    </gpgArguments>
                 </configuration>
             </plugin>
         </plugins>

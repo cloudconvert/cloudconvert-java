@@ -2,12 +2,7 @@ package com.cloudconvert.resource.async;
 
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
-import com.cloudconvert.dto.request.CaptureWebsitesTaskRequest;
-import com.cloudconvert.dto.request.ConvertFilesTaskRequest;
-import com.cloudconvert.dto.request.CreateArchivesTaskRequest;
-import com.cloudconvert.dto.request.ExecuteCommandsTaskRequest;
-import com.cloudconvert.dto.request.MergeFilesTaskRequest;
-import com.cloudconvert.dto.request.OptimizeFilesTaskRequest;
+import com.cloudconvert.dto.request.*;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
@@ -38,10 +33,11 @@ public class AsyncTasksResource extends AbstractTasksResource<AsyncResult<TaskRe
         final SettingsProvider settingsProvider, final ObjectMapperProvider objectMapperProvider, final AsyncRequestExecutor asyncRequestExecutor,
         final AsyncConvertFilesResource asyncConvertFilesResource, final AsyncOptimizeFilesResource asyncOptimizeFilesResource,
         final AsyncCaptureWebsitesResource asyncCaptureWebsitesResource, final AsyncMergeFilesResource asyncMergeFilesResource,
-        final AsyncCreateArchivesResource asyncCreateArchivesResource, final AsyncExecuteCommandsResource asyncExecuteCommandsResource
+        final AsyncCreateArchivesResource asyncCreateArchivesResource, final AsyncExecuteCommandsResource asyncExecuteCommandsResource,
+        final AsyncCreateThumbnailsResource asyncCreateThumbnailsResource
     ) {
         super(settingsProvider, objectMapperProvider, asyncConvertFilesResource, asyncOptimizeFilesResource, asyncCaptureWebsitesResource,
-            asyncMergeFilesResource, asyncCreateArchivesResource, asyncExecuteCommandsResource);
+            asyncMergeFilesResource, asyncCreateArchivesResource, asyncExecuteCommandsResource, asyncCreateThumbnailsResource);
 
         this.asyncRequestExecutor = asyncRequestExecutor;
     }
@@ -195,6 +191,14 @@ public class AsyncTasksResource extends AbstractTasksResource<AsyncResult<TaskRe
     ) throws IOException, URISyntaxException {
         return getAbstractExecuteCommandsResource().command(executeCommandsTaskRequest);
     }
+
+    @Override
+    public AsyncResult<TaskResponse> thumbnail(
+            @NotNull final CreateThumbnailsTaskRequest createThumbnailsTaskRequest
+    ) throws IOException, URISyntaxException {
+        return getAbstractCreateThumbnailsResource().thumbnail(createThumbnailsTaskRequest);
+    }
+
 
     @Override
     public void close() throws IOException {

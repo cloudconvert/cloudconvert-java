@@ -8,6 +8,7 @@ import com.cloudconvert.dto.request.CreateArchivesTaskRequest;
 import com.cloudconvert.dto.request.ExecuteCommandsTaskRequest;
 import com.cloudconvert.dto.request.MergeFilesTaskRequest;
 import com.cloudconvert.dto.request.OptimizeFilesTaskRequest;
+import com.cloudconvert.dto.request.CreateThumbnailsTaskRequest;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
@@ -63,6 +64,9 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
     @Getter
     private final AbstractExecuteCommandsResource<TRAR> abstractExecuteCommandsResource;
 
+    @Getter
+    private final AbstractCreateThumbnailsResource<TRAR> abstractCreateThumbnailsResource;
+
     private final IncludesToNameValuePairsConverter includesToNameValuePairsConverter;
     private final FiltersToNameValuePairsConverter filtersToNameValuePairsConverter;
     private final AlternativeToNameValuePairsConverter alternativeToNameValuePairsConverter;
@@ -72,7 +76,8 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
         final SettingsProvider settingsProvider, final ObjectMapperProvider objectMapperProvider,
         final AbstractConvertFilesResource<TRAR, ORPAR> abstractConvertFilesResource, final AbstractOptimizeFilesResource<TRAR> abstractOptimizeFilesResource,
         final AbstractCaptureWebsitesResource<TRAR> abstractCaptureWebsitesResource, final AbstractMergeFilesResource<TRAR> abstractMergeFilesResource,
-        final AbstractCreateArchivesResource<TRAR> abstractCreateArchivesResource, final AbstractExecuteCommandsResource<TRAR> abstractExecuteCommandsResource
+        final AbstractCreateArchivesResource<TRAR> abstractCreateArchivesResource, final AbstractExecuteCommandsResource<TRAR> abstractExecuteCommandsResource,
+        final AbstractCreateThumbnailsResource<TRAR> abstractCreateThumbnailsResource
     ) {
         super(settingsProvider, objectMapperProvider);
 
@@ -82,6 +87,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
         this.abstractMergeFilesResource = abstractMergeFilesResource;
         this.abstractCreateArchivesResource = abstractCreateArchivesResource;
         this.abstractExecuteCommandsResource = abstractExecuteCommandsResource;
+        this.abstractCreateThumbnailsResource = abstractCreateThumbnailsResource;
 
         this.includesToNameValuePairsConverter = new IncludesToNameValuePairsConverter();
         this.filtersToNameValuePairsConverter = new FiltersToNameValuePairsConverter();
@@ -491,6 +497,19 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
         @NotNull final ExecuteCommandsTaskRequest executeCommandsTaskRequest
     ) throws IOException, URISyntaxException;
 
+    /**
+     * Create a task to convert one input file from input_format to output_format. Requires the task.write scope.
+     *
+     * @param createThumbnailsTaskRequest {@link CreateThumbnailsTaskRequest}
+     * @return {@link TRAR}
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    public abstract TRAR thumbnail(
+            @NotNull final CreateThumbnailsTaskRequest createThumbnailsTaskRequest
+    ) throws IOException, URISyntaxException;
+
+
     @Override
     public void close() throws IOException {
         abstractConvertFilesResource.close();
@@ -499,5 +518,6 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
         abstractMergeFilesResource.close();
         abstractCreateArchivesResource.close();
         abstractExecuteCommandsResource.close();
+        abstractCreateThumbnailsResource.close();
     }
 }

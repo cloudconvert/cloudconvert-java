@@ -2,12 +2,7 @@ package com.cloudconvert.resource.sync;
 
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
-import com.cloudconvert.dto.request.CaptureWebsitesTaskRequest;
-import com.cloudconvert.dto.request.ConvertFilesTaskRequest;
-import com.cloudconvert.dto.request.CreateArchivesTaskRequest;
-import com.cloudconvert.dto.request.ExecuteCommandsTaskRequest;
-import com.cloudconvert.dto.request.MergeFilesTaskRequest;
-import com.cloudconvert.dto.request.OptimizeFilesTaskRequest;
+import com.cloudconvert.dto.request.*;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
@@ -36,14 +31,15 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponse>,
     private final RequestExecutor requestExecutor;
 
     public TasksResource(
-        final SettingsProvider settingsProvider,
-        final ObjectMapperProvider objectMapperProvider, final RequestExecutor requestExecutor,
-        final ConvertFilesResource convertFilesResource, final OptimizeFilesResource optimizeFilesResource,
-        final CaptureWebsitesResource captureWebsitesResource, final MergeFilesResource mergeFilesResource,
-        final CreateArchivesResource createArchivesResource, final ExecuteCommandsResource executeCommandsResource
-    ) {
+            final SettingsProvider settingsProvider,
+            final ObjectMapperProvider objectMapperProvider, final RequestExecutor requestExecutor,
+            final ConvertFilesResource convertFilesResource, final OptimizeFilesResource optimizeFilesResource,
+            final CaptureWebsitesResource captureWebsitesResource, final MergeFilesResource mergeFilesResource,
+            final CreateArchivesResource createArchivesResource, final ExecuteCommandsResource executeCommandsResource,
+            final CreateThumbnailsResource createThumbnailsResource
+            ) {
         super(settingsProvider, objectMapperProvider, convertFilesResource, optimizeFilesResource, captureWebsitesResource,
-            mergeFilesResource, createArchivesResource, executeCommandsResource);
+            mergeFilesResource, createArchivesResource, executeCommandsResource, createThumbnailsResource);
 
         this.requestExecutor = requestExecutor;
     }
@@ -198,6 +194,12 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponse>,
         @NotNull final ExecuteCommandsTaskRequest executeCommandsTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractExecuteCommandsResource().command(executeCommandsTaskRequest);
+    }
+
+    @Override
+    public Result<TaskResponse> thumbnail(@NotNull CreateThumbnailsTaskRequest createThumbnailsTaskRequest
+    ) throws IOException, URISyntaxException {
+        return getAbstractCreateThumbnailsResource().thumbnail(createThumbnailsTaskRequest);
     }
 
     @Override

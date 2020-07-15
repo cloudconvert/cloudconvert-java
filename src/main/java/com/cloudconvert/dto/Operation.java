@@ -12,6 +12,7 @@ public enum Operation {
     ARCHIVE("archive"),
     ARCHIVE_EXTRACT("archive/extract"),
     COMMAND("command"),
+    THUMBNAIL("thumbnail"),
 
     IMPORT_URL("import/url"),
     IMPORT_UPLOAD("import/upload"),

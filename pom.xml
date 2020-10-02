@@ -62,7 +62,7 @@
 
         <jackson-databind.version>2.10.3</jackson-databind.version>
 
-        <slf4j.version>2.0.0-alpha1</slf4j.version>
+        <slf4j.version>1.7.30</slf4j.version>
         <annotations.version>19.0.0</annotations.version>
         <guava.version>28.2-jre</guava.version>
 

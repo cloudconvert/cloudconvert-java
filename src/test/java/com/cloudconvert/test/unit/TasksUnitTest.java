@@ -517,6 +517,33 @@ public class TasksUnitTest extends AbstractTest {
                 assertThat(AbstractResource.VALUE_USER_AGENT).isEqualTo(header.getValue()));
     }
 
+    @Test
+    public void tasks_metadata() throws Exception {
+        final GetMetadataTaskRequest expectedGetMetadataTaskRequest = new GetMetadataTaskRequest().setInput("execute-commands-task-input");
+        final Result<TaskResponse> taskResponseResult = Result.<TaskResponse>builder().build();
+        when(requestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseResult);
+
+        assertThat(cloudConvertClient.tasks().metadata(expectedGetMetadataTaskRequest)).isEqualTo(taskResponseResult);
+        verify(requestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
+
+        final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
+
+        assertThat(httpUriRequest).isNotNull();
+        assertThat(httpUriRequest.getMethod()).isEqualTo(HttpPost.METHOD_NAME);
+        assertThat(httpUriRequest.getURI().toString()).isEqualTo(API_URL + "/" + AbstractResource.V2 + "/metadata");
+        assertThat(httpUriRequest).isInstanceOfSatisfying(HttpEntityEnclosingRequestBase.class, httpEntityEnclosingRequestBase -> {
+            final ExecuteCommandsTaskRequest actualExecuteCommandsTaskRequest = ThrowingSupplier.unchecked(() -> objectMapperProvider.provide()
+                    .readValue(httpEntityEnclosingRequestBase.getEntity().getContent(), ExecuteCommandsTaskRequest.class)).get();
+
+            assertThat(actualExecuteCommandsTaskRequest.getInput()).isEqualTo(expectedGetMetadataTaskRequest.getInput());
+        });
+        assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_AUTHORIZATION)).hasSize(1).allSatisfy(header ->
+                assertThat(VALUE_AUTHORIZATION).isEqualTo(header.getValue()));
+        assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_USER_AGENT)).hasSize(1).allSatisfy(header ->
+                assertThat(AbstractResource.VALUE_USER_AGENT).isEqualTo(header.getValue()));
+    }
+
+
     @After
     public void after() throws Exception {
         cloudConvertClient.close();

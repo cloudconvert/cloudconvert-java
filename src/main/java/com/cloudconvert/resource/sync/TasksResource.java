@@ -36,10 +36,10 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponse>,
             final ConvertFilesResource convertFilesResource, final OptimizeFilesResource optimizeFilesResource,
             final CaptureWebsitesResource captureWebsitesResource, final MergeFilesResource mergeFilesResource,
             final CreateArchivesResource createArchivesResource, final ExecuteCommandsResource executeCommandsResource,
-            final CreateThumbnailsResource createThumbnailsResource
+            final CreateThumbnailsResource createThumbnailsResource, final GetMetadataResource getMetadataResource
             ) {
         super(settingsProvider, objectMapperProvider, convertFilesResource, optimizeFilesResource, captureWebsitesResource,
-            mergeFilesResource, createArchivesResource, executeCommandsResource, createThumbnailsResource);
+            mergeFilesResource, createArchivesResource, executeCommandsResource, createThumbnailsResource, getMetadataResource);
 
         this.requestExecutor = requestExecutor;
     }
@@ -200,6 +200,12 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponse>,
     public Result<TaskResponse> thumbnail(@NotNull CreateThumbnailsTaskRequest createThumbnailsTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractCreateThumbnailsResource().thumbnail(createThumbnailsTaskRequest);
+    }
+
+    @Override
+    public Result<TaskResponse> metadata(@NotNull GetMetadataTaskRequest getMetadataTaskRequest
+    ) throws IOException, URISyntaxException {
+        return getAbstractGetMetadataResource().metadata(getMetadataTaskRequest);
     }
 
     @Override

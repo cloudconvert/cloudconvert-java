@@ -50,7 +50,8 @@ public class AsyncCloudConvertClient extends AbstractCloudConvertClient<AsyncRes
                 new AsyncMergeFilesResource(settingsProvider, objectMapperProvider, asyncRequestExecutor),
                 new AsyncCreateArchivesResource(settingsProvider, objectMapperProvider, asyncRequestExecutor),
                 new AsyncExecuteCommandsResource(settingsProvider, objectMapperProvider, asyncRequestExecutor),
-                new AsyncCreateThumbnailsResource(settingsProvider, objectMapperProvider, asyncRequestExecutor)
+                new AsyncCreateThumbnailsResource(settingsProvider, objectMapperProvider, asyncRequestExecutor),
+                new AsyncGetMetadataResource(settingsProvider, objectMapperProvider, asyncRequestExecutor)
             ),
             new AsyncJobsResource(settingsProvider, objectMapperProvider, asyncRequestExecutor)
         );

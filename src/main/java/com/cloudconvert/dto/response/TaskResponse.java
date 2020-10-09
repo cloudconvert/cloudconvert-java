@@ -145,6 +145,10 @@ public class TaskResponse extends Response {
 
             private Map<String, String> parameters;
         }
+
+
+        private Map<String, String> metadata;
+
     }
 
 

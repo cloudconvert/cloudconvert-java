@@ -291,6 +291,49 @@ public class TasksIntegrationTest extends AbstractTest {
         assertThat(deleteVoidResult.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
     }
 
+
+    @Test(timeout = TIMEOUT)
+    public void getMetadataTaskLifecycle() throws Exception {
+        // Import upload (immediate upload)
+        final Result<TaskResponse> uploadImportTaskResponseResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream);
+        assertThat(uploadImportTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseResult.getBody();
+        assertThat(uploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
+
+        // Thumbnail
+        final GetMetadataTaskRequest getMetadataTaskRequest = new GetMetadataTaskRequest().setInput(uploadImportTaskResponse.getId()).setInputFormat(JPG);
+        final Result<TaskResponse> metadataTaskResponseResult = cloudConvertClient.tasks().metadata(getMetadataTaskRequest);
+        assertThat(metadataTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
+
+        final TaskResponse metadataTaskResponse = metadataTaskResponseResult.getBody();
+        assertThat(metadataTaskResponse.getOperation()).isEqualTo(Operation.METADATA);
+
+        // Wait
+        final Result<TaskResponse> waitMetadataTaskResponseResult = cloudConvertClient.tasks().wait(metadataTaskResponse.getId());
+        assertThat(waitMetadataTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse waitMetadataTaskResponse = waitMetadataTaskResponseResult.getBody();
+        assertThat(waitMetadataTaskResponse.getOperation()).isEqualTo(Operation.METADATA);
+        assertThat(waitMetadataTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
+        assertThat(waitMetadataTaskResponse.getId()).isEqualTo(metadataTaskResponse.getId());
+
+        // Show
+        final Result<TaskResponse> showMetadataTaskResponseResult = cloudConvertClient.tasks().show(metadataTaskResponse.getId());
+        assertThat(showMetadataTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse showMetadataTaskResponse = showMetadataTaskResponseResult.getBody();
+        assertThat(showMetadataTaskResponse.getOperation()).isEqualTo(Operation.METADATA);
+        assertThat(showMetadataTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
+        assertThat(showMetadataTaskResponse.getId()).isEqualTo(metadataTaskResponse.getId());
+        assertThat(showMetadataTaskResponse.getResult().getMetadata()).isNotEmpty();
+
+        // Delete
+        final Result<Void> deleteVoidResult = cloudConvertClient.tasks().delete(metadataTaskResponse.getId());
+        assertThat(deleteVoidResult.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+    }
+
+
     @Test(timeout = TIMEOUT)
     public void listTasksLifecycle() throws Exception {
         // List operations

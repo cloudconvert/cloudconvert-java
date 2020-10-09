@@ -13,6 +13,7 @@ public enum Operation {
     ARCHIVE_EXTRACT("archive/extract"),
     COMMAND("command"),
     THUMBNAIL("thumbnail"),
+    METADATA("metadata"),
 
     IMPORT_URL("import/url"),
     IMPORT_UPLOAD("import/upload"),

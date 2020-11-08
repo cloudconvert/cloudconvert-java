@@ -91,7 +91,7 @@ public class ImportFilesResource extends AbstractImportFilesResource<Result<Task
         final URI multipartUri = new URI(taskResponseResultForm.getUrl());
         final HttpEntity multipartHttpEntity = getMultipartHttpEntity(taskResponseResultForm, file);
         final HttpUriRequest multipartHttpUriRequest = getHttpUriRequest(HttpPost.class, multipartUri, multipartHttpEntity);
-
+        multipartHttpUriRequest.removeHeaders(HEADER_AUTHORIZATION);
         return uploadPostProcess(taskId, requestExecutor.execute(multipartHttpUriRequest, VOID_TYPE_REFERENCE));
     }
 
@@ -122,7 +122,7 @@ public class ImportFilesResource extends AbstractImportFilesResource<Result<Task
         final URI multipartUri = new URI(taskResponseResultForm.getUrl());
         final HttpEntity multipartHttpEntity = getMultipartHttpEntity(taskResponseResultForm, inputStream);
         final HttpUriRequest multipartHttpUriRequest = getHttpUriRequest(HttpPost.class, multipartUri, multipartHttpEntity);
-
+        multipartHttpUriRequest.removeHeaders(HEADER_AUTHORIZATION);
         return uploadPostProcess(taskId, requestExecutor.execute(multipartHttpUriRequest, VOID_TYPE_REFERENCE));
     }
 

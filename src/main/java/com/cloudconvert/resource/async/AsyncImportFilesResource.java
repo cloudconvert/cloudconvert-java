@@ -15,6 +15,7 @@ import com.cloudconvert.dto.result.CompletedAsyncResult;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.executor.AsyncRequestExecutor;
 import com.cloudconvert.resource.AbstractImportFilesResource;
+import com.cloudconvert.resource.AbstractResource;
 import com.google.common.collect.ImmutableList;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
@@ -30,6 +31,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.ExecutionException;
+
+import static com.cloudconvert.resource.AbstractResource.*;
 
 @Slf4j
 public class AsyncImportFilesResource extends AbstractImportFilesResource<AsyncResult<TaskResponse>> {
@@ -101,7 +104,7 @@ public class AsyncImportFilesResource extends AbstractImportFilesResource<AsyncR
             final URI multipartUri = new URI(taskResponseResultForm.getUrl());
             final HttpEntity multipartHttpEntity = getMultipartHttpEntity(taskResponseResultForm, file);
             final HttpUriRequest multipartHttpUriRequest = getHttpUriRequest(HttpPost.class, multipartUri, multipartHttpEntity);
-
+            multipartHttpUriRequest.removeHeaders(HEADER_AUTHORIZATION);
             return uploadPostProcess(taskId, asyncRequestExecutor.execute(multipartHttpUriRequest, VOID_TYPE_REFERENCE));
         } catch (InterruptedException | ExecutionException e) {
             throw new IOException(e);
@@ -143,7 +146,7 @@ public class AsyncImportFilesResource extends AbstractImportFilesResource<AsyncR
             final URI multipartUri = new URI(taskResponseResultForm.getUrl());
             final HttpEntity multipartHttpEntity = getMultipartHttpEntity(taskResponseResultForm, inputStream);
             final HttpUriRequest multipartHttpUriRequest = getHttpUriRequest(HttpPost.class, multipartUri, multipartHttpEntity);
-
+            multipartHttpUriRequest.removeHeaders(HEADER_AUTHORIZATION);
             return uploadPostProcess(taskId, asyncRequestExecutor.execute(multipartHttpUriRequest, VOID_TYPE_REFERENCE));
         } catch (InterruptedException | ExecutionException e) {
             throw new IOException(e);

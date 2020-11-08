@@ -320,6 +320,6 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
         final MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create().setContentType(ContentType.MULTIPART_FORM_DATA);
         uploadImportResponseResultForm.getParameters().forEach(multipartEntityBuilder::addTextBody);
         return new BufferedHttpEntity(multipartEntityBuilder.addPart(
-            FormBodyPartBuilder.create("form", new InputStreamBody(new BufferedInputStream(inputStream), filename)).build()).build());
+            FormBodyPartBuilder.create("file", new InputStreamBody(new BufferedInputStream(inputStream), filename)).build()).build());
     }
 }

@@ -148,7 +148,7 @@ public class ImportsUnitTest extends AbstractTest {
         assertThat(httpUriRequest.getMethod()).isEqualTo(HttpPost.METHOD_NAME);
         assertThat(httpUriRequest.getURI().toString()).isEqualTo(taskResponse.getResult().getForm().getUrl());
         assertThat(httpUriRequest).isInstanceOf(HttpRequestBase.class);
-        assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_AUTHORIZATION)).hasSize(1).allSatisfy(header ->
+        assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_AUTHORIZATION)).hasSize(0).allSatisfy(header ->
             assertThat(VALUE_AUTHORIZATION).isEqualTo(header.getValue()));
         assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_USER_AGENT)).hasSize(1).allSatisfy(header ->
             assertThat(AbstractResource.VALUE_USER_AGENT).isEqualTo(header.getValue()));

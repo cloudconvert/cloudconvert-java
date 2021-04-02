@@ -52,7 +52,8 @@ public class CloudConvertClient extends AbstractCloudConvertClient<Result<Void>,
                 new CreateArchivesResource(settingsProvider, objectMapperProvider, requestExecutor),
                 new ExecuteCommandsResource(settingsProvider, objectMapperProvider, requestExecutor),
                 new CreateThumbnailsResource(settingsProvider, objectMapperProvider, requestExecutor),
-                new GetMetadataResource(settingsProvider, objectMapperProvider, requestExecutor)
+                new GetMetadataResource(settingsProvider, objectMapperProvider, requestExecutor),
+                    new WriteMetadataResource(settingsProvider, objectMapperProvider, requestExecutor)
             ),
             new JobsResource(settingsProvider, objectMapperProvider, requestExecutor)
         );

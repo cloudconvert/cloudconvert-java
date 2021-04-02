@@ -26,7 +26,7 @@ import java.util.Map;
 
 @Slf4j
 public class TasksResource extends AbstractTasksResource<Result<TaskResponse>,
-    Result<Pageable<TaskResponse>>, Result<Void>, Result<Pageable<OperationResponse>>> {
+        Result<Pageable<TaskResponse>>, Result<Void>, Result<Pageable<OperationResponse>>> {
 
     private final RequestExecutor requestExecutor;
 
@@ -36,28 +36,29 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponse>,
             final ConvertFilesResource convertFilesResource, final OptimizeFilesResource optimizeFilesResource,
             final CaptureWebsitesResource captureWebsitesResource, final MergeFilesResource mergeFilesResource,
             final CreateArchivesResource createArchivesResource, final ExecuteCommandsResource executeCommandsResource,
-            final CreateThumbnailsResource createThumbnailsResource, final GetMetadataResource getMetadataResource
-            ) {
+            final CreateThumbnailsResource createThumbnailsResource, final GetMetadataResource getMetadataResource,
+            final WriteMetadataResource writeMetadataResource
+    ) {
         super(settingsProvider, objectMapperProvider, convertFilesResource, optimizeFilesResource, captureWebsitesResource,
-            mergeFilesResource, createArchivesResource, executeCommandsResource, createThumbnailsResource, getMetadataResource);
+                mergeFilesResource, createArchivesResource, executeCommandsResource, createThumbnailsResource, getMetadataResource, writeMetadataResource);
 
         this.requestExecutor = requestExecutor;
     }
 
     public Result<TaskResponse> show(
-        @NotNull final String taskId
+            @NotNull final String taskId
     ) throws IOException, URISyntaxException {
         return show(taskId, ImmutableList.of());
     }
 
     public Result<TaskResponse> show(
-        @NotNull final String taskId, @NotNull final List<Include> includes
+            @NotNull final String taskId, @NotNull final List<Include> includes
     ) throws IOException, URISyntaxException {
         return requestExecutor.execute(getShowHttpUriRequest(taskId, includes), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     public Result<TaskResponse> wait(
-        @NotNull final String taskId
+            @NotNull final String taskId
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId, PATH_SEGMENT_WAIT));
 
@@ -69,39 +70,39 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponse>,
     }
 
     public Result<Pageable<TaskResponse>> list(
-        @NotNull final Map<Filter, String> filters
+            @NotNull final Map<Filter, String> filters
     ) throws IOException, URISyntaxException {
         return list(filters, ImmutableList.of());
     }
 
     @Override
     public Result<Pageable<TaskResponse>> list(
-        @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes
+            @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes
     ) throws IOException, URISyntaxException {
         return list(filters, includes, null);
     }
 
     @Override
     public Result<Pageable<TaskResponse>> list(
-        @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Pagination pagination
+            @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Pagination pagination
     ) throws IOException, URISyntaxException {
         return requestExecutor.execute(getListHttpUriRequest(filters, includes, pagination), TASK_RESPONSE_PAGEABLE_TYPE_REFERENCE);
     }
 
     public Result<TaskResponse> cancel(
-        @NotNull final String taskId
+            @NotNull final String taskId
     ) throws IOException, URISyntaxException {
         return requestExecutor.execute(getCancelHttpUriRequest(taskId), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     public Result<TaskResponse> retry(
-        @NotNull final String taskId
+            @NotNull final String taskId
     ) throws IOException, URISyntaxException {
         return requestExecutor.execute(getRetryHttpUriRequest(taskId), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     public Result<Void> delete(
-        @NotNull final String taskId
+            @NotNull final String taskId
     ) throws IOException, URISyntaxException {
         return requestExecutor.execute(getDeleteHttpUriRequest(taskId), VOID_TYPE_REFERENCE);
     }
@@ -111,26 +112,26 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponse>,
     }
 
     public Result<Pageable<OperationResponse>> operations(
-        @NotNull final Map<Filter, String> filters
+            @NotNull final Map<Filter, String> filters
     ) throws IOException, URISyntaxException {
         return operations(filters, ImmutableList.of());
     }
 
     public Result<Pageable<OperationResponse>> operations(
-        @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes
+            @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes
     ) throws IOException, URISyntaxException {
         return operations(filters, includes, null);
     }
 
     public Result<Pageable<OperationResponse>> operations(
-        @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Boolean alternative
+            @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Boolean alternative
     ) throws IOException, URISyntaxException {
         return requestExecutor.execute(getOperationsHttpUriRequest(filters, includes, alternative), OPERATION_RESPONSE_PAGEABLE_TYPE_REFERENCE);
     }
 
     @Override
     public Result<TaskResponse> convert(
-        @NotNull final ConvertFilesTaskRequest convertFilesTaskRequest
+            @NotNull final ConvertFilesTaskRequest convertFilesTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractConvertFilesResource().convert(convertFilesTaskRequest);
     }
@@ -142,56 +143,56 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponse>,
 
     @Override
     public Result<Pageable<OperationResponse>> convertFormats(
-        @NotNull final Map<Filter, String> filters
+            @NotNull final Map<Filter, String> filters
     ) throws IOException, URISyntaxException {
         return getAbstractConvertFilesResource().convertFormats(filters);
     }
 
     @Override
     public Result<Pageable<OperationResponse>> convertFormats(
-        @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes
+            @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes
     ) throws IOException, URISyntaxException {
         return getAbstractConvertFilesResource().convertFormats(filters, includes);
     }
 
     @Override
     public Result<Pageable<OperationResponse>> convertFormats(
-        @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Boolean alternative
+            @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Boolean alternative
     ) throws IOException, URISyntaxException {
         return getAbstractConvertFilesResource().convertFormats(filters, includes, alternative);
     }
 
     @Override
     public Result<TaskResponse> optimize(
-        @NotNull final OptimizeFilesTaskRequest optimizeFilesTaskRequest
+            @NotNull final OptimizeFilesTaskRequest optimizeFilesTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractOptimizeFilesResource().optimize(optimizeFilesTaskRequest);
     }
 
     @Override
     public Result<TaskResponse> capture(
-        @NotNull final CaptureWebsitesTaskRequest captureWebsitesTaskRequest
+            @NotNull final CaptureWebsitesTaskRequest captureWebsitesTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractCaptureWebsitesResource().capture(captureWebsitesTaskRequest);
     }
 
     @Override
     public Result<TaskResponse> merge(
-        @NotNull final MergeFilesTaskRequest mergeFilesTaskRequest
+            @NotNull final MergeFilesTaskRequest mergeFilesTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractMergeFilesResource().merge(mergeFilesTaskRequest);
     }
 
     @Override
     public Result<TaskResponse> archive(
-        @NotNull final CreateArchivesTaskRequest createArchivesTaskRequest
+            @NotNull final CreateArchivesTaskRequest createArchivesTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractCreateArchivesResource().archive(createArchivesTaskRequest);
     }
 
     @Override
     public Result<TaskResponse> command(
-        @NotNull final ExecuteCommandsTaskRequest executeCommandsTaskRequest
+            @NotNull final ExecuteCommandsTaskRequest executeCommandsTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractExecuteCommandsResource().command(executeCommandsTaskRequest);
     }
@@ -206,6 +207,12 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponse>,
     public Result<TaskResponse> metadata(@NotNull GetMetadataTaskRequest getMetadataTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractGetMetadataResource().metadata(getMetadataTaskRequest);
+    }
+
+    @Override
+    public Result<TaskResponse> writeMetadata(@NotNull WriteMetadataTaskRequest writeMetadataTaskRequest
+    ) throws IOException, URISyntaxException {
+        return getAbstractWriteMetadataResource().writeMetadata(writeMetadataTaskRequest);
     }
 
     @Override

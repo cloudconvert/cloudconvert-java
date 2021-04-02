@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -303,7 +304,7 @@ public class AsyncTasksIntegrationTest extends AbstractTest {
         final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseResult.getBody();
         assertThat(uploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
-        // Convert
+        // Get Metadata
         final GetMetadataTaskRequest getMetadataTaskRequest = new GetMetadataTaskRequest().setInput(uploadImportTaskResponse.getId()).setInputFormat(JPG);
         final Result<TaskResponse> getMetadataTaskResponseResult = asyncCloudConvertClient.tasks().metadata(getMetadataTaskRequest).get();
         assertThat(getMetadataTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
@@ -334,6 +335,52 @@ public class AsyncTasksIntegrationTest extends AbstractTest {
         final Result<Void> deleteVoidResult = asyncCloudConvertClient.tasks().delete(metadataTaskResponse.getId()).get();
         assertThat(deleteVoidResult.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
     }
+
+    @Test(timeout = TIMEOUT)
+    public void writeMetadataTaskLifecycle() throws Exception {
+        // Import upload (immediate upload)
+        final Result<TaskResponse> uploadImportTaskResponseResult = asyncCloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream).get();
+        assertThat(uploadImportTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseResult.getBody();
+        assertThat(uploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
+
+        // Write Metadata
+        final WriteMetadataTaskRequest writeMetadataTaskRequest = new WriteMetadataTaskRequest()
+                .setInput(uploadImportTaskResponse.getId())
+                .setInputFormat(JPG)
+                .setMetadata(new HashMap<String, String>() {{
+                    put("Author", "CloudConvert");
+                }});
+        final Result<TaskResponse> writeMetadataTaskResponseResult = asyncCloudConvertClient.tasks().writeMetadata(writeMetadataTaskRequest).get();
+        assertThat(writeMetadataTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
+
+        final TaskResponse writeMetadataTaskResponse = writeMetadataTaskResponseResult.getBody();
+        assertThat(writeMetadataTaskResponse.getOperation()).isEqualTo(Operation.METADATA_WRITE);
+
+        // Wait
+        final Result<TaskResponse> waitWriteMetadataResponseResult = asyncCloudConvertClient.tasks().wait(writeMetadataTaskResponse.getId()).get();
+        assertThat(waitWriteMetadataResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse waitWriteMetadataTaskResponse = waitWriteMetadataResponseResult.getBody();
+        assertThat(waitWriteMetadataTaskResponse.getOperation()).isEqualTo(Operation.METADATA_WRITE);
+        assertThat(waitWriteMetadataTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
+        assertThat(waitWriteMetadataTaskResponse.getId()).isEqualTo(writeMetadataTaskResponse.getId());
+
+        // Show
+        final Result<TaskResponse> showWriteMetadataResponseResult = asyncCloudConvertClient.tasks().show(writeMetadataTaskResponse.getId()).get();
+        assertThat(showWriteMetadataResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse showWriteMetadataTaskResponse = showWriteMetadataResponseResult.getBody();
+        assertThat(showWriteMetadataTaskResponse.getOperation()).isEqualTo(Operation.METADATA_WRITE);
+        assertThat(showWriteMetadataTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
+        assertThat(showWriteMetadataTaskResponse.getId()).isEqualTo(writeMetadataTaskResponse.getId());
+
+        // Delete
+        final Result<Void> deleteVoidResult = asyncCloudConvertClient.tasks().delete(writeMetadataTaskResponse.getId()).get();
+        assertThat(deleteVoidResult.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+    }
+
 
     @Test(timeout = TIMEOUT)
     public void listTasksLifecycle() throws Exception {

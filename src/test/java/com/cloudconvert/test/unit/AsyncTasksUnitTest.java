@@ -545,6 +545,33 @@ public class AsyncTasksUnitTest extends AbstractTest {
                 assertThat(AbstractResource.VALUE_USER_AGENT).isEqualTo(header.getValue()));
     }
 
+    @Test
+    public void tasks_metadata_write() throws Exception {
+        final WriteMetadataTaskRequest expectedWriteMetadataTaskRequest = new WriteMetadataTaskRequest().setInput("execute-commands-task-input");
+        final AsyncResult<TaskResponse> taskResponseAsyncResult = FutureAsyncResult.<TaskResponse>builder().build();
+        when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE))).thenReturn(taskResponseAsyncResult);
+
+        assertThat(asyncCloudConvertClient.tasks().writeMetadata(expectedWriteMetadataTaskRequest)).isEqualTo(taskResponseAsyncResult);
+        verify(asyncRequestExecutor, times(1)).execute(httpUriRequestArgumentCaptor.capture(), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
+
+        final HttpUriRequest httpUriRequest = httpUriRequestArgumentCaptor.getValue();
+
+        assertThat(httpUriRequest).isNotNull();
+        assertThat(httpUriRequest.getMethod()).isEqualTo(HttpPost.METHOD_NAME);
+        assertThat(httpUriRequest.getURI().toString()).isEqualTo(API_URL + "/" + AbstractResource.V2 + "/metadata/write");
+        assertThat(httpUriRequest).isInstanceOfSatisfying(HttpEntityEnclosingRequestBase.class, httpEntityEnclosingRequestBase -> {
+            final ExecuteCommandsTaskRequest actualExecuteCommandsTaskRequest = ThrowingSupplier.unchecked(() -> objectMapperProvider.provide()
+                    .readValue(httpEntityEnclosingRequestBase.getEntity().getContent(), ExecuteCommandsTaskRequest.class)).get();
+
+            assertThat(actualExecuteCommandsTaskRequest.getInput()).isEqualTo(expectedWriteMetadataTaskRequest.getInput());
+        });
+        assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_AUTHORIZATION)).hasSize(1).allSatisfy(header ->
+                assertThat(VALUE_AUTHORIZATION).isEqualTo(header.getValue()));
+        assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_USER_AGENT)).hasSize(1).allSatisfy(header ->
+                assertThat(AbstractResource.VALUE_USER_AGENT).isEqualTo(header.getValue()));
+    }
+
+
     @After
     public void after() throws Exception {
         asyncCloudConvertClient.close();

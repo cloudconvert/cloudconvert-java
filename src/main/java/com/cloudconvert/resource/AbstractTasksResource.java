@@ -64,6 +64,9 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
     @Getter
     private final AbstractGetMetadataResource<TRAR> abstractGetMetadataResource;
 
+    @Getter
+    private final AbstractWriteMetadataResource<TRAR> abstractWriteMetadataResource;
+
     private final IncludesToNameValuePairsConverter includesToNameValuePairsConverter;
     private final FiltersToNameValuePairsConverter filtersToNameValuePairsConverter;
     private final AlternativeToNameValuePairsConverter alternativeToNameValuePairsConverter;
@@ -74,7 +77,8 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
         final AbstractConvertFilesResource<TRAR, ORPAR> abstractConvertFilesResource, final AbstractOptimizeFilesResource<TRAR> abstractOptimizeFilesResource,
         final AbstractCaptureWebsitesResource<TRAR> abstractCaptureWebsitesResource, final AbstractMergeFilesResource<TRAR> abstractMergeFilesResource,
         final AbstractCreateArchivesResource<TRAR> abstractCreateArchivesResource, final AbstractExecuteCommandsResource<TRAR> abstractExecuteCommandsResource,
-        final AbstractCreateThumbnailsResource<TRAR> abstractCreateThumbnailsResource, final AbstractGetMetadataResource<TRAR> abstractGetMetadataResourceResource
+        final AbstractCreateThumbnailsResource<TRAR> abstractCreateThumbnailsResource, final AbstractGetMetadataResource<TRAR> abstractGetMetadataResourceResource,
+        final AbstractWriteMetadataResource<TRAR> abstractWriteMetadataResourceResource
     ) {
         super(settingsProvider, objectMapperProvider);
 
@@ -86,6 +90,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
         this.abstractExecuteCommandsResource = abstractExecuteCommandsResource;
         this.abstractCreateThumbnailsResource = abstractCreateThumbnailsResource;
         this.abstractGetMetadataResource = abstractGetMetadataResourceResource;
+        this.abstractWriteMetadataResource = abstractWriteMetadataResourceResource;
 
         this.includesToNameValuePairsConverter = new IncludesToNameValuePairsConverter();
         this.filtersToNameValuePairsConverter = new FiltersToNameValuePairsConverter();
@@ -511,13 +516,26 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
     /**
      * Create a task to extract metadata from one file. Requires the task.write scope.
      *
-     * @param getMetadataTaskRequest {@link CreateThumbnailsTaskRequest}
+     * @param getMetadataTaskRequest {@link GetMetadataTaskRequest}
      * @return {@link TRAR}
      * @throws IOException
      * @throws URISyntaxException
      */
     public abstract TRAR metadata(
             @NotNull final GetMetadataTaskRequest getMetadataTaskRequest
+    ) throws IOException, URISyntaxException;
+
+
+    /**
+     * Create a task to write file metadata.
+     *
+     * @param writeMetadataTaskRequest {@link WriteMetadataTaskRequest}
+     * @return {@link TRAR}
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    public abstract TRAR writeMetadata(
+            @NotNull final WriteMetadataTaskRequest writeMetadataTaskRequest
     ) throws IOException, URISyntaxException;
 
 
@@ -530,5 +548,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
         abstractCreateArchivesResource.close();
         abstractExecuteCommandsResource.close();
         abstractCreateThumbnailsResource.close();
+        abstractGetMetadataResource.close();
+        abstractWriteMetadataResource.close();
     }
 }

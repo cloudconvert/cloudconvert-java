@@ -22,7 +22,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -301,7 +303,7 @@ public class TasksIntegrationTest extends AbstractTest {
         final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseResult.getBody();
         assertThat(uploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
-        // Thumbnail
+        // Metadata
         final GetMetadataTaskRequest getMetadataTaskRequest = new GetMetadataTaskRequest().setInput(uploadImportTaskResponse.getId()).setInputFormat(JPG);
         final Result<TaskResponse> metadataTaskResponseResult = cloudConvertClient.tasks().metadata(getMetadataTaskRequest);
         assertThat(metadataTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
@@ -332,6 +334,53 @@ public class TasksIntegrationTest extends AbstractTest {
         final Result<Void> deleteVoidResult = cloudConvertClient.tasks().delete(metadataTaskResponse.getId());
         assertThat(deleteVoidResult.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
     }
+
+
+    @Test(timeout = TIMEOUT)
+    public void writeMetadataTaskLifecycle() throws Exception {
+        // Import upload (immediate upload)
+        final Result<TaskResponse> uploadImportTaskResponseResult = cloudConvertClient.importUsing().upload(new UploadImportRequest(), jpgTest1InputStream);
+        assertThat(uploadImportTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse uploadImportTaskResponse = uploadImportTaskResponseResult.getBody();
+        assertThat(uploadImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
+
+        // Write Metadata
+        final WriteMetadataTaskRequest writeMetadataTaskRequest = new WriteMetadataTaskRequest()
+                .setInput(uploadImportTaskResponse.getId())
+                .setInputFormat(JPG)
+                .setMetadata(new HashMap<String, String>() {{
+                    put("Author", "CloudConvert");
+                }});
+        final Result<TaskResponse> writeMetadataTaskResponseResult = cloudConvertClient.tasks().writeMetadata(writeMetadataTaskRequest);
+        assertThat(writeMetadataTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
+
+        final TaskResponse writeMetadataTaskResponse = writeMetadataTaskResponseResult.getBody();
+        assertThat(writeMetadataTaskResponse.getOperation()).isEqualTo(Operation.METADATA_WRITE);
+
+        // Wait
+        final Result<TaskResponse> waitWriteMetadataTaskResponseResult = cloudConvertClient.tasks().wait(writeMetadataTaskResponse.getId());
+        assertThat(waitWriteMetadataTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse waitWriteMetadataTaskResponse = waitWriteMetadataTaskResponseResult.getBody();
+        assertThat(waitWriteMetadataTaskResponse.getOperation()).isEqualTo(Operation.METADATA_WRITE);
+        assertThat(waitWriteMetadataTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
+        assertThat(waitWriteMetadataTaskResponse.getId()).isEqualTo(writeMetadataTaskResponse.getId());
+
+        // Show
+        final Result<TaskResponse> showWriteMetadataTaskResponseResult = cloudConvertClient.tasks().show(writeMetadataTaskResponse.getId());
+        assertThat(showWriteMetadataTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse showWriteMetadataTaskResponse = showWriteMetadataTaskResponseResult.getBody();
+        assertThat(showWriteMetadataTaskResponse.getOperation()).isEqualTo(Operation.METADATA_WRITE);
+        assertThat(showWriteMetadataTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
+        assertThat(showWriteMetadataTaskResponse.getId()).isEqualTo(writeMetadataTaskResponse.getId());
+
+        // Delete
+        final Result<Void> deleteVoidResult = cloudConvertClient.tasks().delete(writeMetadataTaskResponse.getId());
+        assertThat(deleteVoidResult.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+    }
+
 
 
     @Test(timeout = TIMEOUT)

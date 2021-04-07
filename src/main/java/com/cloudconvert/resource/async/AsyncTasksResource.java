@@ -34,10 +34,11 @@ public class AsyncTasksResource extends AbstractTasksResource<AsyncResult<TaskRe
         final AsyncConvertFilesResource asyncConvertFilesResource, final AsyncOptimizeFilesResource asyncOptimizeFilesResource,
         final AsyncCaptureWebsitesResource asyncCaptureWebsitesResource, final AsyncMergeFilesResource asyncMergeFilesResource,
         final AsyncCreateArchivesResource asyncCreateArchivesResource, final AsyncExecuteCommandsResource asyncExecuteCommandsResource,
-        final AsyncCreateThumbnailsResource asyncCreateThumbnailsResource, final AsyncGetMetadataResource asyncGetMetadataResource
+        final AsyncCreateThumbnailsResource asyncCreateThumbnailsResource, final AsyncGetMetadataResource asyncGetMetadataResource,
+        final AsyncWriteMetadataResource asyncWriteMetadataResource
     ) {
         super(settingsProvider, objectMapperProvider, asyncConvertFilesResource, asyncOptimizeFilesResource, asyncCaptureWebsitesResource,
-            asyncMergeFilesResource, asyncCreateArchivesResource, asyncExecuteCommandsResource, asyncCreateThumbnailsResource, asyncGetMetadataResource);
+            asyncMergeFilesResource, asyncCreateArchivesResource, asyncExecuteCommandsResource, asyncCreateThumbnailsResource, asyncGetMetadataResource, asyncWriteMetadataResource);
 
         this.asyncRequestExecutor = asyncRequestExecutor;
     }
@@ -204,6 +205,13 @@ public class AsyncTasksResource extends AbstractTasksResource<AsyncResult<TaskRe
             @NotNull final GetMetadataTaskRequest getMetadataTaskRequest
     ) throws IOException, URISyntaxException {
         return getAbstractGetMetadataResource().metadata(getMetadataTaskRequest);
+    }
+
+    @Override
+    public AsyncResult<TaskResponse> writeMetadata(
+            @NotNull final WriteMetadataTaskRequest writeMetadataTaskRequest
+    ) throws IOException, URISyntaxException {
+        return getAbstractWriteMetadataResource().writeMetadata(writeMetadataTaskRequest);
     }
 
     @Override

@@ -14,6 +14,7 @@ public enum Operation {
     COMMAND("command"),
     THUMBNAIL("thumbnail"),
     METADATA("metadata"),
+    METADATA_WRITE("metadata/write"),
 
     IMPORT_URL("import/url"),
     IMPORT_UPLOAD("import/upload"),

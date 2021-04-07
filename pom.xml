@@ -7,7 +7,7 @@
 
     <groupId>com.cloudconvert</groupId>
     <artifactId>cloudconvert-java</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
 
     <name>cloudconvert-java</name>
     <description>CloudConvert is an online file converter API - more than 200 different audio, video, document, ebook, archive, image, spreadsheet and presentation formats supported.</description>
@@ -64,7 +64,7 @@
 
         <slf4j.version>1.7.30</slf4j.version>
         <annotations.version>19.0.0</annotations.version>
-        <guava.version>28.2-jre</guava.version>
+        <guava.version>29.0-jre</guava.version>
 
         <lombok.version>1.18.12</lombok.version>
 

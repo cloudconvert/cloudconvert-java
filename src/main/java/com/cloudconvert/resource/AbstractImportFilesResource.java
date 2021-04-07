@@ -49,7 +49,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
     private final Tika tika;
 
     public AbstractImportFilesResource(
-        final SettingsProvider settingsProvider, final ObjectMapperProvider objectMapperProvider
+            final SettingsProvider settingsProvider, final ObjectMapperProvider objectMapperProvider
     ) {
         super(settingsProvider, objectMapperProvider);
 
@@ -65,11 +65,11 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      * @throws URISyntaxException
      */
     public abstract TRAR url(
-        @NotNull final UrlImportRequest urlImportRequest
+            @NotNull final UrlImportRequest urlImportRequest
     ) throws IOException, URISyntaxException;
 
     protected HttpUriRequest getUrlHttpUriRequest(
-        @NotNull final UrlImportRequest urlImportRequest
+            @NotNull final UrlImportRequest urlImportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_URL));
         final HttpEntity httpEntity = getHttpEntity(urlImportRequest);
@@ -89,7 +89,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      * @throws URISyntaxException
      */
     public abstract TRAR upload(
-        @NotNull final UploadImportRequest uploadImportRequest
+            @NotNull final UploadImportRequest uploadImportRequest
     ) throws IOException, URISyntaxException;
 
     /**
@@ -105,7 +105,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      * @throws URISyntaxException
      */
     public abstract TRAR upload(
-        @NotNull final UploadImportRequest uploadImportRequest, @NotNull final File file
+            @NotNull final UploadImportRequest uploadImportRequest, @NotNull final File file
     ) throws IOException, URISyntaxException;
 
     /**
@@ -121,7 +121,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      * @throws URISyntaxException
      */
     public abstract TRAR upload(
-        @NotNull final TRAR taskResponseResult, @NotNull final File file
+            @NotNull final TRAR taskResponseResult, @NotNull final File file
     ) throws IOException, URISyntaxException;
 
     /**
@@ -138,7 +138,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      * @throws URISyntaxException
      */
     public abstract TRAR upload(
-        @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final File file
+            @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final File file
     ) throws IOException, URISyntaxException;
 
     /**
@@ -154,7 +154,24 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      * @throws URISyntaxException
      */
     public abstract TRAR upload(
-        @NotNull final UploadImportRequest uploadImportRequest, @NotNull final InputStream inputStream
+            @NotNull final UploadImportRequest uploadImportRequest, @NotNull final InputStream inputStream
+    ) throws IOException, URISyntaxException;
+
+    /**
+     * Create a task which uploads one input file.
+     * It allows your users to directly upload input files to CloudConvert, without temporary storing them on your server.
+     * <p>
+     * Upload file immediately
+     *
+     * @param uploadImportRequest {@link UploadImportRequest}
+     * @param inputStream         {@link InputStream} of file which will be uploaded
+     * @param filename            Set the filename, including file extension
+     * @return TRD
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    public abstract TRAR upload(
+            @NotNull final UploadImportRequest uploadImportRequest, @NotNull final InputStream inputStream, @NotNull String filename
     ) throws IOException, URISyntaxException;
 
     /**
@@ -170,7 +187,24 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      * @throws URISyntaxException
      */
     public abstract TRAR upload(
-        @NotNull final TRAR taskResponseResult, @NotNull final InputStream inputStream
+            @NotNull final TRAR taskResponseResult, @NotNull final InputStream inputStream
+    ) throws IOException, URISyntaxException;
+
+    /**
+     * Create a task which uploads one input file.
+     * It allows your users to directly upload input files to CloudConvert, without temporary storing them on your server.
+     * <p>
+     * Upload file using existing task response data result
+     *
+     * @param taskResponseResult {@link TRAR}
+     * @param inputStream        {@link InputStream} of file which will be uploaded
+     * @param filename           Set the filename, including file extension
+     * @return TRD
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    public abstract TRAR upload(
+            @NotNull final TRAR taskResponseResult, @NotNull final InputStream inputStream, @NotNull final String filename
     ) throws IOException, URISyntaxException;
 
     /**
@@ -187,7 +221,25 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      * @throws URISyntaxException
      */
     public abstract TRAR upload(
-        @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final InputStream inputStream
+            @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final InputStream inputStream
+    ) throws IOException, URISyntaxException;
+
+    /**
+     * Create a task which uploads one input file.
+     * It allows your users to directly upload input files to CloudConvert, without temporary storing them on your server.
+     * <p>
+     * Upload file using existing task id and {@link com.cloudconvert.dto.response.TaskResponse.Result.Form}
+     *
+     * @param taskId                 task
+     * @param taskResponseResultForm {@link com.cloudconvert.dto.response.TaskResponse.Result.Form}
+     * @param inputStream            {@link InputStream} of file which will be uploaded
+     * @param filename               Set the filename, including file extension
+     * @return
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    public abstract TRAR upload(
+            @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final InputStream inputStream, @NotNull final String filename
     ) throws IOException, URISyntaxException;
 
     /**
@@ -199,11 +251,11 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      * @throws URISyntaxException
      */
     public abstract TRAR s3(
-        @NotNull final S3ImportRequest s3ImportRequest
+            @NotNull final S3ImportRequest s3ImportRequest
     ) throws IOException, URISyntaxException;
 
     protected HttpUriRequest getS3HttpUriRequest(
-        @NotNull final S3ImportRequest s3ImportRequest
+            @NotNull final S3ImportRequest s3ImportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_S3));
         final HttpEntity httpEntity = getHttpEntity(s3ImportRequest);
@@ -220,11 +272,11 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      * @throws URISyntaxException
      */
     public abstract TRAR azureBlob(
-        @NotNull final AzureBlobImportRequest azureBlobImportRequest
+            @NotNull final AzureBlobImportRequest azureBlobImportRequest
     ) throws IOException, URISyntaxException;
 
     protected HttpUriRequest getAzureBlobHttpUriRequest(
-        @NotNull final AzureBlobImportRequest azureBlobImportRequest
+            @NotNull final AzureBlobImportRequest azureBlobImportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.<String>builder().add(PATH_SEGMENT_IMPORT).addAll(PATH_SEGMENTS_AZURE_BLOB).build());
         final HttpEntity httpEntity = getHttpEntity(azureBlobImportRequest);
@@ -241,11 +293,11 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      * @throws URISyntaxException
      */
     public abstract TRAR googleCloudStorage(
-        @NotNull final GoogleCloudStorageImportRequest googleCloudStorageImportRequest
+            @NotNull final GoogleCloudStorageImportRequest googleCloudStorageImportRequest
     ) throws IOException, URISyntaxException;
 
     protected HttpUriRequest getGoogleCloudHttpUriRequest(
-        @NotNull final GoogleCloudStorageImportRequest googleCloudStorageImportRequest
+            @NotNull final GoogleCloudStorageImportRequest googleCloudStorageImportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_GOOGLE_CLOUD_STORAGE));
         final HttpEntity httpEntity = getHttpEntity(googleCloudStorageImportRequest);
@@ -262,11 +314,11 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      * @throws URISyntaxException
      */
     public abstract TRAR openStack(
-        @NotNull final OpenStackImportRequest openStackImportRequest
+            @NotNull final OpenStackImportRequest openStackImportRequest
     ) throws IOException, URISyntaxException;
 
     protected HttpUriRequest getOpenStackHttpUriRequest(
-        @NotNull final OpenStackImportRequest openStackImportRequest
+            @NotNull final OpenStackImportRequest openStackImportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_OPENSTACK));
         final HttpEntity httpEntity = getHttpEntity(openStackImportRequest);
@@ -283,11 +335,11 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      * @throws URISyntaxException
      */
     public abstract TRAR sftp(
-        @NotNull final SftpImportRequest sftpImportRequest
+            @NotNull final SftpImportRequest sftpImportRequest
     ) throws IOException, URISyntaxException;
 
     protected HttpUriRequest getSftpHttpUriRequest(
-        @NotNull final SftpImportRequest sftpImportRequest
+            @NotNull final SftpImportRequest sftpImportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_SFTP));
         final HttpEntity httpEntity = getHttpEntity(sftpImportRequest);
@@ -296,14 +348,14 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
     }
 
     protected HttpEntity getMultipartHttpEntity(
-        final TaskResponse.Result.Form uploadImportResponseResultForm, final File file
+            final TaskResponse.Result.Form uploadImportResponseResultForm, final File file
     ) throws IOException {
         // We still need to convert File to InputStream here, because if we don't, then async client will fail with ContentTooLongException if we do not
         return getMultipartHttpEntity(uploadImportResponseResultForm, file.getName(), new FileInputStream(file));
     }
 
     protected HttpEntity getMultipartHttpEntity(
-        final TaskResponse.Result.Form uploadImportResponseResultForm, final InputStream inputStream
+            final TaskResponse.Result.Form uploadImportResponseResultForm, final InputStream inputStream
     ) throws IOException {
         try {
             final MimeType mimeType = MimeTypes.getDefaultMimeTypes().forName(tika.detect(inputStream));
@@ -314,12 +366,12 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
     }
 
     protected HttpEntity getMultipartHttpEntity(
-        final TaskResponse.Result.Form uploadImportResponseResultForm,
-        @NotNull final String filename, final InputStream inputStream
+            final TaskResponse.Result.Form uploadImportResponseResultForm,
+            @NotNull final String filename, final InputStream inputStream
     ) throws IOException {
         final MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create().setContentType(ContentType.MULTIPART_FORM_DATA);
         uploadImportResponseResultForm.getParameters().forEach(multipartEntityBuilder::addTextBody);
         return new BufferedHttpEntity(multipartEntityBuilder.addPart(
-            FormBodyPartBuilder.create("file", new InputStreamBody(new BufferedInputStream(inputStream), filename)).build()).build());
+                FormBodyPartBuilder.create("file", new InputStreamBody(new BufferedInputStream(inputStream), filename)).build()).build());
     }
 }

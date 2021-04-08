@@ -10,7 +10,7 @@ Add the following dependency to your pom.xml:
 <dependency>
     <groupId>com.cloudconvert</groupId>
     <artifactId>cloudconvert-java</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
 </dependency>
 ```
 
@@ -168,7 +168,7 @@ final CloudConvertClient cloudConvertClient = new CloudConvertClient();
 final InputStream inputStream = getClass().getClassLoader().getResourceAsStream("file.jpg");
 
 // Upload file using import/upload task
-final TaskResponse uploadImportTaskResponse = cloudConvertClient.importUsing().upload(new UploadImportRequest(), inputStream).getBody();
+final TaskResponse uploadImportTaskResponse = cloudConvertClient.importUsing().upload(new UploadImportRequest(), inputStream, "file.jpg").getBody();
 
 // Wait for import/upload task to be finished
 final TaskResponse waitUploadImportTaskResponse = cloudConvertClient.tasks().wait(uploadImportTaskResponse.getId()).getBody();
@@ -183,7 +183,7 @@ final AsyncCloudConvertClient asyncCloudConvertClient = new CloudConvertClient()
 final InputStream inputStream = getClass().getClassLoader().getResourceAsStream("file.jpg");
 
 // Upload file using import/upload task
-final TaskResponse uploadImportTaskResponse = asyncCloudConvertClient.importUsing().upload(new UploadImportRequest(), inputStream).get().getBody();
+final TaskResponse uploadImportTaskResponse = asyncCloudConvertClient.importUsing().upload(new UploadImportRequest(), inputStream, "file.jpg").get().getBody();
 
 // Wait for import/upload task to be finished
 final TaskResponse waitUploadImportTaskResponse = asyncCloudConvertClient.tasks().wait(uploadImportTaskResponse.getId()).get().getBody();

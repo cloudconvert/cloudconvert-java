@@ -41,9 +41,9 @@ public class AsyncImportFilesResource extends AbstractImportFilesResource<AsyncR
     private final AsyncTasksResource asyncTasksResource;
 
     public AsyncImportFilesResource(
-        final SettingsProvider settingsProvider,
-        final ObjectMapperProvider objectMapperProvider, final AsyncRequestExecutor asyncRequestExecutor,
-        final AsyncTasksResource asyncTasksResource
+            final SettingsProvider settingsProvider,
+            final ObjectMapperProvider objectMapperProvider, final AsyncRequestExecutor asyncRequestExecutor,
+            final AsyncTasksResource asyncTasksResource
     ) {
         super(settingsProvider, objectMapperProvider);
 
@@ -53,14 +53,14 @@ public class AsyncImportFilesResource extends AbstractImportFilesResource<AsyncR
 
     @Override
     public AsyncResult<TaskResponse> url(
-        @NotNull final UrlImportRequest urlImportRequest
+            @NotNull final UrlImportRequest urlImportRequest
     ) throws IOException, URISyntaxException {
         return asyncRequestExecutor.execute(getUrlHttpUriRequest(urlImportRequest), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
     public AsyncResult<TaskResponse> upload(
-        @NotNull final UploadImportRequest uploadImportRequest
+            @NotNull final UploadImportRequest uploadImportRequest
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_UPLOAD));
         final HttpEntity httpEntity = getHttpEntity(uploadImportRequest);
@@ -71,14 +71,14 @@ public class AsyncImportFilesResource extends AbstractImportFilesResource<AsyncR
 
     @Override
     public AsyncResult<TaskResponse> upload(
-        @NotNull final UploadImportRequest uploadImportRequest, @NotNull final File file
+            @NotNull final UploadImportRequest uploadImportRequest, @NotNull final File file
     ) throws IOException, URISyntaxException {
         return upload(upload(uploadImportRequest), file);
     }
 
     @Override
     public AsyncResult<TaskResponse> upload(
-        @NotNull final AsyncResult<TaskResponse> TaskResponseAsyncResult, @NotNull final File file
+            @NotNull final AsyncResult<TaskResponse> TaskResponseAsyncResult, @NotNull final File file
     ) throws IOException, URISyntaxException {
         try {
             final Result<TaskResponse> TaskResponseResult = TaskResponseAsyncResult.get();
@@ -89,7 +89,7 @@ public class AsyncImportFilesResource extends AbstractImportFilesResource<AsyncR
                 return upload(taskResponse.getId(), taskResponse.getResult().getForm(), file);
             } else {
                 return CompletedAsyncResult.<TaskResponse>builder().result(Result.<TaskResponse>builder()
-                    .status(TaskResponseResult.getStatus()).message(TaskResponseResult.getMessage()).build()).build();
+                        .status(TaskResponseResult.getStatus()).message(TaskResponseResult.getMessage()).build()).build();
             }
         } catch (InterruptedException | ExecutionException e) {
             throw new IOException(e);
@@ -98,7 +98,7 @@ public class AsyncImportFilesResource extends AbstractImportFilesResource<AsyncR
 
     @Override
     public AsyncResult<TaskResponse> upload(
-        @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final File file
+            @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final File file
     ) throws IOException, URISyntaxException {
         try {
             final URI multipartUri = new URI(taskResponseResultForm.getUrl());
@@ -113,14 +113,19 @@ public class AsyncImportFilesResource extends AbstractImportFilesResource<AsyncR
 
     @Override
     public AsyncResult<TaskResponse> upload(
-        @NotNull final UploadImportRequest uploadImportRequest, @NotNull final InputStream inputStream
+            @NotNull final UploadImportRequest uploadImportRequest, @NotNull final InputStream inputStream
     ) throws IOException, URISyntaxException {
         return upload(upload(uploadImportRequest), inputStream);
     }
 
     @Override
+    public AsyncResult<TaskResponse> upload(@NotNull UploadImportRequest uploadImportRequest, @NotNull InputStream inputStream, @NotNull String filename) throws IOException, URISyntaxException {
+        return upload(upload(uploadImportRequest), inputStream, filename);
+    }
+
+    @Override
     public AsyncResult<TaskResponse> upload(
-        @NotNull final AsyncResult<TaskResponse> TaskResponseAsyncResult, @NotNull final InputStream inputStream
+            @NotNull final AsyncResult<TaskResponse> TaskResponseAsyncResult, @NotNull final InputStream inputStream
     ) throws IOException, URISyntaxException {
         try {
             final Result<TaskResponse> TaskResponseResult = TaskResponseAsyncResult.get();
@@ -131,7 +136,25 @@ public class AsyncImportFilesResource extends AbstractImportFilesResource<AsyncR
                 return upload(taskResponse.getId(), taskResponse.getResult().getForm(), inputStream);
             } else {
                 return CompletedAsyncResult.<TaskResponse>builder().result(Result.<TaskResponse>builder()
-                    .status(TaskResponseResult.getStatus()).message(TaskResponseResult.getMessage()).build()).build();
+                        .status(TaskResponseResult.getStatus()).message(TaskResponseResult.getMessage()).build()).build();
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new IOException(e);
+        }
+    }
+
+    @Override
+    public AsyncResult<TaskResponse> upload(@NotNull AsyncResult<TaskResponse> TaskResponseAsyncResult, @NotNull InputStream inputStream, @NotNull String filename) throws IOException, URISyntaxException {
+        try {
+            final Result<TaskResponse> TaskResponseResult = TaskResponseAsyncResult.get();
+
+            if (HttpStatus.SC_CREATED == TaskResponseResult.getStatus()) {
+                final TaskResponse taskResponse = TaskResponseResult.getBody();
+
+                return upload(taskResponse.getId(), taskResponse.getResult().getForm(), inputStream, filename);
+            } else {
+                return CompletedAsyncResult.<TaskResponse>builder().result(Result.<TaskResponse>builder()
+                        .status(TaskResponseResult.getStatus()).message(TaskResponseResult.getMessage()).build()).build();
             }
         } catch (InterruptedException | ExecutionException e) {
             throw new IOException(e);
@@ -140,7 +163,7 @@ public class AsyncImportFilesResource extends AbstractImportFilesResource<AsyncR
 
     @Override
     public AsyncResult<TaskResponse> upload(
-        @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final InputStream inputStream
+            @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final InputStream inputStream
     ) throws IOException, URISyntaxException {
         try {
             final URI multipartUri = new URI(taskResponseResultForm.getUrl());
@@ -153,8 +176,21 @@ public class AsyncImportFilesResource extends AbstractImportFilesResource<AsyncR
         }
     }
 
+    @Override
+    public AsyncResult<TaskResponse> upload(@NotNull String taskId, TaskResponse.Result.@NotNull Form taskResponseResultForm, @NotNull InputStream inputStream, @NotNull String filename) throws IOException, URISyntaxException {
+        try {
+            final URI multipartUri = new URI(taskResponseResultForm.getUrl());
+            final HttpEntity multipartHttpEntity = getMultipartHttpEntity(taskResponseResultForm, filename, inputStream);
+            final HttpUriRequest multipartHttpUriRequest = getHttpUriRequest(HttpPost.class, multipartUri, multipartHttpEntity);
+            multipartHttpUriRequest.removeHeaders(HEADER_AUTHORIZATION);
+            return uploadPostProcess(taskId, asyncRequestExecutor.execute(multipartHttpUriRequest, VOID_TYPE_REFERENCE));
+        } catch (InterruptedException | ExecutionException e) {
+            throw new IOException(e);
+        }
+    }
+
     private AsyncResult<TaskResponse> uploadPostProcess(
-        final String taskId, final AsyncResult<Void> multipartVoidAsyncResult
+            final String taskId, final AsyncResult<Void> multipartVoidAsyncResult
     ) throws IOException, URISyntaxException, InterruptedException, ExecutionException {
         final Result<Void> multipartVoidResult = multipartVoidAsyncResult.get();
 
@@ -171,45 +207,45 @@ public class AsyncImportFilesResource extends AbstractImportFilesResource<AsyncR
                 return asyncTasksResource.show(taskId);
             } else {
                 return CompletedAsyncResult.<TaskResponse>builder().result(Result.<TaskResponse>builder()
-                    .status(redirectVoidResult.getStatus()).message(redirectVoidResult.getMessage()).build()).build();
+                        .status(redirectVoidResult.getStatus()).message(redirectVoidResult.getMessage()).build()).build();
             }
         } else {
             return CompletedAsyncResult.<TaskResponse>builder().result(Result.<TaskResponse>builder()
-                .status(multipartVoidResult.getStatus()).message(multipartVoidResult.getMessage()).build()).build();
+                    .status(multipartVoidResult.getStatus()).message(multipartVoidResult.getMessage()).build()).build();
         }
     }
 
     @Override
     public AsyncResult<TaskResponse> s3(
-        @NotNull final S3ImportRequest s3ImportRequest
+            @NotNull final S3ImportRequest s3ImportRequest
     ) throws IOException, URISyntaxException {
         return asyncRequestExecutor.execute(getS3HttpUriRequest(s3ImportRequest), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
     public AsyncResult<TaskResponse> azureBlob(
-        @NotNull final AzureBlobImportRequest azureBlobImportRequest
+            @NotNull final AzureBlobImportRequest azureBlobImportRequest
     ) throws IOException, URISyntaxException {
         return asyncRequestExecutor.execute(getAzureBlobHttpUriRequest(azureBlobImportRequest), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
     public AsyncResult<TaskResponse> googleCloudStorage(
-        @NotNull final GoogleCloudStorageImportRequest googleCloudStorageImportRequest
+            @NotNull final GoogleCloudStorageImportRequest googleCloudStorageImportRequest
     ) throws IOException, URISyntaxException {
         return asyncRequestExecutor.execute(getGoogleCloudHttpUriRequest(googleCloudStorageImportRequest), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
     public AsyncResult<TaskResponse> openStack(
-        @NotNull final OpenStackImportRequest openStackImportRequest
+            @NotNull final OpenStackImportRequest openStackImportRequest
     ) throws IOException, URISyntaxException {
         return asyncRequestExecutor.execute(getOpenStackHttpUriRequest(openStackImportRequest), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
     public AsyncResult<TaskResponse> sftp(
-        @NotNull final SftpImportRequest sftpImportRequest
+            @NotNull final SftpImportRequest sftpImportRequest
     ) throws IOException, URISyntaxException {
         return asyncRequestExecutor.execute(getSftpHttpUriRequest(sftpImportRequest), TASK_RESPONSE_TYPE_REFERENCE);
     }

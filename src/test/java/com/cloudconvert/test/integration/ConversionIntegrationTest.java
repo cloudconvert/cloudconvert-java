@@ -43,7 +43,8 @@ public class ConversionIntegrationTest extends AbstractTest {
         // Import upload (immediate upload)
         final Result<TaskResponse> uploadImportTaskResponseResult = cloudConvertClient.importUsing().upload(
                 new UploadImportRequest(),
-                this.getClass().getResourceAsStream("/blank.docx")
+                this.getClass().getResourceAsStream("/blank.docx"),
+                "blank.docx"
         );
         assertThat(uploadImportTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
 

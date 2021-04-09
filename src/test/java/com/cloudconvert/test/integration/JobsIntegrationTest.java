@@ -3,6 +3,7 @@ package com.cloudconvert.test.integration;
 import com.cloudconvert.client.CloudConvertClient;
 import com.cloudconvert.dto.Operation;
 import com.cloudconvert.dto.Status;
+import com.cloudconvert.dto.request.ConvertFilesTaskRequest;
 import com.cloudconvert.dto.request.MergeFilesTaskRequest;
 import com.cloudconvert.dto.request.TaskRequest;
 import com.cloudconvert.dto.request.UploadImportRequest;
@@ -51,6 +52,61 @@ public class JobsIntegrationTest extends AbstractTest {
         odtTest2InputStream = JobsIntegrationTest.class.getClassLoader().getResourceAsStream(ODT_TEST_FILE_2);
     }
 
+    @Test(timeout = TIMEOUT)
+    public void convertDocxToPdfWithJob() throws Exception {
+        final String uploadDocxTaskName = "upload";
+        final String convertTaskName = "convert";
+
+        final Map<String, TaskRequest> tasks = ImmutableMap.of(
+                uploadDocxTaskName, new UploadImportRequest(),
+                convertTaskName, new ConvertFilesTaskRequest().setInputFormat("docx").setOutputFormat(PDF).setInput(uploadDocxTaskName)
+        );
+
+        // Create job
+        final Result<JobResponse> jobResponseResult = cloudConvertClient.jobs().create(tasks);
+        assertThat(jobResponseResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
+
+        final JobResponse jobResponse = jobResponseResult.getBody();
+        assertThat(jobResponse.getTasks()).hasSize(2);
+        assertThat(jobResponse.getStatus()).isEqualTo(Status.WAITING);
+        assertThat(jobResponse.getTasks()).extracting(TaskResponse::getName).contains(uploadDocxTaskName, convertTaskName);
+
+        final TaskResponse uploadTaskJobResponse = jobResponse.getTasks().stream()
+                .filter(taskResponse -> taskResponse.getName().equals(uploadDocxTaskName)).findFirst().get();
+        final TaskResponse mergeFile1AndFile2TaskJobResponse = jobResponse.getTasks().stream()
+                .filter(taskResponse -> taskResponse.getName().equals(convertTaskName)).findFirst().get();
+        assertThat(mergeFile1AndFile2TaskJobResponse.getDependsOnTaskIds()).isNotEmpty();
+        assertThat(mergeFile1AndFile2TaskJobResponse.getDependsOnTaskIds()).contains(uploadTaskJobResponse.getId());
+
+        // Upload (actual upload)
+        final Result<TaskResponse> uploadFileTaskResponseResult = cloudConvertClient.importUsing()
+                .upload(uploadTaskJobResponse.getId(), uploadTaskJobResponse.getResult().getForm(), this.getClass().getResourceAsStream("/blank.docx"));
+        assertThat(uploadFileTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse uploadFileTaskResponse = uploadFileTaskResponseResult.getBody();
+        assertThat(uploadFileTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
+
+        // Wait
+        final Result<JobResponse> waitJobResponseResult = cloudConvertClient.jobs().wait(jobResponse.getId());
+        assertThat(waitJobResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final JobResponse waitJobResponse = waitJobResponseResult.getBody();
+        assertThat(waitJobResponse.getStatus()).isEqualTo(Status.FINISHED);
+        assertThat(waitJobResponse.getId()).isEqualTo(jobResponse.getId());
+
+        // Show
+        final Result<JobResponse> showJobResponseResult = cloudConvertClient.jobs().show(jobResponse.getId());
+        assertThat(showJobResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+        final JobResponse showJobResponse = showJobResponseResult.getBody();
+        assertThat(showJobResponse.getStatus()).isEqualTo(Status.FINISHED);
+        assertThat(showJobResponse.getId()).isEqualTo(jobResponse.getId());
+
+        // Delete job
+        final Result<Void> deleteVoidResult = cloudConvertClient.jobs().delete(jobResponse.getId());
+        assertThat(deleteVoidResult.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+    }
+    
     /**
      * There are few restrictions from the API:
      * 1. Conversion, which has multiple input files is allowed within jobs only;

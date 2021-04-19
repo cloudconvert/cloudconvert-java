@@ -1,6 +1,7 @@
 ## cloudconvert-java
 
-[![Build Status](https://travis-ci.org/cloudconvert/cloudconvert-java.svg?branch=master)](https://travis-ci.org/cloudconvert/cloudconvert-java)
+[![Tests](https://github.com/cloudconvert/cloudconvert-java/actions/workflows/run-tests.yml/badge.svg)](https://github.com/cloudconvert/cloudconvert-java/actions/workflows/run-tests.yml)
+![Maven Central](https://img.shields.io/maven-central/v/com.cloudconvert/cloudconvert-java)
 
 This is the official Java SDK v2 for the [CloudConvert](https://cloudconvert.com/api/v2) _API v2_.
 

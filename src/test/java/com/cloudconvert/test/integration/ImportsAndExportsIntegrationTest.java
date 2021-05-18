@@ -3,19 +3,7 @@ package com.cloudconvert.test.integration;
 import com.cloudconvert.client.CloudConvertClient;
 import com.cloudconvert.dto.Operation;
 import com.cloudconvert.dto.Status;
-import com.cloudconvert.dto.request.AzureBlobExportRequest;
-import com.cloudconvert.dto.request.AzureBlobImportRequest;
-import com.cloudconvert.dto.request.GoogleCloudStorageExportRequest;
-import com.cloudconvert.dto.request.GoogleCloudStorageImportRequest;
-import com.cloudconvert.dto.request.OpenStackExportRequest;
-import com.cloudconvert.dto.request.OpenStackImportRequest;
-import com.cloudconvert.dto.request.S3ExportRequest;
-import com.cloudconvert.dto.request.S3ImportRequest;
-import com.cloudconvert.dto.request.SftpExportRequest;
-import com.cloudconvert.dto.request.SftpImportRequest;
-import com.cloudconvert.dto.request.UploadImportRequest;
-import com.cloudconvert.dto.request.UrlExportRequest;
-import com.cloudconvert.dto.request.UrlImportRequest;
+import com.cloudconvert.dto.request.*;
 import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.test.framework.AbstractTest;
@@ -252,6 +240,23 @@ public class ImportsAndExportsIntegrationTest extends AbstractTest {
 
         final TaskResponse sftpImportTaskResponse = sftpImportTaskResponseResult.getBody();
         assertThat(sftpImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_SFTP);
+
+        // Import Base64
+        final Base64ImportRequest base64ImportRequest = new Base64ImportRequest().setFile("dGVzdDEyMw==").setFilename("test.txt");
+        final Result<TaskResponse> base64ImportTaskResponseResult = cloudConvertClient.importUsing().base64(base64ImportRequest);
+        assertThat(base64ImportTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
+
+        final TaskResponse base64ImportTaskResponse = base64ImportTaskResponseResult.getBody();
+        assertThat(base64ImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_BASE64);
+
+        // Import Raw
+        final RawImportRequest rawImportRequest = new RawImportRequest().setFile("content").setFilename("test.txt");
+        final Result<TaskResponse> rawImportTaskResponseResult = cloudConvertClient.importUsing().raw(rawImportRequest);
+        assertThat(rawImportTaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
+
+        final TaskResponse rawImportTaskResponse = rawImportTaskResponseResult.getBody();
+        assertThat(rawImportTaskResponse.getOperation()).isEqualTo(Operation.IMPORT_RAW);
+
     }
 
     /**

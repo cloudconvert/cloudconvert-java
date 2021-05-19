@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
 public class Base64ImportRequest extends TaskRequest{
 
     /***
-     * (required) The raw file content.
+     * (required) The base64 encoded file content.
      */
     private String file;
 

@@ -2,13 +2,7 @@ package com.cloudconvert.resource;
 
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
-import com.cloudconvert.dto.request.AzureBlobImportRequest;
-import com.cloudconvert.dto.request.GoogleCloudStorageImportRequest;
-import com.cloudconvert.dto.request.OpenStackImportRequest;
-import com.cloudconvert.dto.request.S3ImportRequest;
-import com.cloudconvert.dto.request.SftpImportRequest;
-import com.cloudconvert.dto.request.UploadImportRequest;
-import com.cloudconvert.dto.request.UrlImportRequest;
+import com.cloudconvert.dto.request.*;
 import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AbstractResult;
 import com.google.common.collect.ImmutableList;
@@ -45,6 +39,8 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
     public static final String PATH_SEGMENT_GOOGLE_CLOUD_STORAGE = "google-cloud-storage";
     public static final String PATH_SEGMENT_OPENSTACK = "openstack";
     public static final String PATH_SEGMENT_SFTP = "sftp";
+    public static final String PATH_SEGMENT_BASE64 = "base64";
+    public static final String PATH_SEGMENT_RAW = "raw";
 
     private final Tika tika;
 
@@ -343,6 +339,48 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
     ) throws IOException, URISyntaxException {
         final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_SFTP));
         final HttpEntity httpEntity = getHttpEntity(sftpImportRequest);
+
+        return getHttpUriRequest(HttpPost.class, uri, httpEntity);
+    }
+
+    /***
+     * Create a task to import a base64 file
+     *
+     * @param base64ImportRequest
+     * @return
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    public abstract TRAR base64(
+            @NotNull final Base64ImportRequest base64ImportRequest
+            ) throws IOException, URISyntaxException;
+
+    protected HttpUriRequest getBase64HttpUriRequest(
+            @NotNull final Base64ImportRequest base64ImportRequest
+    ) throws IOException, URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_BASE64));
+        final HttpEntity httpEntity = getHttpEntity(base64ImportRequest);
+
+        return getHttpUriRequest(HttpPost.class, uri, httpEntity);
+    }
+
+    /***
+     * Create a task to import raw file
+     *
+     * @param rawImportRequest
+     * @return
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    public abstract TRAR raw(
+            @NotNull final RawImportRequest rawImportRequest
+    ) throws IOException, URISyntaxException;
+
+    protected HttpUriRequest getRawHttpUriRequest(
+            @NotNull final RawImportRequest rawImportRequest
+    ) throws IOException, URISyntaxException {
+        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_IMPORT, PATH_SEGMENT_RAW));
+        final HttpEntity httpEntity = getHttpEntity(rawImportRequest);
 
         return getHttpUriRequest(HttpPost.class, uri, httpEntity);
     }

@@ -2,13 +2,7 @@ package com.cloudconvert.resource.async;
 
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
-import com.cloudconvert.dto.request.AzureBlobImportRequest;
-import com.cloudconvert.dto.request.GoogleCloudStorageImportRequest;
-import com.cloudconvert.dto.request.OpenStackImportRequest;
-import com.cloudconvert.dto.request.S3ImportRequest;
-import com.cloudconvert.dto.request.SftpImportRequest;
-import com.cloudconvert.dto.request.UploadImportRequest;
-import com.cloudconvert.dto.request.UrlImportRequest;
+import com.cloudconvert.dto.request.*;
 import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AsyncResult;
 import com.cloudconvert.dto.result.CompletedAsyncResult;
@@ -248,6 +242,16 @@ public class AsyncImportFilesResource extends AbstractImportFilesResource<AsyncR
             @NotNull final SftpImportRequest sftpImportRequest
     ) throws IOException, URISyntaxException {
         return asyncRequestExecutor.execute(getSftpHttpUriRequest(sftpImportRequest), TASK_RESPONSE_TYPE_REFERENCE);
+    }
+
+    @Override
+    public AsyncResult<TaskResponse> base64(@NotNull final Base64ImportRequest base64ImportRequest) throws IOException, URISyntaxException {
+        return asyncRequestExecutor.execute(getBase64HttpUriRequest(base64ImportRequest), TASK_RESPONSE_TYPE_REFERENCE);
+    }
+
+    @Override
+    public AsyncResult<TaskResponse> raw(@NotNull final RawImportRequest rawImportRequest) throws IOException, URISyntaxException {
+        return asyncRequestExecutor.execute(getRawHttpUriRequest(rawImportRequest), TASK_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override

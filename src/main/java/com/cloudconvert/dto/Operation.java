@@ -23,6 +23,8 @@ public enum Operation {
     IMPORT_GOOGLE_CLOUD_STORAGE("import/google-cloud-storage"),
     IMPORT_OPENSTACK("import/openstack"),
     IMPORT_SFTP("import/sftp"),
+    IMPORT_BASE64("import/base64"),
+    IMPORT_RAW("import/raw"),
 
     EXPORT_URL("export/url"),
     EXPORT_S3("export/s3"),

@@ -365,7 +365,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
     }
 
     /***
-     * Create a task to import  raw file
+     * Create a task to import raw file
      *
      * @param rawImportRequest
      * @return

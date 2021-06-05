@@ -39,7 +39,7 @@ new CloudConvertClient(new EnvironmentVariableSettingsProvider());
 new CloudConvertClient(new PropertyFileSettingsProvider("custom.properties"));
 
 // Using configuration from string variables
-new CloudConvertClient(new StringSettingsProvider("api-url", "webhook-signing-secret", false));
+new CloudConvertClient(new StringSettingsProvider("api-key", "webhook-signing-secret", false));
 
 // Using configuration from system properties
 new CloudConvertClient(new SystemPropertySettingsProvider()); 
@@ -57,7 +57,7 @@ new AsyncCloudConvertClient(new EnvironmentVariableSettingsProvider());
 new AsyncCloudConvertClient(new PropertyFileSettingsProvider("custom.properties"));
 
 // Using configuration from string variables
-new AsyncCloudConvertClient(new StringSettingsProvider("api-url", "webhook-signing-secret", false));
+new AsyncCloudConvertClient(new StringSettingsProvider("api-key", "webhook-signing-secret", false));
 
 // Using configuration from system properties
 new AsyncCloudConvertClient(new SystemPropertySettingsProvider());

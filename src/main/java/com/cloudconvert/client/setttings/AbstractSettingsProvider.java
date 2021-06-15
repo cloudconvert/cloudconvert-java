@@ -39,7 +39,7 @@ public abstract class AbstractSettingsProvider implements SettingsProvider {
 
     private void init(final String apiKey, final String webhookSigningSecret, final String useSandbox) {
         this.apiKey = Optional.ofNullable(apiKey)
-            .orElseThrow(() -> new IllegalArgumentException("Could not resolve " + USE_SANDBOX + ", make sure it is set correctly ..."));
+            .orElseThrow(() -> new IllegalArgumentException("Could not resolve " + API_KEY + ", make sure it is set correctly ..."));
         this.webhookSigningSecret = Optional.ofNullable(webhookSigningSecret)
             .orElseThrow(() -> new IllegalArgumentException("Could not resolve " + WEBHOOK_SIGNING_SECRET + ", make sure it is set correctly ..."));
         this.apiUrl = Boolean.parseBoolean(useSandbox) ? API_URL_SANDBOX : API_URL_LIVE;

@@ -16,7 +16,7 @@
     <licenses>
         <license>
             <name>The MIT License</name>
-            <url>https://raw.githubusercontent.com/ConvertAPI/convertapi-java/master/LICENSE.txt</url>
+            <url>https://opensource.org/licenses/MIT</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -58,13 +58,13 @@
         <httpclient.version>4.5.13</httpclient.version>
         <httpasyncclient.version>4.1.4</httpasyncclient.version>
         <httpmime.version>4.5.12</httpmime.version>
-        <tika-core.version>1.24</tika-core.version>
+        <tika-core.version>1.27</tika-core.version>
 
         <jackson-databind.version>2.10.5.1</jackson-databind.version>
 
         <slf4j.version>1.7.30</slf4j.version>
         <annotations.version>19.0.0</annotations.version>
-        <guava.version>29.0-jre</guava.version>
+        <guava.version>30.0-jre</guava.version>
 
         <lombok.version>1.18.12</lombok.version>
 

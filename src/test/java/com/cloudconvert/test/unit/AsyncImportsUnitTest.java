@@ -3,12 +3,21 @@ package com.cloudconvert.test.unit;
 import com.cloudconvert.client.AsyncCloudConvertClient;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
-import com.cloudconvert.dto.request.*;
+import com.cloudconvert.dto.request.AzureBlobImportRequest;
+import com.cloudconvert.dto.request.Base64ImportRequest;
+import com.cloudconvert.dto.request.GoogleCloudStorageImportRequest;
+import com.cloudconvert.dto.request.OpenStackImportRequest;
+import com.cloudconvert.dto.request.RawImportRequest;
+import com.cloudconvert.dto.request.S3ImportRequest;
+import com.cloudconvert.dto.request.SftpImportRequest;
+import com.cloudconvert.dto.request.UploadImportRequest;
+import com.cloudconvert.dto.request.UrlImportRequest;
 import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AsyncResult;
 import com.cloudconvert.dto.result.CompletedAsyncResult;
 import com.cloudconvert.dto.result.FutureAsyncResult;
 import com.cloudconvert.dto.result.Result;
+import com.cloudconvert.dto.result.Status;
 import com.cloudconvert.executor.AsyncRequestExecutor;
 import com.cloudconvert.resource.AbstractResource;
 import com.cloudconvert.test.framework.AbstractTest;
@@ -132,10 +141,10 @@ public class AsyncImportsUnitTest extends AbstractTest {
         final AsyncResult<TaskResponse> showTaskResponseAsyncResult = FutureAsyncResult.<TaskResponse>builder().build();
         when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE)))
             .thenReturn(CompletedAsyncResult.<TaskResponse>builder().result(
-                Result.<TaskResponse>builder().status(HttpStatus.SC_CREATED).body(taskResponse).build()).build())
+                Result.<TaskResponse>builder().status(Status.builder().code(HttpStatus.SC_CREATED).build()).body(taskResponse).build()).build())
             .thenReturn(showTaskResponseAsyncResult);
         when(asyncRequestExecutor.execute(any(HttpUriRequest.class), eq(AbstractResource.VOID_TYPE_REFERENCE))).thenReturn(
-            CompletedAsyncResult.<Void>builder().result(Result.<Void>builder().status(HttpStatus.SC_CREATED).build()).build());
+            CompletedAsyncResult.<Void>builder().result(Result.<Void>builder().status(Status.builder().code(HttpStatus.SC_CREATED).build()).build()).build());
 
         assertThat(asyncCloudConvertClient.importUsing().upload(expectedUploadImportRequest, inputStream)).isEqualTo(showTaskResponseAsyncResult);
         verify(asyncRequestExecutor, times(2)).execute(any(HttpUriRequest.class), eq(AbstractResource.TASK_RESPONSE_TYPE_REFERENCE));
@@ -282,8 +291,9 @@ public class AsyncImportsUnitTest extends AbstractTest {
         assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_USER_AGENT)).hasSize(1).allSatisfy(header ->
             assertThat(AbstractResource.VALUE_USER_AGENT).isEqualTo(header.getValue()));
     }
+
     @Test
-    public void import_base64() throws Exception{
+    public void import_base64() throws Exception {
         final Base64ImportRequest expectedBase64ImportRequest = new Base64ImportRequest().setFile("some-file").setFilename("test.txt");
         final AsyncResult<TaskResponse> taskResponseAsyncResult = FutureAsyncResult.<TaskResponse>builder().build();
 
@@ -298,18 +308,18 @@ public class AsyncImportsUnitTest extends AbstractTest {
         assertThat(httpUriRequest.getURI().toString()).isEqualTo(API_URL + "/" + AbstractResource.V2 + "/import/base64");
         assertThat(httpUriRequest).isInstanceOfSatisfying(HttpEntityEnclosingRequestBase.class, httpEntityEnclosingRequestBase -> {
             final Base64ImportRequest actualBase64ImportRequest = ThrowingSupplier.unchecked(() -> objectMapperProvider.provide()
-                    .readValue(httpEntityEnclosingRequestBase.getEntity().getContent(), Base64ImportRequest.class)).get();
+                .readValue(httpEntityEnclosingRequestBase.getEntity().getContent(), Base64ImportRequest.class)).get();
 
             assertThat(actualBase64ImportRequest.getFilename()).isEqualTo(actualBase64ImportRequest.getFilename());
         });
         assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_AUTHORIZATION)).hasSize(1).allSatisfy(header ->
-                assertThat(VALUE_AUTHORIZATION).isEqualTo(header.getValue()));
+            assertThat(VALUE_AUTHORIZATION).isEqualTo(header.getValue()));
         assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_USER_AGENT)).hasSize(1).allSatisfy(header ->
-                assertThat(AbstractResource.VALUE_USER_AGENT).isEqualTo(header.getValue()));
+            assertThat(AbstractResource.VALUE_USER_AGENT).isEqualTo(header.getValue()));
     }
 
     @Test
-    public void import_raw() throws Exception{
+    public void import_raw() throws Exception {
         final RawImportRequest expectedRawImportRequest = new RawImportRequest().setFile("content").setFilename("test.txt");
         final AsyncResult<TaskResponse> taskResponseAsyncResult = FutureAsyncResult.<TaskResponse>builder().build();
 
@@ -324,14 +334,14 @@ public class AsyncImportsUnitTest extends AbstractTest {
         assertThat(httpUriRequest.getURI().toString()).isEqualTo(API_URL + "/" + AbstractResource.V2 + "/import/raw");
         assertThat(httpUriRequest).isInstanceOfSatisfying(HttpEntityEnclosingRequestBase.class, httpEntityEnclosingRequestBase -> {
             final RawImportRequest actualRawImportRequest = ThrowingSupplier.unchecked(() -> objectMapperProvider.provide()
-                    .readValue(httpEntityEnclosingRequestBase.getEntity().getContent(), RawImportRequest.class)).get();
+                .readValue(httpEntityEnclosingRequestBase.getEntity().getContent(), RawImportRequest.class)).get();
 
             assertThat(actualRawImportRequest.getFilename()).isEqualTo(actualRawImportRequest.getFilename());
         });
         assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_AUTHORIZATION)).hasSize(1).allSatisfy(header ->
-                assertThat(VALUE_AUTHORIZATION).isEqualTo(header.getValue()));
+            assertThat(VALUE_AUTHORIZATION).isEqualTo(header.getValue()));
         assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_USER_AGENT)).hasSize(1).allSatisfy(header ->
-                assertThat(AbstractResource.VALUE_USER_AGENT).isEqualTo(header.getValue()));
+            assertThat(AbstractResource.VALUE_USER_AGENT).isEqualTo(header.getValue()));
     }
 
     @After

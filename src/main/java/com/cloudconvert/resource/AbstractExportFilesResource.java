@@ -10,6 +10,8 @@ import com.cloudconvert.dto.request.SftpExportRequest;
 import com.cloudconvert.dto.request.UrlExportRequest;
 import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AbstractResult;
+import com.cloudconvert.exception.CloudConvertClientException;
+import com.cloudconvert.exception.CloudConvertServerException;
 import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -49,7 +51,7 @@ public abstract class AbstractExportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR url(
         @NotNull final UrlExportRequest urlExportRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getUrlHttpUriRequest(
         @NotNull final UrlExportRequest urlExportRequest
@@ -70,7 +72,7 @@ public abstract class AbstractExportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR s3(
         @NotNull final S3ExportRequest s3ExportRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getS3HttpUriRequest(
         @NotNull final S3ExportRequest s3ExportRequest
@@ -91,7 +93,7 @@ public abstract class AbstractExportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR azureBlob(
         @NotNull final AzureBlobExportRequest azureBlobExportRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getAzureBlobHttpUriRequest(
         @NotNull final AzureBlobExportRequest azureBlobExportRequest
@@ -112,7 +114,7 @@ public abstract class AbstractExportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR googleCloudStorage(
         @NotNull final GoogleCloudStorageExportRequest googleCloudStorageExportRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getGoogleCloudStorageHttpUriRequest(
         @NotNull final GoogleCloudStorageExportRequest googleCloudStorageExportRequest
@@ -133,7 +135,7 @@ public abstract class AbstractExportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR openStack(
         @NotNull final OpenStackExportRequest openStackExportRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getOpenStackStorageHttpUriRequest(
         @NotNull final OpenStackExportRequest openStackExportRequest
@@ -154,7 +156,7 @@ public abstract class AbstractExportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR sftp(
         @NotNull final SftpExportRequest sftpExportRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getSftpStorageHttpUriRequest(
         @NotNull final SftpExportRequest sftpExportRequest

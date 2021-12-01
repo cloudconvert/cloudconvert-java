@@ -37,7 +37,7 @@ public class AsyncWebhooksIntegrationTest extends AbstractTest {
     @Test(timeout = TIMEOUT)
     public void userLifecycle() throws Exception {
         final Result<UserResponse> userResponseResult = asyncCloudConvertClient.users().me().get();
-        assertThat(userResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(userResponseResult.getStatus().getCode()).isEqualTo(HttpStatus.SC_OK);
         assertThat(userResponseResult.getBody()).isNotNull();
     }
 
@@ -47,7 +47,7 @@ public class AsyncWebhooksIntegrationTest extends AbstractTest {
         final WebhookRequest webhookRequest = new WebhookRequest().setUrl("http://some-url.com")
             .setEvents(ImmutableList.of(Event.JOB_CREATED, Event.JOB_FAILED, Event.JOB_FINISHED));
         final Result<WebhookResponse> createWebhookResponseResult = asyncCloudConvertClient.webhooks().create(webhookRequest).get();
-        assertThat(createWebhookResponseResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
+        assertThat(createWebhookResponseResult.getStatus().getCode()).isEqualTo(HttpStatus.SC_CREATED);
         assertThat(createWebhookResponseResult.getBody()).isNotNull();
 
         final WebhookResponse createWebhookResponse = createWebhookResponseResult.getBody();
@@ -55,11 +55,11 @@ public class AsyncWebhooksIntegrationTest extends AbstractTest {
 
         // List
         final Result<Pageable<WebhookResponse>> webhookResponsePageable = asyncCloudConvertClient.webhooks().list().get();
-        assertThat(webhookResponsePageable.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(webhookResponsePageable.getStatus().getCode()).isEqualTo(HttpStatus.SC_OK);
 
         // Delete
         final Result<Void> deleteWebhookResponseResult = asyncCloudConvertClient.webhooks().delete(createWebhookResponse.getId()).get();
-        assertThat(deleteWebhookResponseResult.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+        assertThat(deleteWebhookResponseResult.getStatus().getCode()).isEqualTo(HttpStatus.SC_NO_CONTENT);
 
         // Verify
         assertThat(asyncCloudConvertClient.webhooks().verify(WEBHOOK_PAYLOAD, WEBHOOK_SIGNATURE)).isTrue();

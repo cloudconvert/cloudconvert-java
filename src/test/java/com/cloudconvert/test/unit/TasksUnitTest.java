@@ -3,7 +3,15 @@ package com.cloudconvert.test.unit;
 import com.cloudconvert.client.CloudConvertClient;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
-import com.cloudconvert.dto.request.*;
+import com.cloudconvert.dto.request.CaptureWebsitesTaskRequest;
+import com.cloudconvert.dto.request.ConvertFilesTaskRequest;
+import com.cloudconvert.dto.request.CreateArchivesTaskRequest;
+import com.cloudconvert.dto.request.CreateThumbnailsTaskRequest;
+import com.cloudconvert.dto.request.ExecuteCommandsTaskRequest;
+import com.cloudconvert.dto.request.GetMetadataTaskRequest;
+import com.cloudconvert.dto.request.MergeFilesTaskRequest;
+import com.cloudconvert.dto.request.OptimizeFilesTaskRequest;
+import com.cloudconvert.dto.request.WriteMetadataTaskRequest;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
@@ -507,14 +515,14 @@ public class TasksUnitTest extends AbstractTest {
         assertThat(httpUriRequest.getURI().toString()).isEqualTo(API_URL + "/" + AbstractResource.V2 + "/thumbnail");
         assertThat(httpUriRequest).isInstanceOfSatisfying(HttpEntityEnclosingRequestBase.class, httpEntityEnclosingRequestBase -> {
             final ExecuteCommandsTaskRequest actualExecuteCommandsTaskRequest = ThrowingSupplier.unchecked(() -> objectMapperProvider.provide()
-                    .readValue(httpEntityEnclosingRequestBase.getEntity().getContent(), ExecuteCommandsTaskRequest.class)).get();
+                .readValue(httpEntityEnclosingRequestBase.getEntity().getContent(), ExecuteCommandsTaskRequest.class)).get();
 
             assertThat(actualExecuteCommandsTaskRequest.getInput()).isEqualTo(expectedCreateThumbnailsTaskRequest.getInput());
         });
         assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_AUTHORIZATION)).hasSize(1).allSatisfy(header ->
-                assertThat(VALUE_AUTHORIZATION).isEqualTo(header.getValue()));
+            assertThat(VALUE_AUTHORIZATION).isEqualTo(header.getValue()));
         assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_USER_AGENT)).hasSize(1).allSatisfy(header ->
-                assertThat(AbstractResource.VALUE_USER_AGENT).isEqualTo(header.getValue()));
+            assertThat(AbstractResource.VALUE_USER_AGENT).isEqualTo(header.getValue()));
     }
 
     @Test
@@ -533,14 +541,14 @@ public class TasksUnitTest extends AbstractTest {
         assertThat(httpUriRequest.getURI().toString()).isEqualTo(API_URL + "/" + AbstractResource.V2 + "/metadata");
         assertThat(httpUriRequest).isInstanceOfSatisfying(HttpEntityEnclosingRequestBase.class, httpEntityEnclosingRequestBase -> {
             final ExecuteCommandsTaskRequest actualExecuteCommandsTaskRequest = ThrowingSupplier.unchecked(() -> objectMapperProvider.provide()
-                    .readValue(httpEntityEnclosingRequestBase.getEntity().getContent(), ExecuteCommandsTaskRequest.class)).get();
+                .readValue(httpEntityEnclosingRequestBase.getEntity().getContent(), ExecuteCommandsTaskRequest.class)).get();
 
             assertThat(actualExecuteCommandsTaskRequest.getInput()).isEqualTo(expectedGetMetadataTaskRequest.getInput());
         });
         assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_AUTHORIZATION)).hasSize(1).allSatisfy(header ->
-                assertThat(VALUE_AUTHORIZATION).isEqualTo(header.getValue()));
+            assertThat(VALUE_AUTHORIZATION).isEqualTo(header.getValue()));
         assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_USER_AGENT)).hasSize(1).allSatisfy(header ->
-                assertThat(AbstractResource.VALUE_USER_AGENT).isEqualTo(header.getValue()));
+            assertThat(AbstractResource.VALUE_USER_AGENT).isEqualTo(header.getValue()));
     }
 
     @Test
@@ -559,14 +567,14 @@ public class TasksUnitTest extends AbstractTest {
         assertThat(httpUriRequest.getURI().toString()).isEqualTo(API_URL + "/" + AbstractResource.V2 + "/metadata/write");
         assertThat(httpUriRequest).isInstanceOfSatisfying(HttpEntityEnclosingRequestBase.class, httpEntityEnclosingRequestBase -> {
             final ExecuteCommandsTaskRequest actualExecuteCommandsTaskRequest = ThrowingSupplier.unchecked(() -> objectMapperProvider.provide()
-                    .readValue(httpEntityEnclosingRequestBase.getEntity().getContent(), ExecuteCommandsTaskRequest.class)).get();
+                .readValue(httpEntityEnclosingRequestBase.getEntity().getContent(), ExecuteCommandsTaskRequest.class)).get();
 
             assertThat(actualExecuteCommandsTaskRequest.getInput()).isEqualTo(expectedWriteMetadataTaskRequest.getInput());
         });
         assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_AUTHORIZATION)).hasSize(1).allSatisfy(header ->
-                assertThat(VALUE_AUTHORIZATION).isEqualTo(header.getValue()));
+            assertThat(VALUE_AUTHORIZATION).isEqualTo(header.getValue()));
         assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_USER_AGENT)).hasSize(1).allSatisfy(header ->
-                assertThat(AbstractResource.VALUE_USER_AGENT).isEqualTo(header.getValue()));
+            assertThat(AbstractResource.VALUE_USER_AGENT).isEqualTo(header.getValue()));
     }
 
 

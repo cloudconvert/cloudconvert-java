@@ -2,6 +2,7 @@ package com.cloudconvert.processor.response.successful;
 
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.dto.result.Result;
+import com.cloudconvert.dto.result.Status;
 import com.cloudconvert.processor.content.ContentPreProcessor;
 import com.cloudconvert.processor.content.DataExtractingContentPreProcessor;
 import com.cloudconvert.processor.content.DefaultContentPreProcessor;
@@ -9,13 +10,10 @@ import com.cloudconvert.processor.response.ResponseProcessor;
 import com.cloudconvert.resource.AbstractResource;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.ImmutableMap;
-import org.apache.http.Header;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ContentResponseProcessor implements ResponseProcessor {
 
@@ -39,11 +37,10 @@ public class ContentResponseProcessor implements ResponseProcessor {
 
     @Override
     public <T> Result<T> process(
-        final int status, final Header[] headers, final InputStream inputStream, final TypeReference<T> typeReference
+        final Status status, final Map<String, String> headers, final InputStream inputStream, final TypeReference<T> typeReference
     ) throws IOException {
         final String string = contentPreProcessors.getOrDefault(typeReference, defaultContentPreProcessor).preProcess(inputStream);
 
-        return Result.<T>builder().status(status).headers(Arrays.stream(headers).collect(Collectors.toMap(Header::getName, Header::getValue, (v1, v2) -> v1 + ", " + v2)))
-            .message("").body(objectMapperProvider.provide().readValue(string, typeReference)).build();
+        return Result.<T>builder().status(status).headers(headers).body(objectMapperProvider.provide().readValue(string, typeReference)).build();
     }
 }

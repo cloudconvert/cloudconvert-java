@@ -5,6 +5,8 @@ import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.CreateThumbnailsTaskRequest;
 import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AbstractResult;
+import com.cloudconvert.exception.CloudConvertClientException;
+import com.cloudconvert.exception.CloudConvertServerException;
 import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -35,7 +37,7 @@ public abstract class AbstractCreateThumbnailsResource<TRAR extends AbstractResu
      */
     public abstract TRAR thumbnail(
         @NotNull final CreateThumbnailsTaskRequest createThumbnailsTaskRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getThumbnailHttpUriRequest(
         @NotNull final CreateThumbnailsTaskRequest createThumbnailsTaskRequest

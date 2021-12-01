@@ -3,6 +3,8 @@ package com.cloudconvert.resource.sync;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.result.Result;
+import com.cloudconvert.exception.CloudConvertClientException;
+import com.cloudconvert.exception.CloudConvertServerException;
 import com.cloudconvert.executor.RequestExecutor;
 import com.cloudconvert.resource.AbstractFilesResource;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +31,7 @@ public class FilesResource extends AbstractFilesResource<Result<InputStream>> {
     @Override
     public Result<InputStream> download(
         @NotNull final String path
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return requestExecutor.execute(getDownloadHttpUriRequest(path), INPUT_STREAM_TYPE_REFERENCE);
     }
 

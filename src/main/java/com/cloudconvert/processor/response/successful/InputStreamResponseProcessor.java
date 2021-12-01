@@ -1,22 +1,21 @@
 package com.cloudconvert.processor.response.successful;
 
 import com.cloudconvert.dto.result.Result;
+import com.cloudconvert.dto.result.Status;
 import com.cloudconvert.processor.response.ResponseProcessor;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.io.ByteSource;
-import org.apache.http.Header;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 public class InputStreamResponseProcessor implements ResponseProcessor {
 
     @Override
     public <T> Result<T> process(
-        final int status, final Header[] headers, final InputStream inputStream, final TypeReference<T> typeReference
+        final Status status, final Map<String, String> headers, final InputStream inputStream, final TypeReference<T> typeReference
     ) throws IOException {
         final ByteSource byteSource = new ByteSource() {
             @Override
@@ -25,7 +24,6 @@ public class InputStreamResponseProcessor implements ResponseProcessor {
             }
         };
 
-        return Result.<T>builder().headers(Arrays.stream(headers).collect(Collectors.toMap(Header::getName, Header::getValue)))
-            .message("").body((T) new ByteArrayInputStream(byteSource.read())).status(status).build();
+        return Result.<T>builder().status(status).headers(headers).body((T) new ByteArrayInputStream(byteSource.read())).build();
     }
 }

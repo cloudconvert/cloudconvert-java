@@ -72,7 +72,7 @@ public class AsyncJobsIntegrationTest extends AbstractTest {
 
         // Create job
         final Result<JobResponse> jobResponseResult = asyncCloudConvertClient.jobs().create(tasks).get();
-        assertThat(jobResponseResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
+        assertThat(jobResponseResult.getStatus().getCode()).isEqualTo(HttpStatus.SC_CREATED);
 
         final JobResponse jobResponse = jobResponseResult.getBody();
         assertThat(jobResponse.getTasks()).hasSize(3);
@@ -92,7 +92,7 @@ public class AsyncJobsIntegrationTest extends AbstractTest {
         // Upload (actual upload file 1)
         final Result<TaskResponse> uploadFile1TaskResponseResult = asyncCloudConvertClient.importUsing()
             .upload(uploadFile1TaskJobResponse.getId(), uploadFile1TaskJobResponse.getResult().getForm(), odtTest1InputStream).get();
-        assertThat(uploadFile1TaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(uploadFile1TaskResponseResult.getStatus().getCode()).isEqualTo(HttpStatus.SC_OK);
 
         final TaskResponse uploadFile1TaskResponse = uploadFile1TaskResponseResult.getBody();
         assertThat(uploadFile1TaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
@@ -100,14 +100,14 @@ public class AsyncJobsIntegrationTest extends AbstractTest {
         // Upload (actual upload file 2)
         final Result<TaskResponse> uploadFile2TaskResponseResult = asyncCloudConvertClient.importUsing()
             .upload(uploadFile2TaskJobResponse.getId(), uploadFile2TaskJobResponse.getResult().getForm(), odtTest2InputStream).get();
-        assertThat(uploadFile2TaskResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(uploadFile2TaskResponseResult.getStatus().getCode()).isEqualTo(HttpStatus.SC_OK);
 
         final TaskResponse uploadFile2TaskResponse = uploadFile2TaskResponseResult.getBody();
         assertThat(uploadFile2TaskResponse.getOperation()).isEqualTo(Operation.IMPORT_UPLOAD);
 
         // Wait
         final Result<JobResponse> waitJobResponseResult = asyncCloudConvertClient.jobs().wait(jobResponse.getId()).get();
-        assertThat(waitJobResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(waitJobResponseResult.getStatus().getCode()).isEqualTo(HttpStatus.SC_OK);
 
         final JobResponse waitJobResponse = waitJobResponseResult.getBody();
         assertThat(waitJobResponse.getStatus()).isEqualTo(Status.FINISHED);
@@ -115,7 +115,7 @@ public class AsyncJobsIntegrationTest extends AbstractTest {
 
         // Show
         final Result<JobResponse> showJobResponseResult = asyncCloudConvertClient.jobs().show(jobResponse.getId()).get();
-        assertThat(showJobResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(showJobResponseResult.getStatus().getCode()).isEqualTo(HttpStatus.SC_OK);
 
         final JobResponse showJobResponse = showJobResponseResult.getBody();
         assertThat(showJobResponse.getStatus()).isEqualTo(Status.FINISHED);
@@ -123,7 +123,7 @@ public class AsyncJobsIntegrationTest extends AbstractTest {
 
         // Delete job
         final Result<Void> deleteVoidResult = asyncCloudConvertClient.jobs().delete(jobResponse.getId()).get();
-        assertThat(deleteVoidResult.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+        assertThat(deleteVoidResult.getStatus().getCode()).isEqualTo(HttpStatus.SC_NO_CONTENT);
     }
 
     @Test(timeout = TIMEOUT)
@@ -131,7 +131,7 @@ public class AsyncJobsIntegrationTest extends AbstractTest {
         // List jobs
         final Result<Pageable<JobResponse>> jobResponsePageable = asyncCloudConvertClient.jobs()
             .list(ImmutableMap.of(), ImmutableList.of(), new Pagination(10, 1)).get();
-        assertThat(jobResponsePageable.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(jobResponsePageable.getStatus().getCode()).isEqualTo(HttpStatus.SC_OK);
     }
 
     @After

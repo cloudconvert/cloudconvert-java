@@ -6,6 +6,8 @@ import com.cloudconvert.dto.request.TaskRequest;
 import com.cloudconvert.dto.response.JobResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.result.AbstractResult;
+import com.cloudconvert.exception.CloudConvertClientException;
+import com.cloudconvert.exception.CloudConvertServerException;
 import com.cloudconvert.resource.params.Filter;
 import com.cloudconvert.resource.params.Include;
 import com.cloudconvert.resource.params.Pagination;
@@ -65,7 +67,7 @@ public abstract class AbstractJobsResource<JRAR extends AbstractResult<JobRespon
      */
     public abstract JRAR create(
         @NotNull final Map<String, TaskRequest> tasks
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * Create a job with one ore more tasks. Requires the task.write scope.
@@ -84,7 +86,7 @@ public abstract class AbstractJobsResource<JRAR extends AbstractResult<JobRespon
      */
     public abstract JRAR create(
         @NotNull final Map<String, TaskRequest> tasks, @NotNull final String tag
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getCreateHttpUriRequest(
         @NotNull final Map<String, TaskRequest> tasks, @NotNull final String tag
@@ -110,7 +112,7 @@ public abstract class AbstractJobsResource<JRAR extends AbstractResult<JobRespon
      */
     public abstract JRAR show(
         @NotNull final String jobId
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getShowHttpUriRequest(
         @NotNull final String jobId
@@ -137,7 +139,7 @@ public abstract class AbstractJobsResource<JRAR extends AbstractResult<JobRespon
      */
     public abstract JRAR wait(
         @NotNull final String jobId
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getWaitHttpUriRequest(
         @NotNull final String jobId
@@ -154,7 +156,7 @@ public abstract class AbstractJobsResource<JRAR extends AbstractResult<JobRespon
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract JRPAR list() throws IOException, URISyntaxException;
+    public abstract JRPAR list() throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * List all jobs. Requires the task.read scope.
@@ -168,7 +170,7 @@ public abstract class AbstractJobsResource<JRAR extends AbstractResult<JobRespon
      */
     public abstract JRPAR list(
         @NotNull final Map<Filter, String> filters
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * List all jobs. Requires the task.read scope.
@@ -183,7 +185,7 @@ public abstract class AbstractJobsResource<JRAR extends AbstractResult<JobRespon
      */
     public abstract JRPAR list(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * List all jobs. Requires the task.read scope.
@@ -201,7 +203,7 @@ public abstract class AbstractJobsResource<JRAR extends AbstractResult<JobRespon
      */
     public abstract JRPAR list(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Pagination pagination
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getListHttpUriRequest(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Pagination pagination
@@ -225,7 +227,7 @@ public abstract class AbstractJobsResource<JRAR extends AbstractResult<JobRespon
      */
     public abstract VAR delete(
         @NotNull final String jobId
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getDeleteHttpUriRequest(
         @NotNull final String jobId

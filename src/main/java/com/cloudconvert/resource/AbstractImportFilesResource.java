@@ -2,9 +2,19 @@ package com.cloudconvert.resource;
 
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
-import com.cloudconvert.dto.request.*;
+import com.cloudconvert.dto.request.AzureBlobImportRequest;
+import com.cloudconvert.dto.request.Base64ImportRequest;
+import com.cloudconvert.dto.request.GoogleCloudStorageImportRequest;
+import com.cloudconvert.dto.request.OpenStackImportRequest;
+import com.cloudconvert.dto.request.RawImportRequest;
+import com.cloudconvert.dto.request.S3ImportRequest;
+import com.cloudconvert.dto.request.SftpImportRequest;
+import com.cloudconvert.dto.request.UploadImportRequest;
+import com.cloudconvert.dto.request.UrlImportRequest;
 import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AbstractResult;
+import com.cloudconvert.exception.CloudConvertClientException;
+import com.cloudconvert.exception.CloudConvertServerException;
 import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -62,7 +72,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR url(
             @NotNull final UrlImportRequest urlImportRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getUrlHttpUriRequest(
             @NotNull final UrlImportRequest urlImportRequest
@@ -86,7 +96,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR upload(
             @NotNull final UploadImportRequest uploadImportRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * Create a task which uploads one input file.
@@ -102,7 +112,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR upload(
             @NotNull final UploadImportRequest uploadImportRequest, @NotNull final File file
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * Create a task which uploads one input file.
@@ -118,7 +128,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR upload(
             @NotNull final TRAR taskResponseResult, @NotNull final File file
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * Create a task which uploads one input file.
@@ -135,7 +145,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR upload(
             @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final File file
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * Create a task which uploads one input file.
@@ -151,7 +161,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR upload(
             @NotNull final UploadImportRequest uploadImportRequest, @NotNull final InputStream inputStream
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * Create a task which uploads one input file.
@@ -168,7 +178,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR upload(
             @NotNull final UploadImportRequest uploadImportRequest, @NotNull final InputStream inputStream, @NotNull String filename
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * Create a task which uploads one input file.
@@ -184,7 +194,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR upload(
             @NotNull final TRAR taskResponseResult, @NotNull final InputStream inputStream
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * Create a task which uploads one input file.
@@ -201,7 +211,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR upload(
             @NotNull final TRAR taskResponseResult, @NotNull final InputStream inputStream, @NotNull final String filename
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * Create a task which uploads one input file.
@@ -218,7 +228,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR upload(
             @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final InputStream inputStream
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * Create a task which uploads one input file.
@@ -236,7 +246,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR upload(
             @NotNull final String taskId, @NotNull final TaskResponse.Result.Form taskResponseResultForm, @NotNull final InputStream inputStream, @NotNull final String filename
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * Create a task to import files by downloading it from a S3 bucket.
@@ -248,7 +258,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR s3(
             @NotNull final S3ImportRequest s3ImportRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getS3HttpUriRequest(
             @NotNull final S3ImportRequest s3ImportRequest
@@ -269,7 +279,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR azureBlob(
             @NotNull final AzureBlobImportRequest azureBlobImportRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getAzureBlobHttpUriRequest(
             @NotNull final AzureBlobImportRequest azureBlobImportRequest
@@ -290,7 +300,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR googleCloudStorage(
             @NotNull final GoogleCloudStorageImportRequest googleCloudStorageImportRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getGoogleCloudHttpUriRequest(
             @NotNull final GoogleCloudStorageImportRequest googleCloudStorageImportRequest
@@ -311,7 +321,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR openStack(
             @NotNull final OpenStackImportRequest openStackImportRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getOpenStackHttpUriRequest(
             @NotNull final OpenStackImportRequest openStackImportRequest
@@ -332,7 +342,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR sftp(
             @NotNull final SftpImportRequest sftpImportRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getSftpHttpUriRequest(
             @NotNull final SftpImportRequest sftpImportRequest
@@ -353,7 +363,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR base64(
             @NotNull final Base64ImportRequest base64ImportRequest
-            ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getBase64HttpUriRequest(
             @NotNull final Base64ImportRequest base64ImportRequest
@@ -374,7 +384,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
      */
     public abstract TRAR raw(
             @NotNull final RawImportRequest rawImportRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getRawHttpUriRequest(
             @NotNull final RawImportRequest rawImportRequest
@@ -404,8 +414,7 @@ public abstract class AbstractImportFilesResource<TRAR extends AbstractResult<Ta
     }
 
     protected HttpEntity getMultipartHttpEntity(
-            final TaskResponse.Result.Form uploadImportResponseResultForm,
-            @NotNull final String filename, final InputStream inputStream
+            final TaskResponse.Result.Form uploadImportResponseResultForm, @NotNull final String filename, final InputStream inputStream
     ) throws IOException {
         final MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create().setContentType(ContentType.MULTIPART_FORM_DATA);
         uploadImportResponseResultForm.getParameters().forEach(multipartEntityBuilder::addTextBody);

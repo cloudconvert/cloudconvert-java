@@ -5,6 +5,8 @@ import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.ExecuteCommandsTaskRequest;
 import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AbstractResult;
+import com.cloudconvert.exception.CloudConvertClientException;
+import com.cloudconvert.exception.CloudConvertServerException;
 import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -37,7 +39,7 @@ public abstract class AbstractExecuteCommandsResource<TRAR extends AbstractResul
      */
     public abstract TRAR command(
         @NotNull final ExecuteCommandsTaskRequest executeCommandsTaskRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getCommandHttpUriRequest(
         @NotNull final ExecuteCommandsTaskRequest executeCommandsTaskRequest

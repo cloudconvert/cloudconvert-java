@@ -13,7 +13,22 @@ import com.cloudconvert.dto.response.WebhookResponse;
 import com.cloudconvert.dto.result.Result;
 import com.cloudconvert.executor.RequestExecutor;
 import com.cloudconvert.extractor.ResultExtractor;
-import com.cloudconvert.resource.sync.*;
+import com.cloudconvert.resource.sync.CaptureWebsitesResource;
+import com.cloudconvert.resource.sync.ConvertFilesResource;
+import com.cloudconvert.resource.sync.CreateArchivesResource;
+import com.cloudconvert.resource.sync.CreateThumbnailsResource;
+import com.cloudconvert.resource.sync.ExecuteCommandsResource;
+import com.cloudconvert.resource.sync.ExportFilesResource;
+import com.cloudconvert.resource.sync.FilesResource;
+import com.cloudconvert.resource.sync.GetMetadataResource;
+import com.cloudconvert.resource.sync.ImportFilesResource;
+import com.cloudconvert.resource.sync.JobsResource;
+import com.cloudconvert.resource.sync.MergeFilesResource;
+import com.cloudconvert.resource.sync.OptimizeFilesResource;
+import com.cloudconvert.resource.sync.TasksResource;
+import com.cloudconvert.resource.sync.UsersResource;
+import com.cloudconvert.resource.sync.WebhookResource;
+import com.cloudconvert.resource.sync.WriteMetadataResource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,7 +68,7 @@ public class CloudConvertClient extends AbstractCloudConvertClient<Result<Void>,
                 new ExecuteCommandsResource(settingsProvider, objectMapperProvider, requestExecutor),
                 new CreateThumbnailsResource(settingsProvider, objectMapperProvider, requestExecutor),
                 new GetMetadataResource(settingsProvider, objectMapperProvider, requestExecutor),
-                    new WriteMetadataResource(settingsProvider, objectMapperProvider, requestExecutor)
+                new WriteMetadataResource(settingsProvider, objectMapperProvider, requestExecutor)
             ),
             new JobsResource(settingsProvider, objectMapperProvider, requestExecutor)
         );

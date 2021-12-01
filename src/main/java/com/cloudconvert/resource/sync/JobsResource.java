@@ -6,6 +6,8 @@ import com.cloudconvert.dto.request.TaskRequest;
 import com.cloudconvert.dto.response.JobResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.result.Result;
+import com.cloudconvert.exception.CloudConvertClientException;
+import com.cloudconvert.exception.CloudConvertServerException;
 import com.cloudconvert.executor.RequestExecutor;
 import com.cloudconvert.resource.AbstractJobsResource;
 import com.cloudconvert.resource.params.Filter;
@@ -40,61 +42,61 @@ public class JobsResource extends AbstractJobsResource<
     @Override
     public Result<JobResponse> create(
         @NotNull final Map<String, TaskRequest> tasks
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return create(tasks, "");
     }
 
     @Override
     public Result<JobResponse> create(
         @NotNull final Map<String, TaskRequest> tasks, @NotNull final String tag
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return requestExecutor.execute(getCreateHttpUriRequest(tasks, tag), JOB_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
     public Result<JobResponse> show(
         @NotNull final String jobId
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return requestExecutor.execute(getShowHttpUriRequest(jobId), JOB_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
     public Result<JobResponse> wait(
         @NotNull final String jobId
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return requestExecutor.execute(getWaitHttpUriRequest(jobId), JOB_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
-    public Result<Pageable<JobResponse>> list() throws IOException, URISyntaxException {
+    public Result<Pageable<JobResponse>> list() throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return list(ImmutableMap.of());
     }
 
     @Override
     public Result<Pageable<JobResponse>> list(
         @NotNull final Map<Filter, String> filters
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return list(filters, ImmutableList.of());
     }
 
     @Override
     public Result<Pageable<JobResponse>> list(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return list(filters, includes, null);
     }
 
     @Override
     public Result<Pageable<JobResponse>> list(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Pagination pagination
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return requestExecutor.execute(getListHttpUriRequest(filters, includes, pagination), JOB_RESPONSE_PAGEABLE_TYPE_REFERENCE);
     }
 
     @Override
     public Result<Void> delete(
         @NotNull final String jobId
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return requestExecutor.execute(getDeleteHttpUriRequest(jobId), VOID_TYPE_REFERENCE);
     }
 

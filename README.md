@@ -11,7 +11,7 @@ Add the following dependency to your pom.xml:
 <dependency>
     <groupId>com.cloudconvert</groupId>
     <artifactId>cloudconvert-java</artifactId>
-    <version>1.0.7</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 

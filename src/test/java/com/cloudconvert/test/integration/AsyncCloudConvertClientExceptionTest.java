@@ -46,7 +46,7 @@ public class AsyncCloudConvertClientExceptionTest extends AbstractTest {
 
         assertThat(cloudConvertClientException.getStatus().getCode()).isEqualTo(HttpStatus.SC_UNAUTHORIZED);
         assertThat(cloudConvertClientException.getStatus().getReason()).isEqualTo("Unauthorized");
-        assertThat(cloudConvertClientException.getHeaders()).hasSize(6);
+        assertThat(cloudConvertClientException.getHeaders()).containsKey("Content-Type");
         assertThat(cloudConvertClientException.getBody().getCode()).isEqualTo("UNAUTHENTICATED");
         assertThat(cloudConvertClientException.getBody().getMessage()).isEqualTo("Unauthenticated.");
     }
@@ -58,10 +58,10 @@ public class AsyncCloudConvertClientExceptionTest extends AbstractTest {
 
         assertThat(cloudConvertClientException.getStatus().getCode()).isEqualTo(HttpStatus.SC_UNPROCESSABLE_ENTITY);
         assertThat(cloudConvertClientException.getStatus().getReason()).isEqualTo("Unprocessable Entity");
-        assertThat(cloudConvertClientException.getHeaders()).hasSize(8);
+        assertThat(cloudConvertClientException.getHeaders()).containsKey("Content-Type");
         assertThat(cloudConvertClientException.getBody().getCode()).isEqualTo("INVALID_DATA");
         assertThat(cloudConvertClientException.getBody().getMessage()).isEqualTo("The given data was invalid.");
-        assertThat(cloudConvertClientException.getBody().getErrors()).hasSize(1);
+        assertThat(cloudConvertClientException.getBody().getErrors()).containsKey("tasks");
     }
 
     @After

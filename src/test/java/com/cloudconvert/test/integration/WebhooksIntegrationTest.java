@@ -37,7 +37,7 @@ public class WebhooksIntegrationTest extends AbstractTest {
     @Test(timeout = TIMEOUT)
     public void userLifecycle() throws Exception {
         final Result<UserResponse> userResponseResult = cloudConvertClient.users().me();
-        assertThat(userResponseResult.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(userResponseResult.getStatus().getCode()).isEqualTo(HttpStatus.SC_OK);
         assertThat(userResponseResult.getBody()).isNotNull();
     }
 
@@ -47,7 +47,7 @@ public class WebhooksIntegrationTest extends AbstractTest {
         final WebhookRequest webhookRequest = new WebhookRequest().setUrl("http://some-url.com")
             .setEvents(ImmutableList.of(Event.JOB_CREATED, Event.JOB_FAILED, Event.JOB_FINISHED));
         final Result<WebhookResponse> createWebhookResponseResult = cloudConvertClient.webhooks().create(webhookRequest);
-        assertThat(createWebhookResponseResult.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
+        assertThat(createWebhookResponseResult.getStatus().getCode()).isEqualTo(HttpStatus.SC_CREATED);
         assertThat(createWebhookResponseResult.getBody()).isNotNull();
 
         final WebhookResponse createWebhookResponse = createWebhookResponseResult.getBody();
@@ -55,11 +55,11 @@ public class WebhooksIntegrationTest extends AbstractTest {
 
         // List
         final Result<Pageable<WebhookResponse>> webhookResponsePageable = cloudConvertClient.webhooks().list();
-        assertThat(webhookResponsePageable.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(webhookResponsePageable.getStatus().getCode()).isEqualTo(HttpStatus.SC_OK);
 
         // Delete
         final Result<Void> deleteWebhookResponseResult = cloudConvertClient.webhooks().delete(createWebhookResponse.getId());
-        assertThat(deleteWebhookResponseResult.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+        assertThat(deleteWebhookResponseResult.getStatus().getCode()).isEqualTo(HttpStatus.SC_NO_CONTENT);
 
         // Verify
         assertThat(cloudConvertClient.webhooks().verify(WEBHOOK_PAYLOAD, WEBHOOK_SIGNATURE)).isTrue();

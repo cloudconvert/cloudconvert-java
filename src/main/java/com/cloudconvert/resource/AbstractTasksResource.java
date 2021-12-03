@@ -2,11 +2,21 @@ package com.cloudconvert.resource;
 
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
-import com.cloudconvert.dto.request.*;
+import com.cloudconvert.dto.request.CaptureWebsitesTaskRequest;
+import com.cloudconvert.dto.request.ConvertFilesTaskRequest;
+import com.cloudconvert.dto.request.CreateArchivesTaskRequest;
+import com.cloudconvert.dto.request.CreateThumbnailsTaskRequest;
+import com.cloudconvert.dto.request.ExecuteCommandsTaskRequest;
+import com.cloudconvert.dto.request.GetMetadataTaskRequest;
+import com.cloudconvert.dto.request.MergeFilesTaskRequest;
+import com.cloudconvert.dto.request.OptimizeFilesTaskRequest;
+import com.cloudconvert.dto.request.WriteMetadataTaskRequest;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AbstractResult;
+import com.cloudconvert.exception.CloudConvertClientException;
+import com.cloudconvert.exception.CloudConvertServerException;
 import com.cloudconvert.resource.params.Filter;
 import com.cloudconvert.resource.params.Include;
 import com.cloudconvert.resource.params.Pagination;
@@ -108,7 +118,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract TRAR show(
         @NotNull final String taskId
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * Show a task. Requires the task.read scope.
@@ -121,7 +131,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract TRAR show(
         @NotNull final String taskId, @NotNull final List<Include> includes
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getShowHttpUriRequest(
         @NotNull final String taskId, @NotNull final List<Include> includes
@@ -149,7 +159,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract TRAR wait(
         @NotNull final String taskId
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getWaitHttpUriRequest(
         @NotNull final String taskId
@@ -166,7 +176,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract TRPAR list() throws IOException, URISyntaxException;
+    public abstract TRPAR list() throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * List all tasks with their status, payload and result. Requires the task.read scope.
@@ -181,7 +191,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract TRPAR list(
         @NotNull final Map<Filter, String> filters
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * List all tasks with their status, payload and result. Requires the task.read scope.
@@ -197,7 +207,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract TRPAR list(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * List all tasks with their status, payload and result. Requires the task.read scope.
@@ -216,7 +226,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract TRPAR list(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Pagination pagination
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getListHttpUriRequest(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Pagination pagination
@@ -239,7 +249,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract TRAR cancel(
         @NotNull final String taskId
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getCancelHttpUriRequest(
         @NotNull final String taskId
@@ -259,7 +269,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract TRAR retry(
         @NotNull final String taskId
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getRetryHttpUriRequest(
         @NotNull final String taskId
@@ -280,7 +290,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract VAR delete(
         @NotNull final String taskId
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getDeleteHttpUriRequest(
         @NotNull final String taskId
@@ -297,7 +307,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract ORPAR operations() throws IOException, URISyntaxException;
+    public abstract ORPAR operations() throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * List all possible operations, formats, engines and possible options.
@@ -314,7 +324,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract ORPAR operations(
         @NotNull final Map<Filter, String> filters
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * List all possible operations, formats, engines and possible options.
@@ -332,7 +342,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract ORPAR operations(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * List all possible operations, formats, engines and possible options.
@@ -352,7 +362,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract ORPAR operations(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Boolean alternative
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getOperationsHttpUriRequest(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Boolean alternative
@@ -375,7 +385,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract TRAR convert(
         @NotNull final ConvertFilesTaskRequest convertFilesTaskRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * List all supported formats, their engines and possible options.
@@ -384,7 +394,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract ORPAR convertFormats() throws IOException, URISyntaxException;
+    public abstract ORPAR convertFormats() throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * List all supported formats, their engines and possible options.
@@ -400,7 +410,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract ORPAR convertFormats(
         @NotNull final Map<Filter, String> filters
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * List all supported formats, their engines and possible options.
@@ -417,7 +427,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract ORPAR convertFormats(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * List all supported formats, their engines and possible options.
@@ -436,7 +446,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract ORPAR convertFormats(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Boolean alternative
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * Create a task to optimize and compress a file. Currently supported formats are PDF, PNG and JPG.
@@ -448,7 +458,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract TRAR optimize(
         @NotNull final OptimizeFilesTaskRequest optimizeFilesTaskRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * Create a task to convert a website to PDF or to capture a screenshot of a website (png, jpg).
@@ -460,7 +470,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract TRAR capture(
         @NotNull final CaptureWebsitesTaskRequest captureWebsitesTaskRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * Create a task to merge at least two files to one PDF. If input files are not PDFs yet, they are automatically converted to PDF.
@@ -472,7 +482,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract TRAR merge(
         @NotNull final MergeFilesTaskRequest mergeFilesTaskRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * Create a task to create a ZIP, RAR, 7Z, TAR, TAR.GZ or TAR.BZ2 archive.
@@ -484,7 +494,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract TRAR archive(
         @NotNull final CreateArchivesTaskRequest createArchivesTaskRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * Create a task to execute a command. Currently, ffmpeg, imagemagick and graphicsmagick commands re supported.
@@ -498,7 +508,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      */
     public abstract TRAR command(
         @NotNull final ExecuteCommandsTaskRequest executeCommandsTaskRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * Create a task to create a thumbnail of one file. Requires the task.write scope.
@@ -509,8 +519,8 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      * @throws URISyntaxException
      */
     public abstract TRAR thumbnail(
-            @NotNull final CreateThumbnailsTaskRequest createThumbnailsTaskRequest
-    ) throws IOException, URISyntaxException;
+        @NotNull final CreateThumbnailsTaskRequest createThumbnailsTaskRequest
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
 
     /**
@@ -522,8 +532,8 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      * @throws URISyntaxException
      */
     public abstract TRAR metadata(
-            @NotNull final GetMetadataTaskRequest getMetadataTaskRequest
-    ) throws IOException, URISyntaxException;
+        @NotNull final GetMetadataTaskRequest getMetadataTaskRequest
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
 
     /**
@@ -535,8 +545,8 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
      * @throws URISyntaxException
      */
     public abstract TRAR writeMetadata(
-            @NotNull final WriteMetadataTaskRequest writeMetadataTaskRequest
-    ) throws IOException, URISyntaxException;
+        @NotNull final WriteMetadataTaskRequest writeMetadataTaskRequest
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
 
     @Override

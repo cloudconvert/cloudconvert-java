@@ -3,6 +3,8 @@ package com.cloudconvert.resource;
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.result.AbstractResult;
+import com.cloudconvert.exception.CloudConvertClientException;
+import com.cloudconvert.exception.CloudConvertServerException;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.client.utils.URIBuilder;
@@ -31,7 +33,7 @@ public abstract class AbstractFilesResource<ISAR extends AbstractResult<InputStr
      */
     public abstract ISAR download(
         @NotNull final String path
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getDownloadHttpUriRequest(
         @NotNull final String path

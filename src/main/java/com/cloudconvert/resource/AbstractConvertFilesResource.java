@@ -7,6 +7,8 @@ import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AbstractResult;
+import com.cloudconvert.exception.CloudConvertClientException;
+import com.cloudconvert.exception.CloudConvertServerException;
 import com.cloudconvert.resource.params.Filter;
 import com.cloudconvert.resource.params.Include;
 import com.cloudconvert.resource.params.converter.AlternativeToNameValuePairsConverter;
@@ -57,7 +59,7 @@ public abstract class AbstractConvertFilesResource<TRAR extends AbstractResult<T
      */
     public abstract TRAR convert(
         @NotNull final ConvertFilesTaskRequest convertFilesTaskRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getConvertHttpUriRequest(
         @NotNull final ConvertFilesTaskRequest convertFilesTaskRequest
@@ -75,7 +77,7 @@ public abstract class AbstractConvertFilesResource<TRAR extends AbstractResult<T
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract ORP convertFormats() throws IOException, URISyntaxException;
+    public abstract ORP convertFormats() throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * List all supported formats, their engines and possible options.
@@ -91,7 +93,7 @@ public abstract class AbstractConvertFilesResource<TRAR extends AbstractResult<T
      */
     public abstract ORP convertFormats(
         @NotNull final Map<Filter, String> filters
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * List all supported formats, their engines and possible options.
@@ -108,7 +110,7 @@ public abstract class AbstractConvertFilesResource<TRAR extends AbstractResult<T
      */
     public abstract ORP convertFormats(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * List all supported formats, their engines and possible options.
@@ -127,7 +129,7 @@ public abstract class AbstractConvertFilesResource<TRAR extends AbstractResult<T
      */
     public abstract ORP convertFormats(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Boolean alternative
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getConvertFormatsHttpUriRequest(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Boolean alternative

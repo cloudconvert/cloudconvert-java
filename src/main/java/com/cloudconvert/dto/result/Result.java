@@ -10,13 +10,10 @@ import java.util.Map;
 public class Result<T> extends AbstractResult<T> {
 
     @Getter
-    private int status;
+    private Status status;
 
     @Getter
     private Map<String, String> headers;
-
-    @Getter
-    private String message;
 
     @Getter
     @Nullable

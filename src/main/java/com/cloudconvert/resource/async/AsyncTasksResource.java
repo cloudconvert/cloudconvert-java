@@ -2,11 +2,21 @@ package com.cloudconvert.resource.async;
 
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
-import com.cloudconvert.dto.request.*;
+import com.cloudconvert.dto.request.CaptureWebsitesTaskRequest;
+import com.cloudconvert.dto.request.ConvertFilesTaskRequest;
+import com.cloudconvert.dto.request.CreateArchivesTaskRequest;
+import com.cloudconvert.dto.request.CreateThumbnailsTaskRequest;
+import com.cloudconvert.dto.request.ExecuteCommandsTaskRequest;
+import com.cloudconvert.dto.request.GetMetadataTaskRequest;
+import com.cloudconvert.dto.request.MergeFilesTaskRequest;
+import com.cloudconvert.dto.request.OptimizeFilesTaskRequest;
+import com.cloudconvert.dto.request.WriteMetadataTaskRequest;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AsyncResult;
+import com.cloudconvert.exception.CloudConvertClientException;
+import com.cloudconvert.exception.CloudConvertServerException;
 import com.cloudconvert.executor.AsyncRequestExecutor;
 import com.cloudconvert.resource.AbstractTasksResource;
 import com.cloudconvert.resource.params.Filter;
@@ -128,89 +138,89 @@ public class AsyncTasksResource extends AbstractTasksResource<AsyncResult<TaskRe
     @Override
     public AsyncResult<TaskResponse> convert(
         @NotNull final ConvertFilesTaskRequest convertFilesTaskRequest
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return getAbstractConvertFilesResource().convert(convertFilesTaskRequest);
     }
 
     @Override
-    public AsyncResult<Pageable<OperationResponse>> convertFormats() throws IOException, URISyntaxException {
+    public AsyncResult<Pageable<OperationResponse>> convertFormats() throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return getAbstractConvertFilesResource().convertFormats();
     }
 
     @Override
     public AsyncResult<Pageable<OperationResponse>> convertFormats(
         @NotNull final Map<Filter, String> filters
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return getAbstractConvertFilesResource().convertFormats(filters);
     }
 
     @Override
     public AsyncResult<Pageable<OperationResponse>> convertFormats(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return getAbstractConvertFilesResource().convertFormats(filters, includes);
     }
 
     @Override
     public AsyncResult<Pageable<OperationResponse>> convertFormats(
         @NotNull final Map<Filter, String> filters, @NotNull final List<Include> includes, @Nullable final Boolean alternative
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return getAbstractConvertFilesResource().convertFormats(filters, includes, alternative);
     }
 
     @Override
     public AsyncResult<TaskResponse> optimize(
         @NotNull final OptimizeFilesTaskRequest optimizeFilesTaskRequest
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return getAbstractOptimizeFilesResource().optimize(optimizeFilesTaskRequest);
     }
 
     @Override
     public AsyncResult<TaskResponse> capture(
         @NotNull final CaptureWebsitesTaskRequest captureWebsitesTaskRequest
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return getAbstractCaptureWebsitesResource().capture(captureWebsitesTaskRequest);
     }
 
     @Override
     public AsyncResult<TaskResponse> merge(
         @NotNull final MergeFilesTaskRequest mergeFilesTaskRequest
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return getAbstractMergeFilesResource().merge(mergeFilesTaskRequest);
     }
 
     @Override
     public AsyncResult<TaskResponse> archive(
         @NotNull final CreateArchivesTaskRequest createArchivesTaskRequest
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return getAbstractCreateArchivesResource().archive(createArchivesTaskRequest);
     }
 
     @Override
     public AsyncResult<TaskResponse> command(
         @NotNull final ExecuteCommandsTaskRequest executeCommandsTaskRequest
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return getAbstractExecuteCommandsResource().command(executeCommandsTaskRequest);
     }
 
     @Override
     public AsyncResult<TaskResponse> thumbnail(
-            @NotNull final CreateThumbnailsTaskRequest createThumbnailsTaskRequest
-    ) throws IOException, URISyntaxException {
+        @NotNull final CreateThumbnailsTaskRequest createThumbnailsTaskRequest
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return getAbstractCreateThumbnailsResource().thumbnail(createThumbnailsTaskRequest);
     }
 
     @Override
     public AsyncResult<TaskResponse> metadata(
-            @NotNull final GetMetadataTaskRequest getMetadataTaskRequest
-    ) throws IOException, URISyntaxException {
+        @NotNull final GetMetadataTaskRequest getMetadataTaskRequest
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return getAbstractGetMetadataResource().metadata(getMetadataTaskRequest);
     }
 
     @Override
     public AsyncResult<TaskResponse> writeMetadata(
-            @NotNull final WriteMetadataTaskRequest writeMetadataTaskRequest
-    ) throws IOException, URISyntaxException {
+        @NotNull final WriteMetadataTaskRequest writeMetadataTaskRequest
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return getAbstractWriteMetadataResource().writeMetadata(writeMetadataTaskRequest);
     }
 

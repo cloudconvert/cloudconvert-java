@@ -6,6 +6,8 @@ import com.cloudconvert.dto.request.WebhookRequest;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.WebhookResponse;
 import com.cloudconvert.dto.result.AbstractResult;
+import com.cloudconvert.exception.CloudConvertClientException;
+import com.cloudconvert.exception.CloudConvertServerException;
 import com.cloudconvert.resource.params.Filter;
 import com.cloudconvert.resource.params.Pagination;
 import com.cloudconvert.resource.params.converter.FiltersToNameValuePairsConverter;
@@ -60,7 +62,7 @@ public abstract class AbstractWebhooksResource<WRAR extends AbstractResult<Webho
      */
     public abstract WRAR create(
         @NotNull final WebhookRequest webhookRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getCreateHttpUriRequest(
         @NotNull final WebhookRequest webhookRequest
@@ -77,7 +79,7 @@ public abstract class AbstractWebhooksResource<WRAR extends AbstractResult<Webho
      * @throws IOException
      * @throws URISyntaxException
      */
-    public abstract WRPAR list() throws IOException, URISyntaxException;
+    public abstract WRPAR list() throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * List all webhooks. Requires the webhook.read scope.
@@ -90,7 +92,7 @@ public abstract class AbstractWebhooksResource<WRAR extends AbstractResult<Webho
      */
     public abstract WRPAR list(
         @NotNull final Map<Filter, String> filters
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     /**
      * List all webhooks. Requires the webhook.read scope.
@@ -106,7 +108,7 @@ public abstract class AbstractWebhooksResource<WRAR extends AbstractResult<Webho
      */
     public abstract WRPAR list(
         @NotNull final Map<Filter, String> filters, @Nullable final Pagination pagination
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getListHttpUriRequest(
         @NotNull final Map<Filter, String> filters, @Nullable final Pagination pagination
@@ -131,7 +133,7 @@ public abstract class AbstractWebhooksResource<WRAR extends AbstractResult<Webho
      */
     public abstract VAR delete(
         @NotNull final String webhookId
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getDeleteHttpUriRequest(
         @NotNull final String webhookId

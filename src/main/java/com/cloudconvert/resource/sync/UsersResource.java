@@ -4,6 +4,8 @@ import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.response.UserResponse;
 import com.cloudconvert.dto.result.Result;
+import com.cloudconvert.exception.CloudConvertClientException;
+import com.cloudconvert.exception.CloudConvertServerException;
 import com.cloudconvert.executor.RequestExecutor;
 import com.cloudconvert.resource.AbstractUsersResource;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +28,7 @@ public class UsersResource extends AbstractUsersResource<Result<UserResponse>> {
     }
 
     @Override
-    public Result<UserResponse> me() throws IOException, URISyntaxException {
+    public Result<UserResponse> me() throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return requestExecutor.execute(getMeHttpUriRequest(), USER_RESPONSE_TYPE_REFERENCE);
     }
 

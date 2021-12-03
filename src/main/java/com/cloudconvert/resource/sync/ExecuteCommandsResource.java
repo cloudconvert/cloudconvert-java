@@ -5,6 +5,8 @@ import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.ExecuteCommandsTaskRequest;
 import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.Result;
+import com.cloudconvert.exception.CloudConvertClientException;
+import com.cloudconvert.exception.CloudConvertServerException;
 import com.cloudconvert.executor.RequestExecutor;
 import com.cloudconvert.resource.AbstractExecuteCommandsResource;
 import com.google.common.collect.ImmutableList;
@@ -34,7 +36,7 @@ public class ExecuteCommandsResource extends AbstractExecuteCommandsResource<Res
     @Override
     public Result<TaskResponse> command(
         @NotNull final ExecuteCommandsTaskRequest executeCommandsTaskRequest
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return requestExecutor.execute(getCommandHttpUriRequest(executeCommandsTaskRequest), TASK_RESPONSE_TYPE_REFERENCE);
     }
 

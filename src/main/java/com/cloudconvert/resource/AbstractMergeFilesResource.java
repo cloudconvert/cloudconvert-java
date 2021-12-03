@@ -5,6 +5,8 @@ import com.cloudconvert.client.setttings.SettingsProvider;
 import com.cloudconvert.dto.request.MergeFilesTaskRequest;
 import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.result.AbstractResult;
+import com.cloudconvert.exception.CloudConvertClientException;
+import com.cloudconvert.exception.CloudConvertServerException;
 import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -35,7 +37,7 @@ public abstract class AbstractMergeFilesResource<TRAR extends AbstractResult<Tas
      */
     public abstract TRAR merge(
         @NotNull final MergeFilesTaskRequest mergeFilesTaskRequest
-    ) throws IOException, URISyntaxException;
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
     protected HttpUriRequest getMergeHttpUriRequest(
         @NotNull final MergeFilesTaskRequest mergeFilesTaskRequest

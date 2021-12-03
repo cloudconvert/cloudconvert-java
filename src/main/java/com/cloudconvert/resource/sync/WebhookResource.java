@@ -6,6 +6,8 @@ import com.cloudconvert.dto.request.WebhookRequest;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.WebhookResponse;
 import com.cloudconvert.dto.result.Result;
+import com.cloudconvert.exception.CloudConvertClientException;
+import com.cloudconvert.exception.CloudConvertServerException;
 import com.cloudconvert.executor.RequestExecutor;
 import com.cloudconvert.resource.AbstractWebhooksResource;
 import com.cloudconvert.resource.params.Filter;
@@ -35,33 +37,33 @@ public class WebhookResource extends AbstractWebhooksResource<
     @Override
     public Result<WebhookResponse> create(
         @NotNull final WebhookRequest webhookRequest
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return requestExecutor.execute(getCreateHttpUriRequest(webhookRequest), WEBHOOKS_RESPONSE_TYPE_REFERENCE);
     }
 
     @Override
-    public Result<Pageable<WebhookResponse>> list() throws IOException, URISyntaxException {
+    public Result<Pageable<WebhookResponse>> list() throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return list(ImmutableMap.of());
     }
 
     @Override
     public Result<Pageable<WebhookResponse>> list(
         @NotNull final Map<Filter, String> filters
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return list(filters, null);
     }
 
     @Override
     public Result<Pageable<WebhookResponse>> list(
         @NotNull final Map<Filter, String> filters, @Nullable final Pagination pagination
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return requestExecutor.execute(getListHttpUriRequest(filters, pagination), WEBHOOKS_RESPONSE_PAGEABLE_TYPE_REFERENCE);
     }
 
     @Override
     public Result<Void> delete(
         @NotNull final String webhookId
-    ) throws IOException, URISyntaxException {
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return requestExecutor.execute(getDeleteHttpUriRequest(webhookId), VOID_TYPE_REFERENCE);
     }
 

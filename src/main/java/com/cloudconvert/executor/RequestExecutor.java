@@ -2,6 +2,8 @@ package com.cloudconvert.executor;
 
 import com.cloudconvert.client.http.CloseableHttpClientProvider;
 import com.cloudconvert.dto.result.Result;
+import com.cloudconvert.exception.CloudConvertClientException;
+import com.cloudconvert.exception.CloudConvertServerException;
 import com.cloudconvert.extractor.ResultExtractor;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -21,7 +23,7 @@ public class RequestExecutor extends AbstractRequestExecutor<CloseableHttpClient
 
     public <T> Result<T> execute(
         @NotNull final HttpUriRequest httpUriRequest, @NotNull final TypeReference<T> typeReference
-    ) throws IOException {
+    ) throws IOException, CloudConvertClientException, CloudConvertServerException {
         return getResultExtractor().extract(getCloseableHttpClient().execute(httpUriRequest), typeReference);
     }
 }

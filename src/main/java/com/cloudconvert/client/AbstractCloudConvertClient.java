@@ -7,13 +7,7 @@ import com.cloudconvert.dto.response.TaskResponse;
 import com.cloudconvert.dto.response.UserResponse;
 import com.cloudconvert.dto.response.WebhookResponse;
 import com.cloudconvert.dto.result.AbstractResult;
-import com.cloudconvert.resource.AbstractExportFilesResource;
-import com.cloudconvert.resource.AbstractFilesResource;
-import com.cloudconvert.resource.AbstractImportFilesResource;
-import com.cloudconvert.resource.AbstractJobsResource;
-import com.cloudconvert.resource.AbstractTasksResource;
-import com.cloudconvert.resource.AbstractUsersResource;
-import com.cloudconvert.resource.AbstractWebhooksResource;
+import com.cloudconvert.resource.*;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -33,13 +27,14 @@ public class AbstractCloudConvertClient<
     private final AbstractUsersResource<URAR> abstractUsersResource;
     private final AbstractWebhooksResource<WRAR, WRPAR, VAR> abstractWebhooksResource;
     private final AbstractFilesResource<ISAR> abstractFilesResource;
+    private final AbstractSignedUrlResource abstractSignedUrlResource;
 
     public AbstractCloudConvertClient(
-        final AbstractTasksResource<TRAR, TRPAR, VAR, ORPAR> abstractTasksResource, final AbstractJobsResource<JRAR, JRPAR, VAR> abstractJobsResource,
-        final AbstractImportFilesResource<TRAR> abstractImportFilesResource, final AbstractExportFilesResource<TRAR> abstractExportFilesResource,
-        final AbstractUsersResource<URAR> abstractUsersResource, final AbstractWebhooksResource<WRAR, WRPAR, VAR> abstractWebhooksResource,
-        final AbstractFilesResource<ISAR> abstractFilesResource
-    ) {
+            final AbstractTasksResource<TRAR, TRPAR, VAR, ORPAR> abstractTasksResource, final AbstractJobsResource<JRAR, JRPAR, VAR> abstractJobsResource,
+            final AbstractImportFilesResource<TRAR> abstractImportFilesResource, final AbstractExportFilesResource<TRAR> abstractExportFilesResource,
+            final AbstractUsersResource<URAR> abstractUsersResource, final AbstractWebhooksResource<WRAR, WRPAR, VAR> abstractWebhooksResource,
+            final AbstractFilesResource<ISAR> abstractFilesResource, final AbstractSignedUrlResource abstractSignedUrlResource
+            ) {
         this.abstractTasksResource = abstractTasksResource;
         this.abstractJobsResource = abstractJobsResource;
         this.abstractImportFilesResource = abstractImportFilesResource;
@@ -47,6 +42,7 @@ public class AbstractCloudConvertClient<
         this.abstractUsersResource = abstractUsersResource;
         this.abstractWebhooksResource = abstractWebhooksResource;
         this.abstractFilesResource = abstractFilesResource;
+        this.abstractSignedUrlResource = abstractSignedUrlResource;
     }
 
     public AbstractTasksResource<TRAR, TRPAR, VAR, ORPAR> tasks() {
@@ -77,6 +73,8 @@ public class AbstractCloudConvertClient<
         return abstractFilesResource;
     }
 
+    public AbstractSignedUrlResource signedUrls() { return abstractSignedUrlResource; }
+
     @Override
     public void close() throws IOException {
         abstractTasksResource.close();
@@ -86,5 +84,6 @@ public class AbstractCloudConvertClient<
         abstractUsersResource.close();
         abstractWebhooksResource.close();
         abstractFilesResource.close();
+        abstractSignedUrlResource.close();
     }
 }

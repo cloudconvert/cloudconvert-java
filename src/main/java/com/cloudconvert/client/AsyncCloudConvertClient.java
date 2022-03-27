@@ -13,22 +13,7 @@ import com.cloudconvert.dto.response.WebhookResponse;
 import com.cloudconvert.dto.result.AsyncResult;
 import com.cloudconvert.executor.AsyncRequestExecutor;
 import com.cloudconvert.extractor.ResultExtractor;
-import com.cloudconvert.resource.async.AsyncCaptureWebsitesResource;
-import com.cloudconvert.resource.async.AsyncConvertFilesResource;
-import com.cloudconvert.resource.async.AsyncCreateArchivesResource;
-import com.cloudconvert.resource.async.AsyncCreateThumbnailsResource;
-import com.cloudconvert.resource.async.AsyncExecuteCommandsResource;
-import com.cloudconvert.resource.async.AsyncExportFilesResource;
-import com.cloudconvert.resource.async.AsyncFilesResource;
-import com.cloudconvert.resource.async.AsyncGetMetadataResource;
-import com.cloudconvert.resource.async.AsyncImportFilesResource;
-import com.cloudconvert.resource.async.AsyncJobsResource;
-import com.cloudconvert.resource.async.AsyncMergeFilesResource;
-import com.cloudconvert.resource.async.AsyncOptimizeFilesResource;
-import com.cloudconvert.resource.async.AsyncTasksResource;
-import com.cloudconvert.resource.async.AsyncUsersResource;
-import com.cloudconvert.resource.async.AsyncWebhookResource;
-import com.cloudconvert.resource.async.AsyncWriteMetadataResource;
+import com.cloudconvert.resource.async.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -82,7 +67,8 @@ public class AsyncCloudConvertClient extends AbstractCloudConvertClient<AsyncRes
             new AsyncExportFilesResource(settingsProvider, objectMapperProvider, asyncRequestExecutor),
             new AsyncUsersResource(settingsProvider, objectMapperProvider, asyncRequestExecutor),
             new AsyncWebhookResource(settingsProvider, objectMapperProvider, asyncRequestExecutor),
-            new AsyncFilesResource(settingsProvider, objectMapperProvider, asyncRequestExecutor)
+            new AsyncFilesResource(settingsProvider, objectMapperProvider, asyncRequestExecutor),
+            new AsyncSignedUrlResource(settingsProvider, objectMapperProvider, asyncRequestExecutor)
         );
     }
 }

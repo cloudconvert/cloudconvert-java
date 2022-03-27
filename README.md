@@ -190,7 +190,7 @@ final TaskResponse uploadImportTaskResponse = asyncCloudConvertClient.importUsin
 final TaskResponse waitUploadImportTaskResponse = asyncCloudConvertClient.tasks().wait(uploadImportTaskResponse.getId()).get().getBody();
 ```
 
-## Signing Webhook 
+## Verify Webhook Signatures
 The node SDK allows to verify webhook requests received from CloudConvert.
 
 ```java
@@ -205,6 +205,28 @@ final String signature = "signature";
 
 // Returns true if signature is valid, and false if signature is invalid
 final boolean isValid = cloudConvertClient.webhooks().verify(payload, signature);
+```
+
+## Signed URLs
+
+Signed URLs allow converting files on demand only using URL query parameters. The Java SDK allows to generate such URLs. Therefore, you need to obtain a signed URL base and a signing secret on the [CloudConvert Dashboard](https://cloudconvert.com/dashboard/api/v2/signed-urls).
+
+```java
+
+final String base = "https://s.cloudconvert.com/..."; // You can find it in your signed URL settings.
+final String signingSecret = "..."; // You can find it in your signed URL settings.
+final String cacheKey = "mykey"; // Allows caching of the result file for 24h
+
+final Map<String, TaskRequest> tasks = ImmutableMap.of(
+        "import-my-file", new UrlImportRequest().setUrl("import-url"),
+        "convert-my-file", new ConvertFilesTaskRequest()
+        .setInput("import-my-file")
+        .setOutputFormat("pdf")
+        "export-my-file", new UrlExportRequest().setInput("convert-my-file")
+        );
+
+
+final String url = cloudConvertClient.signedUrls().sign(base, signingSecret, tasks, cacheKey);
 ```
 
 ## Unit Tests

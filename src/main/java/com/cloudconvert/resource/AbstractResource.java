@@ -105,6 +105,20 @@ public abstract class AbstractResource implements Closeable {
         return new URIBuilder(settingsProvider.getApiUrl()).setPathSegments(v2PathSegments).setParameters(nameValuePairs).build();
     }
 
+    protected URI getSyncUri(
+            final List<String> pathSegments
+    ) throws URISyntaxException {
+        return getSyncUri(pathSegments, ImmutableList.of());
+    }
+
+    protected URI getSyncUri(
+            final List<String> pathSegments, final List<NameValuePair> nameValuePairs
+    ) throws URISyntaxException {
+        final List<String> v2PathSegments = ImmutableList.<String>builder().add(V2).addAll(pathSegments).build();
+
+        return new URIBuilder(settingsProvider.getSyncApiUrl()).setPathSegments(v2PathSegments).setParameters(nameValuePairs).build();
+    }
+
     protected HttpEntity getHttpEntity(
         final Request request
     ) throws JsonProcessingException {

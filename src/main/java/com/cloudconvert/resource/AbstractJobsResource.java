@@ -144,7 +144,7 @@ public abstract class AbstractJobsResource<JRAR extends AbstractResult<JobRespon
     protected HttpUriRequest getWaitHttpUriRequest(
         @NotNull final String jobId
     ) throws URISyntaxException {
-        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_JOBS, jobId, PATH_SEGMENT_WAIT));
+        final URI uri = getSyncUri(ImmutableList.of(PATH_SEGMENT_JOBS, jobId));
 
         return getHttpUriRequest(HttpGet.class, uri);
     }

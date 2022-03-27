@@ -16,9 +16,13 @@ public abstract class AbstractSettingsProvider implements SettingsProvider {
     public static final String API_URL_SANDBOX = "https://api.sandbox.cloudconvert.com/v2";
     public static final String API_URL_LIVE = "https://api.cloudconvert.com/v2";
 
+    public static final String API_SYNC_URL_SANDBOX = "https://sync.api.sandbox.cloudconvert.com/v2";
+    public static final String API_SYNC_URL_LIVE = "https://sync.api.cloudconvert.com/v2";
+
     private String apiKey;
     private String webhookSigningSecret;
     private String apiUrl;
+    private String syncApiUrl;
 
     protected AbstractSettingsProvider(
         final String apiKey, final String webhookSigningSecret, final String useSandbox
@@ -43,6 +47,7 @@ public abstract class AbstractSettingsProvider implements SettingsProvider {
         this.webhookSigningSecret = Optional.ofNullable(webhookSigningSecret)
             .orElseThrow(() -> new IllegalArgumentException("Could not resolve " + WEBHOOK_SIGNING_SECRET + ", make sure it is set correctly ..."));
         this.apiUrl = Boolean.parseBoolean(useSandbox) ? API_URL_SANDBOX : API_URL_LIVE;
+        this.syncApiUrl = Boolean.parseBoolean(useSandbox) ? API_SYNC_URL_SANDBOX : API_SYNC_URL_LIVE;
     }
 
     @Override
@@ -58,5 +63,10 @@ public abstract class AbstractSettingsProvider implements SettingsProvider {
     @Override
     public String getApiUrl() {
         return apiUrl;
+    }
+
+    @Override
+    public String getSyncApiUrl() {
+        return syncApiUrl;
     }
 }

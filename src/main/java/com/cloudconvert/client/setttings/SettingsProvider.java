@@ -9,5 +9,7 @@ public interface SettingsProvider {
 
     String getApiUrl();
 
+    String getSyncApiUrl();
+
     String getWebhookSigningSecret();
 }

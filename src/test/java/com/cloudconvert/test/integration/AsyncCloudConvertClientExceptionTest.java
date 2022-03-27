@@ -57,7 +57,7 @@ public class AsyncCloudConvertClientExceptionTest extends AbstractTest {
             () -> asyncCloudConvertAuthorizedClient.jobs().create(ImmutableMap.of()).get(), CloudConvertClientException.class);
 
         assertThat(cloudConvertClientException.getStatus().getCode()).isEqualTo(HttpStatus.SC_UNPROCESSABLE_ENTITY);
-        assertThat(cloudConvertClientException.getStatus().getReason()).isEqualTo("Unprocessable Entity");
+        assertThat(cloudConvertClientException.getStatus().getReason()).contains("Unprocessable");
         assertThat(cloudConvertClientException.getHeaders()).containsKey("Content-Type");
         assertThat(cloudConvertClientException.getBody().getCode()).isEqualTo("INVALID_DATA");
         assertThat(cloudConvertClientException.getBody().getMessage()).isEqualTo("The given data was invalid.");

@@ -164,7 +164,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
     protected HttpUriRequest getWaitHttpUriRequest(
         @NotNull final String taskId
     ) throws URISyntaxException {
-        final URI uri = getUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId, PATH_SEGMENT_WAIT));
+        final URI uri = getSyncUri(ImmutableList.of(PATH_SEGMENT_TASKS, taskId));
 
         return getHttpUriRequest(HttpGet.class, uri);
     }

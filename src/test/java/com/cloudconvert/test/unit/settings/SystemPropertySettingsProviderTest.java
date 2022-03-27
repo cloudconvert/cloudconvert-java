@@ -36,6 +36,7 @@ public class SystemPropertySettingsProviderTest {
         assertThat(systemPropertySettingsProvider.getApiKey()).isEqualTo(API_KEY);
         assertThat(systemPropertySettingsProvider.getWebhookSigningSecret()).isEqualTo(WEBHOOK_SIGNING_SECRET);
         assertThat(systemPropertySettingsProvider.getApiUrl()).isEqualTo(AbstractSettingsProvider.API_URL_SANDBOX);
+        assertThat(systemPropertySettingsProvider.getSyncApiUrl()).isEqualTo(AbstractSettingsProvider.API_SYNC_URL_SANDBOX);
     }
 
     @Test
@@ -48,6 +49,7 @@ public class SystemPropertySettingsProviderTest {
         assertThat(systemPropertySettingsProvider.getApiKey()).isEqualTo(API_KEY);
         assertThat(systemPropertySettingsProvider.getWebhookSigningSecret()).isEqualTo(WEBHOOK_SIGNING_SECRET);
         assertThat(systemPropertySettingsProvider.getApiUrl()).isEqualTo(AbstractSettingsProvider.API_URL_LIVE);
+        assertThat(systemPropertySettingsProvider.getSyncApiUrl()).isEqualTo(AbstractSettingsProvider.API_SYNC_URL_LIVE);
     }
 
     @Test

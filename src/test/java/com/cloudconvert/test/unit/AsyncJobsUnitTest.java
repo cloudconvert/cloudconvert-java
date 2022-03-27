@@ -77,6 +77,7 @@ public class AsyncJobsUnitTest extends AbstractTest {
     public void before() {
         when(settingsProvider.getApiKey()).thenReturn(API_KEY);
         when(settingsProvider.getApiUrl()).thenReturn(API_URL);
+        when(settingsProvider.getSyncApiUrl()).thenReturn(API_SYNC_URL);
 
         asyncCloudConvertClient = new AsyncCloudConvertClient(settingsProvider, objectMapperProvider, asyncRequestExecutor);
     }
@@ -152,7 +153,7 @@ public class AsyncJobsUnitTest extends AbstractTest {
 
         assertThat(httpUriRequest).isNotNull();
         assertThat(httpUriRequest.getMethod()).isEqualTo(HttpGet.METHOD_NAME);
-        assertThat(httpUriRequest.getURI().toString()).isEqualTo(API_URL + "/" + AbstractResource.V2 + "/jobs/" + JOB_ID + "/wait");
+        assertThat(httpUriRequest.getURI().toString()).isEqualTo(API_SYNC_URL + "/" + AbstractResource.V2 + "/jobs/" + JOB_ID);
         assertThat(httpUriRequest).isInstanceOf(HttpRequestBase.class);
         assertThat(httpUriRequest.getHeaders(AbstractResource.HEADER_AUTHORIZATION)).hasSize(1).allSatisfy(header ->
             assertThat(VALUE_AUTHORIZATION).isEqualTo(header.getValue()));

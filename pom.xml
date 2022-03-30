@@ -58,7 +58,7 @@
         <httpmime.version>4.5.12</httpmime.version>
         <tika-core.version>1.27</tika-core.version>
 
-        <jackson-databind.version>2.10.5.1</jackson-databind.version>
+        <jackson-databind.version>2.12.6.1</jackson-databind.version>
 
         <slf4j.version>1.7.30</slf4j.version>
         <annotations.version>19.0.0</annotations.version>

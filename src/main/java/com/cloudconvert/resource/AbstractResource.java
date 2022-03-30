@@ -131,6 +131,10 @@ public abstract class AbstractResource implements Closeable {
         return new ByteArrayEntity(objectMapperProvider.provide().writeValueAsBytes(map), ContentType.APPLICATION_JSON);
     }
 
+    protected String getJson(final Map<String, Object> map) throws JsonProcessingException {
+        return objectMapperProvider.provide().writeValueAsString(map);
+    }
+
     protected HttpUriRequest getHttpUriRequest(
         final Class<? extends HttpRequestBase> httpRequestBaseClass, final URI uri
     ) {

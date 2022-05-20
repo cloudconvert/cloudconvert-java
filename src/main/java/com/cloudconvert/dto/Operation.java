@@ -13,6 +13,7 @@ public enum Operation {
     ARCHIVE_EXTRACT("archive/extract"),
     COMMAND("command"),
     THUMBNAIL("thumbnail"),
+    WATERMARK("watermark"),
     METADATA("metadata"),
     METADATA_WRITE("metadata/write"),
 

@@ -3,15 +3,7 @@ package com.cloudconvert.test.integration;
 import com.cloudconvert.client.CloudConvertClient;
 import com.cloudconvert.dto.Operation;
 import com.cloudconvert.dto.Status;
-import com.cloudconvert.dto.request.CaptureWebsitesTaskRequest;
-import com.cloudconvert.dto.request.ConvertFilesTaskRequest;
-import com.cloudconvert.dto.request.CreateArchivesTaskRequest;
-import com.cloudconvert.dto.request.CreateThumbnailsTaskRequest;
-import com.cloudconvert.dto.request.ExecuteCommandsTaskRequest;
-import com.cloudconvert.dto.request.GetMetadataTaskRequest;
-import com.cloudconvert.dto.request.OptimizeFilesTaskRequest;
-import com.cloudconvert.dto.request.UploadImportRequest;
-import com.cloudconvert.dto.request.WriteMetadataTaskRequest;
+import com.cloudconvert.dto.request.*;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
@@ -387,6 +379,45 @@ public class TasksIntegrationTest extends AbstractTest {
         final Result<Void> deleteVoidResult = cloudConvertClient.tasks().delete(writeMetadataTaskResponse.getId());
         assertThat(deleteVoidResult.getStatus().getCode()).isEqualTo(HttpStatus.SC_NO_CONTENT);
     }
+
+
+    @Test(timeout = TIMEOUT)
+    public void watermarkFileTaskLifecycle() throws Exception {
+
+        // Watermark
+        final AddWatermarkTaskRequest addWatermarkTaskRequest = new AddWatermarkTaskRequest()
+                .setInputFormat(JPG)
+                .setProperty("text", "Hello World");
+        final Result<TaskResponse> watermarkTaskResponseResult = cloudConvertClient.tasks().watermark(addWatermarkTaskRequest);
+        assertThat(watermarkTaskResponseResult.getStatus().getCode()).isEqualTo(HttpStatus.SC_CREATED);
+
+        final TaskResponse watermarkTaskResponse = watermarkTaskResponseResult.getBody();
+        assertThat(watermarkTaskResponse.getOperation()).isEqualTo(Operation.WATERMARK);
+
+        // Wait
+        final Result<TaskResponse> waitWatermarkTaskResponseResult = cloudConvertClient.tasks().wait(watermarkTaskResponse.getId());
+        assertThat(waitWatermarkTaskResponseResult.getStatus().getCode()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse waitWatermarkTaskResponse = waitWatermarkTaskResponseResult.getBody();
+        assertThat(waitWatermarkTaskResponse.getOperation()).isEqualTo(Operation.WATERMARK);
+        assertThat(waitWatermarkTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
+        assertThat(waitWatermarkTaskResponse.getId()).isEqualTo(watermarkTaskResponse.getId());
+
+        // Show
+        final Result<TaskResponse> showWatermarkTaskResponseResult = cloudConvertClient.tasks().show(watermarkTaskResponse.getId());
+        assertThat(showWatermarkTaskResponseResult.getStatus().getCode()).isEqualTo(HttpStatus.SC_OK);
+
+        final TaskResponse showWatermarkTaskResponse = showWatermarkTaskResponseResult.getBody();
+        assertThat(showWatermarkTaskResponse.getOperation()).isEqualTo(Operation.WATERMARK);
+        assertThat(showWatermarkTaskResponse.getStatus()).isEqualTo(Status.FINISHED);
+        assertThat(showWatermarkTaskResponse.getId()).isEqualTo(watermarkTaskResponse.getId());
+
+        // Delete
+        final Result<Void> deleteVoidResult = cloudConvertClient.tasks().delete(watermarkTaskResponse.getId());
+        assertThat(deleteVoidResult.getStatus().getCode()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+    }
+
+
 
     @Test(timeout = TIMEOUT)
     public void listTasksLifecycle() throws Exception {

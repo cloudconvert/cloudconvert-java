@@ -2,15 +2,7 @@ package com.cloudconvert.resource;
 
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
-import com.cloudconvert.dto.request.CaptureWebsitesTaskRequest;
-import com.cloudconvert.dto.request.ConvertFilesTaskRequest;
-import com.cloudconvert.dto.request.CreateArchivesTaskRequest;
-import com.cloudconvert.dto.request.CreateThumbnailsTaskRequest;
-import com.cloudconvert.dto.request.ExecuteCommandsTaskRequest;
-import com.cloudconvert.dto.request.GetMetadataTaskRequest;
-import com.cloudconvert.dto.request.MergeFilesTaskRequest;
-import com.cloudconvert.dto.request.OptimizeFilesTaskRequest;
-import com.cloudconvert.dto.request.WriteMetadataTaskRequest;
+import com.cloudconvert.dto.request.*;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
@@ -77,6 +69,9 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
     @Getter
     private final AbstractWriteMetadataResource<TRAR> abstractWriteMetadataResource;
 
+    @Getter
+    private final AbstractAddWatermarkResource<TRAR> abstractAddWatermarkResource;
+
     private final IncludesToNameValuePairsConverter includesToNameValuePairsConverter;
     private final FiltersToNameValuePairsConverter filtersToNameValuePairsConverter;
     private final AlternativeToNameValuePairsConverter alternativeToNameValuePairsConverter;
@@ -88,7 +83,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
         final AbstractCaptureWebsitesResource<TRAR> abstractCaptureWebsitesResource, final AbstractMergeFilesResource<TRAR> abstractMergeFilesResource,
         final AbstractCreateArchivesResource<TRAR> abstractCreateArchivesResource, final AbstractExecuteCommandsResource<TRAR> abstractExecuteCommandsResource,
         final AbstractCreateThumbnailsResource<TRAR> abstractCreateThumbnailsResource, final AbstractGetMetadataResource<TRAR> abstractGetMetadataResourceResource,
-        final AbstractWriteMetadataResource<TRAR> abstractWriteMetadataResourceResource
+        final AbstractWriteMetadataResource<TRAR> abstractWriteMetadataResourceResource, final AbstractAddWatermarkResource<TRAR> abstractAddWatermarkResource
     ) {
         super(settingsProvider, objectMapperProvider);
 
@@ -101,6 +96,7 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
         this.abstractCreateThumbnailsResource = abstractCreateThumbnailsResource;
         this.abstractGetMetadataResource = abstractGetMetadataResourceResource;
         this.abstractWriteMetadataResource = abstractWriteMetadataResourceResource;
+        this.abstractAddWatermarkResource = abstractAddWatermarkResource;
 
         this.includesToNameValuePairsConverter = new IncludesToNameValuePairsConverter();
         this.filtersToNameValuePairsConverter = new FiltersToNameValuePairsConverter();
@@ -549,6 +545,19 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
     ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
 
 
+    /**
+     * Create a task to add a watermark to a file. Requires the task.write scope.
+     *
+     * @param addWatermarkTaskRequest {@link AddWatermarkTaskRequest}
+     * @return {@link TRAR}
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    public abstract TRAR watermark(
+            @NotNull final AddWatermarkTaskRequest addWatermarkTaskRequest
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException;
+
+
     @Override
     public void close() throws IOException {
         abstractConvertFilesResource.close();
@@ -560,5 +569,6 @@ public abstract class AbstractTasksResource<TRAR extends AbstractResult<TaskResp
         abstractCreateThumbnailsResource.close();
         abstractGetMetadataResource.close();
         abstractWriteMetadataResource.close();
+        abstractAddWatermarkResource.close();
     }
 }

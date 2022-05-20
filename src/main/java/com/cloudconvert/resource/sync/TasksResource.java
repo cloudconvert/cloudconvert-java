@@ -2,15 +2,7 @@ package com.cloudconvert.resource.sync;
 
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
-import com.cloudconvert.dto.request.CaptureWebsitesTaskRequest;
-import com.cloudconvert.dto.request.ConvertFilesTaskRequest;
-import com.cloudconvert.dto.request.CreateArchivesTaskRequest;
-import com.cloudconvert.dto.request.CreateThumbnailsTaskRequest;
-import com.cloudconvert.dto.request.ExecuteCommandsTaskRequest;
-import com.cloudconvert.dto.request.GetMetadataTaskRequest;
-import com.cloudconvert.dto.request.MergeFilesTaskRequest;
-import com.cloudconvert.dto.request.OptimizeFilesTaskRequest;
-import com.cloudconvert.dto.request.WriteMetadataTaskRequest;
+import com.cloudconvert.dto.request.*;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
@@ -46,10 +38,10 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponse>,
         final CaptureWebsitesResource captureWebsitesResource, final MergeFilesResource mergeFilesResource,
         final CreateArchivesResource createArchivesResource, final ExecuteCommandsResource executeCommandsResource,
         final CreateThumbnailsResource createThumbnailsResource, final GetMetadataResource getMetadataResource,
-        final WriteMetadataResource writeMetadataResource
+        final WriteMetadataResource writeMetadataResource, final AddWatermarkResource addWatermarkResource
     ) {
         super(settingsProvider, objectMapperProvider, convertFilesResource, optimizeFilesResource, captureWebsitesResource,
-            mergeFilesResource, createArchivesResource, executeCommandsResource, createThumbnailsResource, getMetadataResource, writeMetadataResource);
+            mergeFilesResource, createArchivesResource, executeCommandsResource, createThumbnailsResource, getMetadataResource, writeMetadataResource, addWatermarkResource);
 
         this.requestExecutor = requestExecutor;
     }
@@ -220,6 +212,12 @@ public class TasksResource extends AbstractTasksResource<Result<TaskResponse>,
     public Result<TaskResponse> writeMetadata(@NotNull WriteMetadataTaskRequest writeMetadataTaskRequest
     ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return getAbstractWriteMetadataResource().writeMetadata(writeMetadataTaskRequest);
+    }
+
+    @Override
+    public Result<TaskResponse> watermark(@NotNull AddWatermarkTaskRequest addWatermarkTaskRequest
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
+        return getAbstractAddWatermarkResource().watermark(addWatermarkTaskRequest);
     }
 
     @Override

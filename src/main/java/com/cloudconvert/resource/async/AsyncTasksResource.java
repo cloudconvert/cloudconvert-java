@@ -2,15 +2,7 @@ package com.cloudconvert.resource.async;
 
 import com.cloudconvert.client.mapper.ObjectMapperProvider;
 import com.cloudconvert.client.setttings.SettingsProvider;
-import com.cloudconvert.dto.request.CaptureWebsitesTaskRequest;
-import com.cloudconvert.dto.request.ConvertFilesTaskRequest;
-import com.cloudconvert.dto.request.CreateArchivesTaskRequest;
-import com.cloudconvert.dto.request.CreateThumbnailsTaskRequest;
-import com.cloudconvert.dto.request.ExecuteCommandsTaskRequest;
-import com.cloudconvert.dto.request.GetMetadataTaskRequest;
-import com.cloudconvert.dto.request.MergeFilesTaskRequest;
-import com.cloudconvert.dto.request.OptimizeFilesTaskRequest;
-import com.cloudconvert.dto.request.WriteMetadataTaskRequest;
+import com.cloudconvert.dto.request.*;
 import com.cloudconvert.dto.response.OperationResponse;
 import com.cloudconvert.dto.response.Pageable;
 import com.cloudconvert.dto.response.TaskResponse;
@@ -45,10 +37,10 @@ public class AsyncTasksResource extends AbstractTasksResource<AsyncResult<TaskRe
         final AsyncCaptureWebsitesResource asyncCaptureWebsitesResource, final AsyncMergeFilesResource asyncMergeFilesResource,
         final AsyncCreateArchivesResource asyncCreateArchivesResource, final AsyncExecuteCommandsResource asyncExecuteCommandsResource,
         final AsyncCreateThumbnailsResource asyncCreateThumbnailsResource, final AsyncGetMetadataResource asyncGetMetadataResource,
-        final AsyncWriteMetadataResource asyncWriteMetadataResource
+        final AsyncWriteMetadataResource asyncWriteMetadataResource, final AsyncAddWatermarkResource asyncAddWatermarkResource
     ) {
         super(settingsProvider, objectMapperProvider, asyncConvertFilesResource, asyncOptimizeFilesResource, asyncCaptureWebsitesResource,
-            asyncMergeFilesResource, asyncCreateArchivesResource, asyncExecuteCommandsResource, asyncCreateThumbnailsResource, asyncGetMetadataResource, asyncWriteMetadataResource);
+            asyncMergeFilesResource, asyncCreateArchivesResource, asyncExecuteCommandsResource, asyncCreateThumbnailsResource, asyncGetMetadataResource, asyncWriteMetadataResource, asyncAddWatermarkResource);
 
         this.asyncRequestExecutor = asyncRequestExecutor;
     }
@@ -222,6 +214,13 @@ public class AsyncTasksResource extends AbstractTasksResource<AsyncResult<TaskRe
         @NotNull final WriteMetadataTaskRequest writeMetadataTaskRequest
     ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
         return getAbstractWriteMetadataResource().writeMetadata(writeMetadataTaskRequest);
+    }
+
+    @Override
+    public AsyncResult<TaskResponse> watermark(
+            @NotNull final AddWatermarkTaskRequest addWatermarkTaskRequest
+    ) throws IOException, URISyntaxException, CloudConvertClientException, CloudConvertServerException {
+        return getAbstractAddWatermarkResource().watermark(addWatermarkTaskRequest);
     }
 
     @Override

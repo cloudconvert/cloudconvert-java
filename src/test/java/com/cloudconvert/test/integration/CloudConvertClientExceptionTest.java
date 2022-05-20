@@ -60,7 +60,6 @@ public class CloudConvertClientExceptionTest extends AbstractTest {
         assertThat(cloudConvertClientException.getStatus().getReason()).contains("Unprocessable");
         assertThat(cloudConvertClientException.getHeaders()).containsKey("Content-Type");
         assertThat(cloudConvertClientException.getBody().getCode()).isEqualTo("INVALID_DATA");
-        assertThat(cloudConvertClientException.getBody().getMessage()).isEqualTo("The given data was invalid.");
         assertThat(cloudConvertClientException.getBody().getErrors()).containsKey("tasks");
     }
 

@@ -7,7 +7,7 @@
 
     <groupId>com.cloudconvert</groupId>
     <artifactId>cloudconvert-java</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
 
     <name>cloudconvert-java</name>
     <description>CloudConvert is an online file converter API - more than 200 different audio, video, document, ebook, archive, image, spreadsheet and presentation formats supported.</description>

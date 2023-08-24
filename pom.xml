@@ -56,7 +56,7 @@
         <httpclient.version>4.5.13</httpclient.version>
         <httpasyncclient.version>4.1.4</httpasyncclient.version>
         <httpmime.version>4.5.12</httpmime.version>
-        <tika-core.version>1.27</tika-core.version>
+        <tika-core.version>1.28.3</tika-core.version>
 
         <jackson-databind.version>2.13.4.2</jackson-databind.version>
 

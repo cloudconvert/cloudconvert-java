@@ -16,7 +16,7 @@ jobs:
     
     strategy:
       fail-fast: false
-      max-parallel: 1
+      max-parallel: 2
       matrix:
         jdk: ["8", "11", "17", "21"]
 

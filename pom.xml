@@ -64,13 +64,13 @@
         <annotations.version>19.0.0</annotations.version>
         <guava.version>32.0.0-jre</guava.version>
 
-        <lombok.version>1.18.12</lombok.version>
+        <lombok.version>1.18.30</lombok.version>
 
         <junit.version>4.13.1</junit.version>
-        <mockito.version>3.3.3</mockito.version>
+        <mockito.version>4.11.0</mockito.version>
+        <byte-buddy.version>1.14.17</byte-buddy.version>
         <assertj-core.version>3.15.0</assertj-core.version>
         <throwing-function.version>1.5.0</throwing-function.version>
-        <system-rules.version>1.19.0</system-rules.version>
 
         <maven-surefire-plugin.version>3.0.0-M3</maven-surefire-plugin.version>
         <nexus-staging-plugin.version>1.6.7</nexus-staging-plugin.version>
@@ -149,6 +149,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>${byte-buddy.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>${assertj-core.version}</version>
@@ -158,12 +164,6 @@
             <groupId>com.pivovarit</groupId>
             <artifactId>throwing-function</artifactId>
             <version>${throwing-function.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.stefanbirkner</groupId>
-            <artifactId>system-rules</artifactId>
-            <version>${system-rules.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

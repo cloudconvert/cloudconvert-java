@@ -2,16 +2,17 @@ package com.cloudconvert.test.unit.settings;
 
 import com.cloudconvert.client.setttings.AbstractSettingsProvider;
 import com.cloudconvert.client.setttings.EnvironmentVariableSettingsProvider;
+import com.cloudconvert.client.setttings.EnvironmentVariables;
 import com.cloudconvert.test.framework.UnitTest;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
 
 @Category(UnitTest.class)
 @RunWith(MockitoJUnitRunner.class)
@@ -20,16 +21,16 @@ public class EnvironmentVariableSettingsProviderTest {
     public static final String API_KEY = "api-key";
     public static final String WEBHOOK_SIGNING_SECRET = "webhook-signing-secret";
 
-    @Rule
-    public EnvironmentVariables environmentVariables = new EnvironmentVariables();
+    @Mock
+    private EnvironmentVariables environmentVariables;
 
     @Test
     public void success_useSandbox() {
-        environmentVariables.set(AbstractSettingsProvider.API_KEY, API_KEY);
-        environmentVariables.set(AbstractSettingsProvider.USE_SANDBOX, "true");
-        environmentVariables.set(AbstractSettingsProvider.WEBHOOK_SIGNING_SECRET, WEBHOOK_SIGNING_SECRET);
+        when(environmentVariables.getenv(AbstractSettingsProvider.API_KEY)).thenReturn(API_KEY);
+        when(environmentVariables.getenv(AbstractSettingsProvider.USE_SANDBOX)).thenReturn("true");
+        when(environmentVariables.getenv(AbstractSettingsProvider.WEBHOOK_SIGNING_SECRET)).thenReturn(WEBHOOK_SIGNING_SECRET);
 
-        final EnvironmentVariableSettingsProvider environmentVariableSettingsProvider = new EnvironmentVariableSettingsProvider();
+        final EnvironmentVariableSettingsProvider environmentVariableSettingsProvider = new EnvironmentVariableSettingsProvider(environmentVariables);
         assertThat(environmentVariableSettingsProvider.getApiKey()).isEqualTo(API_KEY);
         assertThat(environmentVariableSettingsProvider.getWebhookSigningSecret()).isEqualTo(WEBHOOK_SIGNING_SECRET);
         assertThat(environmentVariableSettingsProvider.getApiUrl()).isEqualTo(AbstractSettingsProvider.API_URL_SANDBOX);
@@ -37,11 +38,11 @@ public class EnvironmentVariableSettingsProviderTest {
 
     @Test
     public void success_useLive() {
-        environmentVariables.set(AbstractSettingsProvider.API_KEY, API_KEY);
-        environmentVariables.set(AbstractSettingsProvider.USE_SANDBOX, "false");
-        environmentVariables.set(AbstractSettingsProvider.WEBHOOK_SIGNING_SECRET, WEBHOOK_SIGNING_SECRET);
+        when(environmentVariables.getenv(AbstractSettingsProvider.API_KEY)).thenReturn(API_KEY);
+        when(environmentVariables.getenv(AbstractSettingsProvider.USE_SANDBOX)).thenReturn("false");
+        when(environmentVariables.getenv(AbstractSettingsProvider.WEBHOOK_SIGNING_SECRET)).thenReturn(WEBHOOK_SIGNING_SECRET);
 
-        final EnvironmentVariableSettingsProvider environmentVariableSettingsProvider = new EnvironmentVariableSettingsProvider();
+        final EnvironmentVariableSettingsProvider environmentVariableSettingsProvider = new EnvironmentVariableSettingsProvider(environmentVariables);
         assertThat(environmentVariableSettingsProvider.getApiKey()).isEqualTo(API_KEY);
         assertThat(environmentVariableSettingsProvider.getWebhookSigningSecret()).isEqualTo(WEBHOOK_SIGNING_SECRET);
         assertThat(environmentVariableSettingsProvider.getApiUrl()).isEqualTo(AbstractSettingsProvider.API_URL_LIVE);
@@ -49,6 +50,7 @@ public class EnvironmentVariableSettingsProviderTest {
 
     @Test
     public void failure() {
-        assertThatThrownBy(EnvironmentVariableSettingsProvider::new).isInstanceOf(IllegalArgumentException.class);
+        when(environmentVariables.getenv(AbstractSettingsProvider.API_KEY)).thenReturn(null);
+        assertThatThrownBy(() -> new EnvironmentVariableSettingsProvider(environmentVariables)).isInstanceOf(IllegalArgumentException.class);
     }
 }

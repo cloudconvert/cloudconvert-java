@@ -3,7 +3,7 @@
 [![Tests](https://github.com/cloudconvert/cloudconvert-java/actions/workflows/run-tests.yml/badge.svg)](https://github.com/cloudconvert/cloudconvert-java/actions/workflows/run-tests.yml)
 ![Maven Central](https://img.shields.io/maven-central/v/com.cloudconvert/cloudconvert-java)
 
-This is the official Java SDK v2 for the [CloudConvert](https://cloudconvert.com/api/v2) _API v2_.
+This is the official Java SDK v2 for the [CloudConvert](https://cloudconvert.com/api/v2) API.
 
 ## Installation
 Add the following dependency to your pom.xml:

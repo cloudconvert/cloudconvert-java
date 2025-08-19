@@ -29,7 +29,7 @@ public enum Operation {
 
     EXPORT_URL("export/url"),
     EXPORT_S3("export/s3"),
-    EXPORT_AZURE_BLOB("export/azure-blob"),
+    EXPORT_AZURE_BLOB("export/azure/blob"),
     EXPORT_GOOGLE_CLOUD_STORAGE("export/google-cloud-storage"),
     EXPORT_OPENSTACK("export/openstack"),
     EXPORT_SFTP("export/sftp");

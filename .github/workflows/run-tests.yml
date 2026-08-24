@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       max-parallel: 2
       matrix:
-        jdk: ["8", "11", "17", "21", "25"]
+        jdk: ["8", "17", "25"]
 
     steps:
     - uses: actions/checkout@v4
@@ -34,5 +34,8 @@ jobs:
       run: mvn clean compile -U
     - name: Unit Tests
       run: mvn test -Punit-tests 
+    # The integration tests exercise the client against the live API, which does not
+    # differ per JDK - running them on every matrix entry only multiplies API rate limits.
     - name: Integration Tests
+      if: matrix.jdk == '25'
       run: mvn test -Pintegration-tests

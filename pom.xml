@@ -56,19 +56,22 @@
         <annotations.version>19.0.0</annotations.version>
         <guava.version>32.0.0-jre</guava.version>
 
-        <lombok.version>1.18.30</lombok.version>
+        <!-- 1.18.40+ is required to run on JDK 25 (the latest LTS) -->
+        <lombok.version>1.18.46</lombok.version>
 
         <junit.version>4.13.1</junit.version>
         <mockito.version>4.11.0</mockito.version>
-        <byte-buddy.version>1.14.17</byte-buddy.version>
+        <!-- Overrides the byte-buddy that mockito 4.x pulls in, which cannot read JDK 25 class files -->
+        <byte-buddy.version>1.18.12</byte-buddy.version>
         <assertj-core.version>3.27.7</assertj-core.version>
         <throwing-function.version>1.5.0</throwing-function.version>
 
-        <maven-surefire-plugin.version>3.0.0-M3</maven-surefire-plugin.version>
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
         <central-publishing-maven-plugin.version>0.7.0</central-publishing-maven-plugin.version>
-        <maven-source-plugin.version>3.1.0</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
-        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
     </properties>
 
     <dependencies>
@@ -191,6 +194,23 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <!-- JDK 23 turned off implicit annotation processing, so lombok
+                         must be declared explicitly rather than found on the classpath -->
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

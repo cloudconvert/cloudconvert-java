@@ -50,7 +50,7 @@
         <!-- Override the commons-codec 1.11 pulled in transitively by httpclient -->
         <commons-codec.version>1.22.0</commons-codec.version>
 
-        <jackson-databind.version>2.22.1</jackson-databind.version>
+        <jackson-databind.version>2.22.2</jackson-databind.version>
 
         <slf4j.version>1.7.30</slf4j.version>
         <annotations.version>19.0.0</annotations.version>
